@@ -85,6 +85,7 @@ const Anasayfa = () => {
           <TextField label="Okul Adı" fullWidth margin="dense" value={userInfo.okulAdi} />
           <TextField label="Mail" fullWidth margin="dense" value={userInfo.mail} />
           <TextField label="Telefon" fullWidth margin="dense" value={userInfo.telefon} />
+          <TextField label="Son Giriş Tarihi" fullWidth margin="dense" value={"12 / 03 / 2025"} />
         </Box>
       </Drawer>
 
