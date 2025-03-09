@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import HomePage from "./pages/HomePage";
+import MyAccount from "./pages/MyAccount/MyAccount";
 import './App.css'
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/giris" element={<Login />} />
         <Route path="/sifremi-unuttum" element={<ForgotPassword />} />
         <Route path="/anasayfa" element={<HomePage />} />
+        <Route path="/hesabim" element={<MyAccount />} />
       </Routes>
     </Router>
   );

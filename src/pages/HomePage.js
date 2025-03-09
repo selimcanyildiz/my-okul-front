@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Container, Button, Drawer, Box, TextField, Typography, IconButton, Divider, Grid } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CloseIcon from '@mui/icons-material/Close';
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import { useNavigate } from "react-router-dom";
 
 const Anasayfa = () => {
   const navigate = useNavigate();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const userInfo = {
@@ -45,6 +47,8 @@ const Anasayfa = () => {
     setDrawerOpen(open);
   };
 
+  const handleMyAccount = () => navigate("/hesabim")
+
   return (
     <Container maxWidth="xl" sx={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: 0 }}>
       <IconButton
@@ -64,8 +68,16 @@ const Anasayfa = () => {
 
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
         <Box sx={{ width: 300, padding: 2, margin: 0 }}>
-          <Typography style={{textAlign:"center"}} variant="h6" sx={{ margin: 0 }}>Hesabım</Typography>
-          <Divider />
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="h6">Hesabım</Typography>
+            <IconButton
+              onClick={handleMyAccount}
+              color="primary"
+            >
+              <ArrowCircleRightIcon fontSize="large" />
+            </IconButton>
+          </Box>
+          <Divider sx={{ my: 1 }} />
           <TextField label="Ad" fullWidth margin="dense" value={userInfo.ad} />
           <TextField label="Soyad" fullWidth margin="dense" value={userInfo.soyad} />
           <TextField label="TC" fullWidth margin="dense" value={userInfo.tc} />
