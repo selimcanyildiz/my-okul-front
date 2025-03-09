@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, TextField, Button, Typography, Box, Link, Paper } from "@mui/material";
+import { Container, TextField, Button, Typography, Box, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const Giris = () => {
@@ -15,6 +15,10 @@ const Giris = () => {
     }
   };
 
+  const handleForgotPassword = () => {
+    navigate("/sifremi-unuttum");
+  }
+
   return (
     <Container maxWidth="xs">
       <Paper elevation={3} sx={{ p: 4, mt: 10, textAlign: "center" }}>
@@ -24,7 +28,7 @@ const Giris = () => {
         <Box component="form" noValidate autoComplete="off">
           <TextField
             fullWidth
-            label="Kullanıcı Adı"
+            label="TC Kimlik No"
             variant="outlined"
             margin="normal"
             value={kullaniciAdi}
@@ -49,9 +53,9 @@ const Giris = () => {
             Giriş Yap
           </Button>
         </Box>
-        <Link href="#" variant="body2" sx={{ display: "block", mt: 2 }}>
+        <Button onClick={handleForgotPassword} variant="contained" sx={{ display: "block", mt:2 }}>
           Şifremi Unuttum
-        </Link>
+        </Button>
       </Paper>
     </Container>
   );
