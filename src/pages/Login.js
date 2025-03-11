@@ -1,15 +1,25 @@
 import React, { useState } from "react";
-import { Container, TextField, Button, Typography, Box, Paper } from "@mui/material";
+import { 
+  Container, TextField, Button, Typography, 
+  Box, Paper, IconButton, InputAdornment 
+} from "@mui/material";
+import { Visibility, VisibilityOff, Person, Lock } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const Giris = () => {
   const [kullaniciAdi, setKullaniciAdi] = useState("");
   const [sifre, setSifre] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [hata, setHata] = useState(""); // Hata mesajı için state
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    if (kullaniciAdi === "1" && sifre === "1") {
-      navigate("/anasayfa");  // Ana sayfaya yönlendir
+    if (kullaniciAdi.length !== 11) {
+      setHata("TC Kimlik No 11 haneli olmalıdır.");
+      return;
+    }
+    if (kullaniciAdi === "11111111111" && sifre === "1") {
+      navigate("/anasayfa");  
     } else {
       alert("Kullanıcı adı veya şifre hatalı.");
     }
@@ -17,7 +27,16 @@ const Giris = () => {
 
   const handleForgotPassword = () => {
     navigate("/sifremi-unuttum");
-  }
+  };
+
+  const handleKullaniciAdiChange = (e) => {
+    const value = e.target.value;
+    // Sadece sayıları kabul et ve en fazla 11 karaktere izin ver
+    if (/^\d*$/.test(value) && value.length <= 11) {
+      setKullaniciAdi(value);
+      setHata(""); // Hata mesajını temizle
+    }
+  };
 
   return (
     <Container maxWidth="xs">
@@ -32,16 +51,39 @@ const Giris = () => {
             variant="outlined"
             margin="normal"
             value={kullaniciAdi}
-            onChange={(e) => setKullaniciAdi(e.target.value)}
+            onChange={handleKullaniciAdiChange}
+            error={!!hata} // Hata varsa kırmızı çerçeve
+            helperText={hata} // Hata mesajını göster
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Person />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             fullWidth
             label="Şifre"
             variant="outlined"
             margin="normal"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={sifre}
             onChange={(e) => setSifre(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Lock />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <Button
             fullWidth

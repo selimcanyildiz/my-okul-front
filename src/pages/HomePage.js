@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Container, Button, Drawer, Box, TextField, Typography, IconButton, Divider, Grid } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import CloseIcon from '@mui/icons-material/Close';
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import { useNavigate } from "react-router-dom";
 
 const Anasayfa = () => {
@@ -17,63 +17,103 @@ const Anasayfa = () => {
     sifre: "******",
     okulAdi: "My Okul",
     mail: "example@example.com",
-    telefon: "+90 123 456 7890"
+    telefon: "+90 123 456 7890",
+  };
+
+  const handleRouter = async (url, userName, password, userNameClassName, passwordClassName, loginBtnClassName) => {
+    const data = {
+      url: url,
+      username: userName,
+      password: password,
+      usernameInput: userNameClassName,
+      passwordInput: passwordClassName,
+      loginBtn: loginBtnClassName,
+    };
+
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const response1 = await response.json();
+      console.log(response1.message);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const buttons = [
     {
       label: "Eğitim Parkı",
-      url: "https://www.egitimparki.com",
-      onClick: () => window.open("https://www.egitimparki.com", "_blank")
+      onClick: () => {
+        handleRouter(
+          "https://www.egitimparki.com/Login",
+          "1535-175",
+          "9A01E",
+          "txtUserName",
+          "txtPassword",
+          "btnLogin"
+        );
+      },
     },
     {
       label: "Bookr Class",
       url: "https://www.bookrclass.com",
-      onClick: () => window.open("https://www.bookrclass.com", "_blank")
+      onClick: () => window.open("https://www.bookrclass.com", "_blank"),
     },
     {
       label: "Rokodemi",
-      url: "https://www.rokodemi.com",
-      onClick: () => window.open("https://www.rokodemi.com", "_blank")
+      url: "https://www.rokodemi.com/Login",
+      userName: "MEHMETAKIFMERMER",
+      password: "1905gs",
+      userNameClassName: "Email",
+      passwordClassName: "Password",
+      loginBtnClassName: "submit",
+      onClick: () => {
+        handleRouter(
+          "https://www.rokodemi.com/Login",
+          "MEHMETAKIFMERMER",
+          "1905gs",
+          "Email",
+          "Password",
+          "submit"
+        );
+      },
     },
     {
       label: "Eyotek",
       url: "https://www.eyotek.com",
-      onClick: () => window.open("https://www.eyotek.com", "_blank")
-    }
+      onClick: () => window.open("https://www.eyotek.com", "_blank"),
+    },
   ];
 
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
 
-  const handleMyAccount = () => navigate("/hesabim")
+  const handleMyAccount = () => navigate("/hesabim");
 
   return (
-    <Container maxWidth="xl" sx={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: 0 }}>
-      <IconButton
-        onClick={() => navigate("/")}
-        sx={{ position: "absolute", top: 10, right: 10, padding: 0 }}
-      >
+    <Container
+      maxWidth="xl"
+      sx={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: 0 }}
+    >
+      <IconButton onClick={() => navigate("/")} sx={{ position: "absolute", top: 10, right: 10, padding: 0 }}>
         <CloseIcon fontSize="large" />
       </IconButton>
 
-      <IconButton
-        onClick={toggleDrawer(true)}
-        color="primary"
-        sx={{ position: "absolute", top: 10, right: 50, padding: 0 }}
-      >
+      <IconButton onClick={toggleDrawer(true)} color="primary" sx={{ position: "absolute", top: 10, right: 50, padding: 0 }}>
         <AccountCircleIcon fontSize="large" />
       </IconButton>
 
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
         <Box sx={{ width: 300, padding: 2, margin: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Typography variant="h6">Hesabım</Typography>
-            <IconButton
-              onClick={handleMyAccount}
-              color="primary"
-            >
+            <IconButton onClick={handleMyAccount} color="primary">
               <ArrowCircleRightIcon fontSize="large" />
             </IconButton>
           </Box>
@@ -97,7 +137,7 @@ const Anasayfa = () => {
           alignItems: "center",
           textAlign: "center",
           margin: 0,
-          padding: 0
+          padding: 0,
         }}
       >
         <Grid container spacing={2} sx={{ maxWidth: "100%", margin: 0 }}>
@@ -115,7 +155,7 @@ const Anasayfa = () => {
                   textTransform: "none",
                   display: "flex",
                   justifyContent: "center",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
                 onClick={button.onClick}
               >
@@ -125,7 +165,6 @@ const Anasayfa = () => {
           ))}
         </Grid>
       </Box>
-
     </Container>
   );
 };
