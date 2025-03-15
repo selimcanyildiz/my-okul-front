@@ -4,7 +4,7 @@ import { Button, Container, Grid } from "@mui/material";
 const Anasayfa = () => {
   const handleLoginClick = async (platformName) => {
     try {
-      const response = await fetch("http://localhost:8000/login-to-platform", {
+      const response = await fetch("https://denemeback.onrender.com/login-to-platform", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,7 +24,7 @@ const Anasayfa = () => {
           action: "login",
           data: data,
         },
-        "http://localhost:3000"
+        "https://my-okul-front.vercel.app"
       );
 
       alert("Eklentiye mesaj gönderildi. Eğer eklenti yüklüyse, giriş işlemi gerçekleşecek.");
