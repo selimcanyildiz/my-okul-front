@@ -50,6 +50,7 @@ const Anasayfa = () => {
           </Button>
         </Grid>
       </Grid>
+      <a href="https://denemeback.onrender.com/download-extension" download>ZIP Dosyasını İndir</a>
     </Container>
   );
 };
