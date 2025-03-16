@@ -78,6 +78,7 @@ const Giris = () => {
               height: "80%",
               backgroundImage: "url(/images/loginbg.png)", // Resim ekledik
               backgroundPosition: "center",
+              backgroundRepeat:"no-repeat",
               // border: "1px solid black",
               borderRadius: "8px", // Kartın kenarları yuvarlak
             }}
