@@ -1,8 +1,14 @@
 import React from "react";
 import { Button, Container, Grid, Box, Typography } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
+import { useNavigate } from "react-router-dom";
 
 const Anasayfa = () => {
+  const navigate = useNavigate();
+
   const handleLoginClick = async (platformName) => {
     try {
       const response = await fetch("https://denemeback.onrender.com/login-to-platform", {
@@ -35,9 +41,53 @@ const Anasayfa = () => {
     }
   };
 
+  const handleMyAccount = () => navigate("/hesabim");
+
   return (
     <Container maxWidth="xl">
-      <Grid container spacing={4} style={{ marginTop: "20px" }}>
+      <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
+        {/* <Grid item>
+          <Box mt={4}>
+            <Button
+              variant="contained"
+              color="primary"
+              href="https://denemeback.onrender.com/download-extension"
+              download
+              startIcon={<CloudDownloadIcon />}
+            >
+              ZIP Dosyasını İndir
+            </Button>
+          </Box>
+
+          <Box mt={4}>
+            <Button
+              variant="contained"
+              color="primary"
+              href="https://denemeback.onrender.com/download-extension"
+              download
+              startIcon={<ArrowOutwardIcon />}
+            >
+              Eklenti sayfası
+            </Button>
+          </Box>
+        </Grid> */}
+
+        <Grid item>
+          <Button
+            startIcon={<PermIdentityOutlinedIcon />}
+            style={{ color: "#152147" }}
+            onClick={handleMyAccount}
+          >
+            Hesabım
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Grid>
+        <Typography style={{ textAlign: "center", fontSize: "30px", color: "#152147", marginTop: "-20px", marginBottom: "20px" }}>MY Okulları'na Hoşgeldiniz</Typography>
+      </Grid>
+
+      <Grid container spacing={4} >
         {/* Eğitim Parkı Butonu */}
         <Grid item xs={12} md={5.75}>
           <Box
@@ -47,11 +97,13 @@ const Anasayfa = () => {
             border={1}
             borderColor="grey.300"
             borderRadius={2}
+            onClick={() => handleLoginClick("egitimparki")}
             p={2}
             sx={{
-              backgroundColor: "orange",
+              backgroundColor: "#ED6D2D",
               color: "white",
-              borderRadius:"20px"
+              borderRadius: "20px",
+              cursor:"pointer"
             }}
           >
             <Box>
@@ -60,13 +112,14 @@ const Anasayfa = () => {
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
               <Button
-                onClick={() => handleLoginClick("egitimparki")}
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
                   backgroundColor: "none", // Buton arka planı beyaz
                   border: "none",
                   color: "white",
-                  fontSize: "16px"
+                  fontSize: "16px",
+                  width: "788",
+                  height: "282"
                 }}
               >
                 GİRİŞ YAP
@@ -74,9 +127,9 @@ const Anasayfa = () => {
             </Box>
             <Box>
               <img
-                src="/images/egtmpark.png" // Eğitim Parkı logosu URL'si
+                src="/images/egitimpark.png" // Eğitim Parkı logosu URL'si
                 alt="Eğitim Parkı Logo"
-                style={{ width: 100, height: 100 }}
+                style={{ width: 130, height: 80, marginRight:"10px" }}
               />
             </Box>
           </Box>
@@ -93,11 +146,13 @@ const Anasayfa = () => {
             border={1}
             borderColor="grey.300"
             borderRadius={2}
+            onClick={() => handleLoginClick("bookr")}
             p={2}
             sx={{
-              backgroundColor: "blue",
+              backgroundColor: "#436BF0",
               color: "white",
-              borderRadius:"20px"
+              borderRadius: "20px",
+              cursor:"pointer"
             }}
           >
             <Box>
@@ -106,7 +161,6 @@ const Anasayfa = () => {
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
               <Button
-                onClick={() => handleLoginClick("bookr")}
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
                   backgroundColor: "none",
@@ -122,7 +176,7 @@ const Anasayfa = () => {
               <img
                 src="/images/bookr.png"
                 alt="Eğitim Parkı Logo"
-                style={{ width: 100, height: 100 }}
+                style={{ width: 150, height: 140, marginRight:"10px" }}
               />
             </Box>
           </Box>
@@ -139,11 +193,13 @@ const Anasayfa = () => {
             border={1}
             borderColor="grey.300"
             borderRadius={2}
+            onClick={() => handleLoginClick("rokodemi")}
             p={2}
             sx={{
-              backgroundColor: "purple",
+              backgroundColor: "#A46FA6",
               color: "white",
-              borderRadius:"20px"
+              borderRadius: "20px",
+              cursor:"pointer"
             }}
           >
             <Box>
@@ -152,7 +208,6 @@ const Anasayfa = () => {
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
               <Button
-                onClick={() => handleLoginClick("rokodemi")}
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
                   backgroundColor: "none", // Buton arka planı beyaz
@@ -166,9 +221,9 @@ const Anasayfa = () => {
             </Box>
             <Box>
               <img
-                src="/images/rokodemi.jpg" // Eğitim Parkı logosu URL'si
+                src="/images/rokodemi.png"
                 alt="Eğitim Parkı Logo"
-                style={{ width: 100, height: 100 }}
+                style={{ width: 200, height: 100, marginRight:"-30px" }}
               />
             </Box>
           </Box>
@@ -185,11 +240,13 @@ const Anasayfa = () => {
             border={1}
             borderColor="grey.300"
             borderRadius={2}
+            onClick={() => handleLoginClick("eyotek")}
             p={2}
             sx={{
-              backgroundColor: "#994C00",
+              backgroundColor: "#D97E1C",
               color: "white",
-              borderRadius:"20px"
+              borderRadius: "20px",
+              cursor:"pointer"
             }}
           >
             <Box>
@@ -198,7 +255,6 @@ const Anasayfa = () => {
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
               <Button
-                onClick={() => handleLoginClick("eyotek")}
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
                   backgroundColor: "none",
@@ -212,21 +268,15 @@ const Anasayfa = () => {
             </Box>
             <Box>
               <img
-                src="/images/bookr.png"
+                src="/images/eyotek.png"
                 alt="Eğitim Parkı Logo"
-                style={{ width: 100, height: 100 }}
+                style={{ width: 200, height: 46, marginRight:"10px" }}
               />
             </Box>
           </Box>
         </Grid>
       </Grid>
 
-      {/* ZIP Dosyasını İndirme Linki */}
-      <Box mt={4}>
-        <a href="https://denemeback.onrender.com/download-extension" download>
-          ZIP Dosyasını İndir
-        </a>
-      </Box>
     </Container>
   );
 };
