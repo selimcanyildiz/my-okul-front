@@ -65,7 +65,7 @@ const Giris = () => {
         <Box
           sx={{
             flex: 1,
-            backgroundColor:"#f0f3f7",
+            backgroundColor: "#f0f3f7",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -78,7 +78,7 @@ const Giris = () => {
               height: "80%",
               backgroundImage: "url(/images/loginbg.png)", // Resim ekledik
               backgroundPosition: "center",
-              backgroundRepeat:"no-repeat",
+              backgroundRepeat: "no-repeat",
               // border: "1px solid black",
               borderRadius: "8px", // Kartın kenarları yuvarlak
             }}
@@ -194,8 +194,23 @@ const Giris = () => {
           </Box>
         </Box>
         <Box sx={{ position: "absolute", top: 10, right: 10, display: "flex", flexDirection: "row", gap: 2 }}>
-          <Button style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform:"none" }} startIcon={<DownloadIcon />}>Zip Dosyasını İndir</Button>
-          <Button style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform:"none" }} startIcon={<ArrowOutwardIcon />}>Eklentiye Git</Button>
+          <Button
+            style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
+            startIcon={<DownloadIcon />}
+            onClick={() => {
+              window.location.href = "https://denemeback.onrender.com/download-extension"; // Zip dosyasını indirme URL'sine git
+            }}
+          >
+            Zip Dosyasını İndir
+          </Button>
+
+          {/* <Button
+            style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
+            startIcon={<ArrowOutwardIcon />}
+          >
+            Eklentiye Git
+          </Button> */}
+
         </Box>
       </Paper>
     </Box>
