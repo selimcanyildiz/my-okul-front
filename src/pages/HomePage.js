@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Container, Grid } from "@mui/material";
+import { Button, Container, Grid, Box, Typography } from "@mui/material";
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 const Anasayfa = () => {
   const handleLoginClick = async (platformName) => {
@@ -36,21 +37,196 @@ const Anasayfa = () => {
 
   return (
     <Container maxWidth="xl">
-      <Grid container spacing={2} style={{ marginBottom: "20px", marginTop: "20px" }}>
-        <Grid item xs={12}>
-          <Button onClick={() => handleLoginClick("egitimparki")} variant="contained" color="primary">
-            Eğitim Parkı
-          </Button>
+      <Grid container spacing={4} style={{ marginTop: "20px" }}>
+        {/* Eğitim Parkı Butonu */}
+        <Grid item xs={12} md={5.75}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            border={1}
+            borderColor="grey.300"
+            borderRadius={2}
+            p={2}
+            sx={{
+              backgroundColor: "orange",
+              color: "white",
+              borderRadius:"20px"
+            }}
+          >
+            <Box>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Eğitim Parkı</Typography>
+              <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
+                Platforma giriş yapmak için tıklayınız.
+              </Typography>
+              <Button
+                onClick={() => handleLoginClick("egitimparki")}
+                startIcon={<ArrowOutwardIcon />}
+                sx={{
+                  backgroundColor: "none", // Buton arka planı beyaz
+                  border: "none",
+                  color: "white",
+                  fontSize: "16px"
+                }}
+              >
+                GİRİŞ YAP
+              </Button>
+            </Box>
+            <Box>
+              <img
+                src="/images/egtmpark.png" // Eğitim Parkı logosu URL'si
+                alt="Eğitim Parkı Logo"
+                style={{ width: 100, height: 100 }}
+              />
+            </Box>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={0.5}>
+        </Grid>
+
+        <Grid item xs={12} md={5.75}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            border={1}
+            borderColor="grey.300"
+            borderRadius={2}
+            p={2}
+            sx={{
+              backgroundColor: "blue",
+              color: "white",
+              borderRadius:"20px"
+            }}
+          >
+            <Box>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Bookr Class</Typography>
+              <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
+                Platforma giriş yapmak için tıklayınız.
+              </Typography>
+              <Button
+                onClick={() => handleLoginClick("bookr")}
+                startIcon={<ArrowOutwardIcon />}
+                sx={{
+                  backgroundColor: "none",
+                  border: "none",
+                  color: "white",
+                  fontSize: "16px"
+                }}
+              >
+                GİRİŞ YAP
+              </Button>
+            </Box>
+            <Box>
+              <img
+                src="/images/bookr.png"
+                alt="Eğitim Parkı Logo"
+                style={{ width: 100, height: 100 }}
+              />
+            </Box>
+          </Box>
         </Grid>
       </Grid>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Button onClick={() => handleLoginClick("rokodemi")} variant="contained" color="primary">
-            Rokodemi
-          </Button>
+
+      <Grid container spacing={4} style={{ marginTop: "20px" }}>
+        {/* Eğitim Parkı Butonu */}
+        <Grid item xs={12} md={5.75}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            border={1}
+            borderColor="grey.300"
+            borderRadius={2}
+            p={2}
+            sx={{
+              backgroundColor: "purple",
+              color: "white",
+              borderRadius:"20px"
+            }}
+          >
+            <Box>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Rokodemi</Typography>
+              <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
+                Platforma giriş yapmak için tıklayınız.
+              </Typography>
+              <Button
+                onClick={() => handleLoginClick("rokodemi")}
+                startIcon={<ArrowOutwardIcon />}
+                sx={{
+                  backgroundColor: "none", // Buton arka planı beyaz
+                  border: "none",
+                  color: "white",
+                  fontSize: "16px"
+                }}
+              >
+                GİRİŞ YAP
+              </Button>
+            </Box>
+            <Box>
+              <img
+                src="/images/rokodemi.jpg" // Eğitim Parkı logosu URL'si
+                alt="Eğitim Parkı Logo"
+                style={{ width: 100, height: 100 }}
+              />
+            </Box>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={0.5}>
+        </Grid>
+
+        <Grid item xs={12} md={5.75}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            border={1}
+            borderColor="grey.300"
+            borderRadius={2}
+            p={2}
+            sx={{
+              backgroundColor: "#994C00",
+              color: "white",
+              borderRadius:"20px"
+            }}
+          >
+            <Box>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Eyotek</Typography>
+              <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
+                Platforma giriş yapmak için tıklayınız.
+              </Typography>
+              <Button
+                onClick={() => handleLoginClick("eyotek")}
+                startIcon={<ArrowOutwardIcon />}
+                sx={{
+                  backgroundColor: "none",
+                  border: "none",
+                  color: "white",
+                  fontSize: "16px"
+                }}
+              >
+                GİRİŞ YAP
+              </Button>
+            </Box>
+            <Box>
+              <img
+                src="/images/bookr.png"
+                alt="Eğitim Parkı Logo"
+                style={{ width: 100, height: 100 }}
+              />
+            </Box>
+          </Box>
         </Grid>
       </Grid>
-      <a href="https://denemeback.onrender.com/download-extension" download>ZIP Dosyasını İndir</a>
+
+      {/* ZIP Dosyasını İndirme Linki */}
+      <Box mt={4}>
+        <a href="https://denemeback.onrender.com/download-extension" download>
+          ZIP Dosyasını İndir
+        </a>
+      </Box>
     </Container>
   );
 };
