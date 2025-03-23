@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/HomePage/HomePage";
 import MyAccount from "./pages/MyAccount/MyAccount";
 import './App.css'
 import { createTheme, ThemeProvider } from '@mui/material/styles';

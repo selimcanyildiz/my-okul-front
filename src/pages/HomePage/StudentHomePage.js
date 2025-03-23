@@ -1,13 +1,32 @@
-import React from "react";
-import { Button, Container, Grid, Box, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { Button, Grid, Box, Typography, Menu, MenuItem } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
+import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from "react-router-dom";
 
-const Anasayfa = () => {
+const StudentHomePage = () => {
   const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = useState(null); // Menü anchor elementi
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget); // Menü aç
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null); // Menüyi kapat
+  };
+
+  const handleMyAccount = () => {
+    handleClose(); // Menü kapat
+    navigate("/hesabim"); // Hesabım sayfasına git
+  };
+
+  const handleLogout = () => {
+    handleClose(); // Menü kapat
+    navigate("/");
+  };
 
   const handleLoginClick = async (platformName) => {
     try {
@@ -41,53 +60,54 @@ const Anasayfa = () => {
     }
   };
 
-  const handleMyAccount = () => navigate("/hesabim");
-
   return (
-    <Container maxWidth="xl">
-      <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
-        {/* <Grid item>
-          <Box mt={4}>
-            <Button
-              variant="contained"
-              color="primary"
-              href="https://denemeback.onrender.com/download-extension"
-              download
-              startIcon={<CloudDownloadIcon />}
-            >
-              ZIP Dosyasını İndir
-            </Button>
-          </Box>
-
-          <Box mt={4}>
-            <Button
-              variant="contained"
-              color="primary"
-              href="https://denemeback.onrender.com/download-extension"
-              download
-              startIcon={<ArrowOutwardIcon />}
-            >
-              Eklenti sayfası
-            </Button>
-          </Box>
-        </Grid> */}
+    <>
+      <Grid container justifyContent="space-between" alignItems="center" style={{ padding: '10px 0', borderBottom: "1px solid gray" }}>
+        <Grid item>
+          <img src="/images/loginbg.png" alt="Logo" style={{ height: '50px', width: "70px" }} />
+        </Grid>
 
         <Grid item>
-          <Button
-            startIcon={<PermIdentityOutlinedIcon />}
-            style={{ color: "#152147" }}
-            onClick={handleMyAccount}
-          >
-            Hesabım
-          </Button>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Button
+              style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
+              startIcon={<DownloadIcon />}
+              onClick={() => {
+                window.location.href = "https://denemeback.onrender.com/download-extension";
+              }}
+            >
+              Zip Dosyasını İndir
+            </Button>
+
+            <div style={{ marginLeft: "20px" }}>
+              <Button
+                startIcon={<PermIdentityOutlinedIcon />}
+                style={{ color: "#152147", marginRight: "20px", border: "1px solid gray", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
+                onClick={handleClick} // Butona tıklanınca menüyü aç
+              >
+                Hesabım
+              </Button>
+
+              <Menu
+                anchorEl={anchorEl} // Menü açılacak yer
+                open={Boolean(anchorEl)} // Menü açılma durumu
+                onClose={handleClose} // Menü kapanınca
+              >
+                <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem>
+                <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
+              </Menu>
+            </div>
+          </div>
         </Grid>
+
       </Grid>
+
 
       <Grid>
-        <Typography style={{ textAlign: "center", fontSize: "30px", color: "#152147", marginTop: "-20px", marginBottom: "20px" }}>MY Okulları'na Hoşgeldiniz</Typography>
+        <Typography style={{ textAlign: "center", fontSize: "30px", color: "#152147" }}>MY Okulları'na Hoşgeldiniz</Typography>
       </Grid>
 
-      <Grid container spacing={4} >
+      <Grid container spacing={4} style={{ padding: 20 }} >
         {/* Eğitim Parkı Butonu */}
         <Grid item xs={12} md={5.75}>
           <Box
@@ -103,14 +123,31 @@ const Anasayfa = () => {
               backgroundColor: "#ED6D2D",
               color: "white",
               borderRadius: "20px",
-              cursor:"pointer"
+              cursor: "pointer"
             }}
           >
             <Box>
               <Typography variant="h3" style={{ fontWeight: 550 }}>Eğitim Parkı</Typography>
-              <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                gutterBottom
+                style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}
+              >
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
+
+              {/* Kullanıcı Adı ve Şifre Alanları */}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                </Typography>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                </Typography>
+              </Box>
+
+              {/* Giriş Yap Butonu */}
               <Button
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
@@ -129,7 +166,7 @@ const Anasayfa = () => {
               <img
                 src="/images/egitimpark.png" // Eğitim Parkı logosu URL'si
                 alt="Eğitim Parkı Logo"
-                style={{ width: 130, height: 80, marginRight:"10px" }}
+                style={{ width: 130, height: 80, marginRight: "10px" }}
               />
             </Box>
           </Box>
@@ -152,7 +189,7 @@ const Anasayfa = () => {
               backgroundColor: "#436BF0",
               color: "white",
               borderRadius: "20px",
-              cursor:"pointer"
+              cursor: "pointer"
             }}
           >
             <Box>
@@ -160,6 +197,14 @@ const Anasayfa = () => {
               <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                </Typography>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                </Typography>
+              </Box>
               <Button
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
@@ -176,15 +221,14 @@ const Anasayfa = () => {
               <img
                 src="/images/bookr.png"
                 alt="Eğitim Parkı Logo"
-                style={{ width: 150, height: 140, marginRight:"10px" }}
+                style={{ width: 150, height: 140, marginRight: "10px" }}
               />
             </Box>
           </Box>
         </Grid>
       </Grid>
 
-      <Grid container spacing={4} style={{ marginTop: "20px" }}>
-        {/* Eğitim Parkı Butonu */}
+      <Grid container spacing={4} style={{ padding: 20 }}>
         <Grid item xs={12} md={5.75}>
           <Box
             display="flex"
@@ -199,7 +243,7 @@ const Anasayfa = () => {
               backgroundColor: "#A46FA6",
               color: "white",
               borderRadius: "20px",
-              cursor:"pointer"
+              cursor: "pointer"
             }}
           >
             <Box>
@@ -207,6 +251,14 @@ const Anasayfa = () => {
               <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                </Typography>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                </Typography>
+              </Box>
               <Button
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
@@ -223,7 +275,7 @@ const Anasayfa = () => {
               <img
                 src="/images/rokodemi.png"
                 alt="Eğitim Parkı Logo"
-                style={{ width: 200, height: 100, marginRight:"-30px" }}
+                style={{ width: 200, height: 100, marginRight: "-30px" }}
               />
             </Box>
           </Box>
@@ -246,7 +298,7 @@ const Anasayfa = () => {
               backgroundColor: "#D97E1C",
               color: "white",
               borderRadius: "20px",
-              cursor:"pointer"
+              cursor: "pointer"
             }}
           >
             <Box>
@@ -254,6 +306,14 @@ const Anasayfa = () => {
               <Typography variant="body2" color="textSecondary" gutterBottom style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}>
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                </Typography>
+                <Typography variant="body1" sx={{ color: "white" }}>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                </Typography>
+              </Box>
               <Button
                 startIcon={<ArrowOutwardIcon />}
                 sx={{
@@ -270,15 +330,14 @@ const Anasayfa = () => {
               <img
                 src="/images/eyotek.png"
                 alt="Eğitim Parkı Logo"
-                style={{ width: 200, height: 46, marginRight:"10px" }}
+                style={{ width: 200, height: 46, marginRight: "10px" }}
               />
             </Box>
           </Box>
         </Grid>
       </Grid>
-
-    </Container>
+    </>
   );
 };
 
-export default Anasayfa;
+export default StudentHomePage;

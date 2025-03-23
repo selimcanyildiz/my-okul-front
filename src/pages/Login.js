@@ -19,13 +19,24 @@ const Giris = () => {
       setHata("TC Kimlik No 11 haneli olmalıdır.");
       return;
     }
+  
     if (kullaniciAdi === "11111111111" && sifre === "1") {
+      // Öğrenci
+      localStorage.setItem("userType", "student");
+      navigate("/anasayfa");
+    } else if (kullaniciAdi === "22222222222" && sifre === "2") {
+      // Yönetici
+      localStorage.setItem("userType", "manager");
+      navigate("/anasayfa");
+    } else if (kullaniciAdi === "33333333333" && sifre === "3") {
+      // Admin
+      localStorage.setItem("userType", "admin");
       navigate("/anasayfa");
     } else {
       alert("Kullanıcı adı veya şifre hatalı.");
     }
   };
-
+  
   const handleForgotPassword = () => {
     navigate("/sifremi-unuttum");
   };
