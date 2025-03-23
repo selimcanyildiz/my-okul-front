@@ -12,6 +12,7 @@ import SuperAdminHomePage from "./SuperAdminHomePage";
 import AddSchool from "./AddSchool";
 import AddStudent from "./AddStudent";
 import SmsSettings from "./SmsSettings";
+import Settings from "./Settings";
 
 const AdminSuperAdminHomePage = () => {
     const navigate = useNavigate();
@@ -31,6 +32,8 @@ const AdminSuperAdminHomePage = () => {
                 return <AddStudent />;
             case 'sms':
                 return <SmsSettings />;
+            case 'settings':
+                return <Settings />;
             default:
                 return null;
         }
@@ -55,6 +58,8 @@ const AdminSuperAdminHomePage = () => {
                 return "Öğrenci Bilgileri";
             case 'sms':
                 return "Sms Ayarları";
+            case 'settings':
+                return "Ayarlar";
             default:
                 return "";
         }
@@ -219,15 +224,29 @@ const AdminSuperAdminHomePage = () => {
                 <Box sx={{ marginTop: "auto", marginBottom: 2 }}>
                     <Button
                         sx={{
-                            color: "black",
+                            color: activeMenu === 'settings' ? "primary.main" : "black",
+                            marginBottom: 2,
                             display: 'flex', // Flex kullanarak içeriği yan yana hizala
                             alignItems: "center", // Dikeyde ortala
                             justifyContent: "flex-start", // Sola hizala
-                            width: "100%", // Tam genişlik
-                            textTransform: "capitalize", // Sadece baş harfler büyük
-                            paddingLeft: "20px", // Sol padding
+                            position: "relative",
+                            textTransform: "capitalize",
+                            textAlign: "left",
+                            paddingLeft: "20px",
+                            width: "100%",
+                            "&::before": {
+                                content: '""',
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                height: "100%",
+                                width: "4px",
+                                backgroundColor: activeMenu === 'settings' ? "primary.main" : "transparent",
+                                borderRadius: "2px",
+                            },
                         }}
-                        startIcon={<SettingsApplicationsIcon />} // Ayarlar ikonu
+                        startIcon={<SettingsApplicationsIcon />} // İkonu ekle
+                        onClick={() => handleMenuClick('settings')}
                     >
                         Ayarlar
                     </Button>

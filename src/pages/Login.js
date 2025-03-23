@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box, Paper, IconButton, InputAdornment, Checkbox, FormControlLabel } from "@mui/material";
 import { Visibility, VisibilityOff, Person, Lock } from "@mui/icons-material";
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from "react-router-dom";
 
 const Giris = () => {
@@ -114,7 +112,7 @@ const Giris = () => {
             position: "relative",
           }}
         >
-          <Box sx={{ mx: 3, mt: 2 }}>
+          <Box sx={{ mx: 2 }}>
             <Typography style={{ marginTop: "20px" }} variant="h5" gutterBottom align="center">
               GİRİŞ EKRANI
             </Typography>
@@ -197,14 +195,14 @@ const Giris = () => {
               fullWidth
               variant="contained"
               color="primary"
-              sx={{ fontSize: "0.7rem", padding: "8px", fontSize: "10px" }}
+              sx={{ fontSize: "0.7rem", padding: "8px" }}
               onClick={handleLogin}
             >
               Giriş Yap
             </Button>
           </Box>
         </Box>
-        <Box sx={{ position: "absolute", top: 10, right: 10, display: "flex", flexDirection: "row", gap: 2 }}>
+        {/* <Box sx={{ position: "absolute", top: 10, right: 10, display: "flex", flexDirection: "row", gap: 2 }}>
           <Button
             style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
             startIcon={<DownloadIcon />}
@@ -215,14 +213,7 @@ const Giris = () => {
             Zip Dosyasını İndir
           </Button>
 
-          {/* <Button
-            style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
-            startIcon={<ArrowOutwardIcon />}
-          >
-            Eklentiye Git
-          </Button> */}
-
-        </Box>
+        </Box> */}
       </Paper>
     </Box>
   );

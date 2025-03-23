@@ -1,8 +1,29 @@
-import React from "react";
-import { Box, Typography, Paper, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+    Box,
+    Typography,
+    Paper,
+    Grid,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const SuperAdminHomePage = () => {
-    // Örnek veriler
+    const navigate = useNavigate();
+
+    const [userType, setUserType] = useState(null);
+    const [selectedSchool, setSelectedSchool] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("");
+
     const totalStudents = 270;
     const activeStudents = 200;
     const inactiveStudents = 70;
@@ -50,6 +71,21 @@ const SuperAdminHomePage = () => {
         }
     ];
 
+    const filteredStudents = students.filter((student) => {
+        const schoolMatch = selectedSchool ? student.school === selectedSchool : true;
+        const statusMatch = selectedStatus ? student.status === selectedStatus : true;
+        return schoolMatch && statusMatch;
+    });
+
+    useEffect(() => {
+        const storedUserType = localStorage.getItem("userType");
+        if (storedUserType) {
+            setUserType(storedUserType);
+        } else {
+            navigate("/");
+        }
+    }, [navigate]);
+
     return (
         <Box sx={{ marginTop: 1, padding: 2 }}>
             <Grid container spacing={3}>
@@ -80,8 +116,52 @@ const SuperAdminHomePage = () => {
 
             {/* Öğrenci Tablosu */}
             <Box sx={{ marginTop: 4 }}>
-                <Typography variant="h6" sx={{ marginBottom: 2 }}>Son Giriş Tarihleri</Typography>
-                <TableContainer component={Paper}>
+                <Grid container alignItems="center" justifyContent="space-between">
+                    {/* Sol: Son Giriş Tarihleri Başlığı */}
+                    <Grid item>
+                        <Typography variant="h6">Son Giriş Tarihleri</Typography>
+                    </Grid>
+
+                    {/* Sağ: Filtreleme Seçenekleri */}
+                    <Grid item sx={{ display: "flex", gap: 2 }}>
+                        {/* Okul Seçme Dropdown'u */}
+                        {userType === "admin" && <FormControl sx={{ minWidth: 200 }}>
+                            <InputLabel id="school-select-label">Okul Seçin</InputLabel>
+                            <Select
+                                labelId="school-select-label"
+                                label="Okul Seçin"
+                                value={selectedSchool}
+                                onChange={(e) => setSelectedSchool(e.target.value)}
+                                sx={{ borderRadius: "20px" }}
+                            >
+                                <MenuItem value="">Tüm Okullar</MenuItem>
+                                <MenuItem value="Abc Koleji">ABC Koleji</MenuItem>
+                                <MenuItem value="Def Koleji">Def Koleji</MenuItem>
+                                <MenuItem value="Ghı Koleji">Ghı Koleji</MenuItem>
+                                <MenuItem value="My Kolej">My Kolej</MenuItem>
+                                <MenuItem value="XYZ Koleji">XYZ Koleji</MenuItem>
+                            </Select>
+                        </FormControl>}
+
+                        {/* Durum Seçme Dropdown'u */}
+                        <FormControl sx={{ minWidth: 200 }}>
+                            <InputLabel id="status-select-label">Durum Seçin</InputLabel>
+                            <Select
+                                labelId="status-select-label"
+                                label="Durum Seçin"
+                                value={selectedStatus}
+                                onChange={(e) => setSelectedStatus(e.target.value)}
+                                sx={{ borderRadius: "20px" }}
+                            >
+                                <MenuItem value="">Tüm Durumlar</MenuItem>
+                                <MenuItem value="active">Aktif</MenuItem>
+                                <MenuItem value="inactive">Pasif</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+
+                <TableContainer component={Paper} style={{marginTop:"20px"}}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -93,7 +173,7 @@ const SuperAdminHomePage = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {students.map((student) => (
+                            {filteredStudents.map((student) => (
                                 <TableRow key={student.id}>
                                     <TableCell>{student.name}</TableCell>
                                     <TableCell>{student.school}</TableCell>

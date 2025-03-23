@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Grid, Box, Typography, Menu, MenuItem } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useNavigate } from "react-router-dom";
 
@@ -62,32 +61,76 @@ const StudentHomePage = () => {
 
   return (
     <>
-      <Grid container justifyContent="space-between" alignItems="center" style={{ padding: '10px 0', borderBottom: "1px solid gray" }}>
-        <Grid item>
-          <img src="/images/loginbg.png" alt="Logo" style={{ height: '50px', width: "70px" }} />
-        </Grid>
+      <Box
+        sx={{
+          backgroundColor: "white",
+          padding: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)", // Hafif bir gölge efekti
+        }}
+      >
+        {/* Sol: Logo */}
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <img
+            src="/images/school.jpg" // Logo resmi
+            alt="School Logo"
+            style={{ width: "100px", height: "50px", marginRight: "16px" }} // Logo boyutu ve sağ boşluk
+          />
+        </Box>
 
-        <Grid item>
-          <div style={{ display: "flex", alignItems: "center" }}>
+        {/* Sağ: Butonlar ve Öğrenci Bilgileri */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* Butonlar */}
+          <Box sx={{ display: "flex", gap: 1 }}>
             <Button
-              style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
-              startIcon={<DownloadIcon />}
-              onClick={() => {
-                window.location.href = "https://denemeback.onrender.com/download-extension";
+              sx={{
+                borderRadius: "100%", // Tam yuvarlak buton
+                minWidth: "36px", // Butonun minimum genişliği
+                height: "36px", // Butonun yüksekliği
+                bgcolor: "primary.main", // Arka plan rengi
+                background: "#E0E0E0", // Gradient arka plan
+                color: "black", // İkon rengi
+                // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Gölge efekti
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              Zip Dosyasını İndir
+              <DownloadIcon onClick={() => {
+                window.location.href = "https://denemeback.onrender.com/download-extension"; // Zip dosyasını indirme URL'sine git
+              }} sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
             </Button>
 
-            <div style={{ marginLeft: "20px" }}>
-              <Button
-                startIcon={<PermIdentityOutlinedIcon />}
-                style={{ color: "#152147", marginRight: "20px", border: "1px solid gray", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
-                onClick={handleClick} // Butona tıklanınca menüyü aç
-              >
-                Hesabım
-              </Button>
+            <Button
+              sx={{
+                borderRadius: "100%", // Tam yuvarlak buton
+                minWidth: "36px", // Butonun minimum genişliği
+                height: "36px", // Butonun yüksekliği
+                bgcolor: "primary.main", // Arka plan rengi
+                background: "#E0E0E0", // Gradient arka plan
+                color: "black", // İkon rengi
+                marginLeft: "10px",
+                // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Gölge efekti
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ArrowOutwardIcon sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
+            </Button>
+          </Box>
 
+          {/* Öğrenci Bilgileri */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "10px" }}>
+            <Box sx={{ textAlign: "right" }}>
+              <Typography onClick={handleClick} variant="body1" sx={{ fontWeight: "bold", cursor: "pointer" }}>
+                Selimcan Yıldız
+              </Typography>
               <Menu
                 anchorEl={anchorEl} // Menü açılacak yer
                 open={Boolean(anchorEl)} // Menü açılma durumu
@@ -96,14 +139,21 @@ const StudentHomePage = () => {
                 <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem>
                 <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
               </Menu>
-            </div>
-          </div>
-        </Grid>
+              <Typography variant="body2" sx={{ color: "gray" }}>
+                Özel ABC Okulu
+              </Typography>
+            </Box>
+            {/* <img
+              src="/images/student.jpg" // Öğrenci resmi
+              alt="Student Avatar"
+              style={{ width: "40px", height: "40px", borderRadius: "50%" }} // Yuvarlak resim
+            /> */}
+          </Box>
+        </Box>
+      </Box>
 
-      </Grid>
 
-
-      <Grid>
+      <Grid style={{ marginTop: "20px" }}>
         <Typography style={{ textAlign: "center", fontSize: "30px", color: "#152147" }}>MY Okulları'na Hoşgeldiniz</Typography>
       </Grid>
 

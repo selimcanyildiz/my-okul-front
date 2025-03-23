@@ -6,6 +6,22 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddSchoolModal from "./AddSchoolModal";
 
 const AddSchool = () => {
+    
+    const [openModal, setOpenModal] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [searchText, setSearchText] = useState("");
+    const [newSchool, setNewSchool] = useState({
+        id: null,
+        schoolName: "",
+        address: "",
+        city: "",
+        district: "",
+        responsibleName: "",
+        responsibleSurname: "",
+        tcNo: "",
+        username: "", // Yeni eklenen alan
+        password: ""
+    });
     const [schools, setSchools] = useState([
         {
             id: 1,
@@ -15,7 +31,9 @@ const AddSchool = () => {
             district: "Kadıköy",
             responsibleName: "Ahmet Yılmaz",
             responsibleSurname: "Yılmaz",
-            tcNo: "12345678901"
+            tcNo: "12345678901",
+            username: "ahmetyılmaz123",
+            password: "ahmet123"
         },
         {
             id: 2,
@@ -25,7 +43,9 @@ const AddSchool = () => {
             district: "Çankaya",
             responsibleName: "Mehmet Demir",
             responsibleSurname: "Demir",
-            tcNo: "98765432109"
+            tcNo: "98765432109",
+            username: "mehmetdemir123",
+            password: "mehmet123"
         },
         {
             id: 3,
@@ -35,7 +55,9 @@ const AddSchool = () => {
             district: "Konak",
             responsibleName: "Ayşe Kara",
             responsibleSurname: "Kara",
-            tcNo: "45678901234"
+            tcNo: "45678901234",
+            username: "ayşekara123",
+            password: "ayşe123"
         },
         {
             id: 4,
@@ -45,23 +67,11 @@ const AddSchool = () => {
             district: "Osmangazi",
             responsibleName: "Ali Can",
             responsibleSurname: "Can",
-            tcNo: "11223344556"
+            tcNo: "11223344556",
+            username: "alican123",
+            password: "ali123"
         }
     ]);
-
-    const [openModal, setOpenModal] = useState(false);
-    const [newSchool, setNewSchool] = useState({
-        id: null,
-        schoolName: "",
-        address: "",
-        city: "",
-        district: "",
-        responsibleName: "",
-        responsibleSurname: "",
-        tcNo: ""
-    });
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [searchText, setSearchText] = useState(""); // Arama metni state'i
 
     const handleOpenModal = () => {
         setOpenModal(true); // Modal'ı açma
@@ -118,8 +128,15 @@ const AddSchool = () => {
         school.district.toLowerCase().includes(searchText.toLowerCase()) ||
         school.responsibleName.toLowerCase().includes(searchText.toLowerCase()) ||
         school.responsibleSurname.toLowerCase().includes(searchText.toLowerCase()) ||
-        school.tcNo.toLowerCase().includes(searchText.toLowerCase())
+        school.tcNo.toLowerCase().includes(searchText.toLowerCase()) ||
+        school.username.toLowerCase().includes(searchText.toLowerCase()) ||
+        school.password.toLowerCase().includes(searchText.toLowerCase())
     );
+
+    const maskPassword = (password) => {
+        if (!password) return ''; // Şifre yoksa boş string döndür
+        return '*'.repeat(password.length); // Şifrenin uzunluğu kadar * karakteri oluştur
+    };
 
     return (
         <>
@@ -187,13 +204,15 @@ const AddSchool = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ width: "20%", fontWeight: "bold", textAlign: "center" }}>Okul Adı</TableCell>
-                                <TableCell sx={{ width: "20%", fontWeight: "bold", textAlign: "center" }}>Adres</TableCell>
+                                <TableCell sx={{ width: "15%", fontWeight: "bold", textAlign: "center" }}>Okul Adı</TableCell>
+                                <TableCell sx={{ width: "15%", fontWeight: "bold", textAlign: "center" }}>Adres</TableCell>
                                 <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>İl</TableCell>
                                 <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>İlçe</TableCell>
-                                <TableCell sx={{ width: "15%", fontWeight: "bold", textAlign: "center" }}>Yetkili Adı</TableCell>
-                                <TableCell sx={{ width: "15%", fontWeight: "bold", textAlign: "center" }}>Yetkili Soyadı</TableCell>
+                                <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>Yetkili Adı</TableCell>
+                                <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>Yetkili Soyadı</TableCell>
                                 <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>TC No</TableCell>
+                                <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>Kullanıcı Adı</TableCell>
+                                <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>Şifre</TableCell>
                                 <TableCell sx={{ width: "10%", fontWeight: "bold", textAlign: "center" }}>İşlemler</TableCell>
                             </TableRow>
                         </TableHead>
@@ -207,6 +226,8 @@ const AddSchool = () => {
                                     <TableCell sx={{ textAlign: "center" }}>{school.responsibleName}</TableCell>
                                     <TableCell sx={{ textAlign: "center" }}>{school.responsibleSurname}</TableCell>
                                     <TableCell sx={{ textAlign: "center" }}>{school.tcNo}</TableCell>
+                                    <TableCell sx={{ textAlign: "center" }}>{school.username}</TableCell>
+                                    <TableCell sx={{ textAlign: "center" }}>{maskPassword(school.password)}</TableCell>
                                     <TableCell sx={{ textAlign: "center" }}>
                                         <IconButton color="primary" onClick={() => handleEditSchool(school)}>
                                             <EditIcon />
