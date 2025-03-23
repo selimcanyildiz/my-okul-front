@@ -4,6 +4,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import SchoolIcon from '@mui/icons-material/School';
 import MessageIcon from '@mui/icons-material/Message';
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useNavigate } from "react-router-dom";
 import AdminHomePage from "./AdminHomePage";
 import SuperAdminHomePage from "./SuperAdminHomePage";
@@ -125,7 +127,7 @@ const AdminSuperAdminHomePage = () => {
                         Ana Sayfa
                     </Button>
 
-                    <Button
+                    {userType === "admin" && <Button
                         sx={{
                             color: activeMenu === 'addSchool' ? "primary.main" : "black",
                             marginBottom: 2,
@@ -152,7 +154,7 @@ const AdminSuperAdminHomePage = () => {
                         onClick={() => handleMenuClick('addSchool')}
                     >
                         Kurum Bilgileri
-                    </Button>
+                    </Button>}
 
                     <Button
                         sx={{
@@ -215,11 +217,31 @@ const AdminSuperAdminHomePage = () => {
 
                 {/* Ayarlar ve Çıkış Yap Butonları */}
                 <Box sx={{ marginTop: "auto", marginBottom: 2 }}>
-                    <Button sx={{ color: "black", display: 'block' }}>
+                    <Button
+                        sx={{
+                            color: "black",
+                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
+                            alignItems: "center", // Dikeyde ortala
+                            justifyContent: "flex-start", // Sola hizala
+                            width: "100%", // Tam genişlik
+                            textTransform: "capitalize", // Sadece baş harfler büyük
+                            paddingLeft: "20px", // Sol padding
+                        }}
+                        startIcon={<SettingsApplicationsIcon />} // Ayarlar ikonu
+                    >
                         Ayarlar
                     </Button>
                     <Button
-                        sx={{ color: "black", display: 'block' }}
+                        sx={{
+                            color: "black",
+                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
+                            alignItems: "center", // Dikeyde ortala
+                            justifyContent: "flex-start", // Sola hizala
+                            width: "100%", // Tam genişlik
+                            textTransform: "capitalize", // Sadece baş harfler büyük
+                            paddingLeft: "20px", // Sol padding
+                        }}
+                        startIcon={<ExitToAppIcon />} // Çıkış Yap ikonu
                         onClick={() => navigate("/")}
                     >
                         Çıkış Yap
@@ -263,9 +285,9 @@ const AdminSuperAdminHomePage = () => {
                         <Typography variant="h5" sx={{ color: "black" }}>
                             {userType === "manager" ? "Selim Can" : "Celal Sarı"}
                         </Typography>
-                        <Typography variant="body2" sx={{ color: "gray" }}>
-                            {userType === "manager" ? "Özel ABC Okulu" : "XYZ Koleji"}
-                        </Typography>
+                        {userType === "manager" && <Typography variant="body2" sx={{ color: "gray" }}>
+                            Özel ABC Okulu
+                        </Typography>}
                     </Box>
                 </Box>
 
