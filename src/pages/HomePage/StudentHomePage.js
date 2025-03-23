@@ -79,7 +79,7 @@ const StudentHomePage = () => {
           <img
             src="/images/school.jpg" // Logo resmi
             alt="School Logo"
-            style={{ width: "100px", height: "50px", marginRight: "16px" }} // Logo boyutu ve sağ boşluk
+            style={{ width: "170px", height: "60px", marginRight: "16px" }} // Logo boyutu ve sağ boşluk
           />
         </Box>
 
@@ -143,11 +143,6 @@ const StudentHomePage = () => {
                 Özel ABC Okulu
               </Typography>
             </Box>
-            {/* <img
-              src="/images/student.jpg" // Öğrenci resmi
-              alt="Student Avatar"
-              style={{ width: "40px", height: "40px", borderRadius: "50%" }} // Yuvarlak resim
-            /> */}
           </Box>
         </Box>
       </Box>
@@ -189,10 +184,10 @@ const StudentHomePage = () => {
 
               {/* Kullanıcı Adı ve Şifre Alanları */}
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
                 </Typography>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
                 </Typography>
               </Box>
@@ -248,10 +243,10 @@ const StudentHomePage = () => {
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
                 </Typography>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
                 </Typography>
               </Box>
@@ -302,10 +297,10 @@ const StudentHomePage = () => {
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
                 </Typography>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
                 </Typography>
               </Box>
@@ -357,10 +352,10 @@ const StudentHomePage = () => {
                 Platforma giriş yapmak için tıklayınız.
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
                 </Typography>
-                <Typography variant="body1" sx={{ color: "white" }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight:"bold" }}>
                   Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
                 </Typography>
               </Box>

@@ -1,174 +1,404 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Paper, Grid, TextField, Button } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Paper,
+    Grid,
+    TextField,
+    Button,
+    Avatar,
+} from "@mui/material";
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { useNavigate } from "react-router-dom";
+
+// Placeholder logo (replace with your actual logo URL)
+const logoUrl = "https://via.placeholder.com/40";
 
 const Settings = () => {
     const navigate = useNavigate();
     const [userType, setUserType] = useState("");
     const [userData, setUserData] = useState({
-        username: "",
+        name: "",
+        tcNumber: "",
         password: "",
-        school: ""
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+    });
+    const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
+    const [isEditingPassword, setIsEditingPassword] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
     });
 
-    // localStorage'dan kullanıcı tipini al
+    // Fetch user type from localStorage
     useEffect(() => {
         const storedUserType = localStorage.getItem("userType");
         if (storedUserType) {
             setUserType(storedUserType);
-            // Kullanıcı tipine göre örnek verileri yükle
+            // Load sample data based on user type
             if (storedUserType === "admin") {
                 setUserData({
-                    username: "Celal Sarı",
+                    name: "Ali Yılmaz",
+                    tcNumber: "12345678901",
                     password: "admin123",
-                    school: ""
+                    firstName: "Ali",
+                    lastName: "Yılmaz",
+                    email: "aliyilmaz@example.com",
+                    phone: "0 (550) 123 45 67",
                 });
             } else if (storedUserType === "manager") {
                 setUserData({
-                    username: "Selim Can",
+                    name: "Selim Can",
+                    tcNumber: "98765432109",
                     password: "manager123",
-                    school: "Özel Abc Okulu"
+                    firstName: "Selim",
+                    lastName: "Can",
+                    email: "selimcan@example.com",
+                    phone: "0 (555) 987 65 43",
                 });
             }
         } else {
-            navigate("/"); // Kullanıcı tipi yoksa ana sayfaya yönlendir
+            navigate("/"); // Redirect to homepage if no user type
         }
     }, [navigate]);
 
-    // Input değişikliklerini handle etme
+    // Handle input changes for personal info
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUserData({
             ...userData,
-            [name]: value
+            [name]: value,
         });
     };
 
-    // Bilgileri güncelleme işlemi
-    const handleUpdate = () => {
-        // Burada API çağrısı yaparak bilgileri güncelleyebilirsiniz
-        console.log("Güncellenen Bilgiler:", userData);
-        alert("Bilgileriniz güncellendi!");
+    // Handle input changes for password
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData({
+            ...passwordData,
+            [name]: value,
+        });
+    };
+
+    // Handle update action for personal info
+    const handleUpdatePersonalInfo = () => {
+        if (isEditingPersonalInfo) {
+            console.log("Updated Personal Information:", userData);
+            alert("Kişisel bilgileriniz güncellendi!");
+        }
+        setIsEditingPersonalInfo(!isEditingPersonalInfo);
+    };
+
+    // Handle update action for password
+    const handleUpdatePassword = () => {
+        if (isEditingPassword) {
+            if (passwordData.newPassword !== passwordData.confirmPassword) {
+                alert("Yeni şifreler eşleşmiyor!");
+                return;
+            }
+            console.log("Updated Password:", passwordData);
+            alert("Şifreniz güncellendi!");
+        }
+        setIsEditingPassword(!isEditingPassword);
     };
 
     return (
-        <Box sx={{ 
-            display: "flex", 
-            justifyContent: "center", 
-            alignItems: "center",
-        }}>
-            <Paper sx={{ 
-                padding: 4, 
-                borderRadius: "16px", 
-                boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)", 
-                maxWidth: "600px", 
-                width: "100%", 
-                background: "#ffffff"
-            }}>
-                <Typography variant="h4" sx={{ 
-                    marginBottom: 3, 
-                    fontWeight: "bold", 
-                    color: "#333", 
-                    textAlign: "center"
-                }}>
-                    Kullanıcı Bilgileri
-                </Typography>
+        <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                backgroundColor: "#f5f5f5",
+                padding: 2,
+            }}
+        >
+            <Paper
+                sx={{
+                    padding: 4,
+                    borderRadius: "16px",
+                    width: "100%",
+                }}
+            >
+                {/* First Card: Logo, Name, TC, and Password */}
+                <Paper
+                    sx={{
+                        padding: 3,
+                        marginBottom: 4,
+                        borderRadius: "12px",
+                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
+                    }}
+                >
+                    <Grid container spacing={2} alignItems="center">
+                        {/* Logo */}
+                        <Grid item xs={2}>
+                            <Avatar
+                                src={logoUrl}
+                                sx={{ width: 40, height: 40 }}
+                            />
+                        </Grid>
 
-                <Grid container spacing={3}>
-                    {/* Kullanıcı Adı */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Kullanıcı Adı"
-                            name="username"
-                            value={userData.username}
-                            onChange={handleInputChange}
-                            variant="outlined"
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "12px",
-                                },
-                                "& .MuiInputLabel-outlined": {
-                                    color: "#666",
-                                },
-                                "& .MuiOutlinedInput-input": {
-                                    color: "#333",
-                                },
-                            }}
-                        />
+                        {/* Name and Role */}
+                        <Grid item xs={3}>
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", color: "#333" }}
+                            >
+                                {userData.name}
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666" }}
+                            >
+                                {userType === "admin" ? "Admin" : "Yetkili"}
+                            </Typography>
+                        </Grid>
+
+                        {/* TC Kimlik No */}
+                        <Grid item xs={3}>
+                            <Typography
+                                variant="body2"
+                                sx={{ fontWeight: "bold", color: "#333" }}
+                            >
+                                TC Kimlik No
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "#333" }}>
+                                {userData.tcNumber}
+                            </Typography>
+                        </Grid>
+
+                        {/* Password */}
+                        <Grid item xs={4}>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", fontWeight: "bold" }}
+                            >
+                                Şifre
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: "#333" }}>
+                                {userData.password}
+                            </Typography>
+                        </Grid>
                     </Grid>
+                </Paper>
 
-                    {/* Şifre */}
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Şifre"
-                            type="password"
-                            name="password"
-                            value={userData.password}
-                            onChange={handleInputChange}
-                            variant="outlined"
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "12px",
-                                },
-                                "& .MuiInputLabel-outlined": {
-                                    color: "#666",
-                                },
-                                "& .MuiOutlinedInput-input": {
-                                    color: "#333",
-                                },
-                            }}
-                        />
-                    </Grid>
+                {/* Second Card: Personal Information */}
+                <Paper
+                    sx={{
+                        padding: 3,
+                        marginBottom: 4,
+                        borderRadius: "12px",
+                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
+                        position: "relative",
+                    }}
+                >
+                    {/* Edit Button */}
+                    <Button
+                        onClick={handleUpdatePersonalInfo}
+                        endIcon={<BorderColorIcon style={{fontSize:"15px"}} />}
+                        sx={{
+                            position: "absolute",
+                            top: 16,
+                            right: 16,
+                            padding: "8px 16px",
+                            borderRadius: "20px",
+                            bgcolor:"white",
+                            color: "gray",
+                            border:"1px solid gray",
+                            textTransform: "none", 
+                            fontSize:"13px"
+                        }}
+                    >
+                        {isEditingPersonalInfo ? "Kaydet" : "Düzenle"}
+                    </Button>
 
-                    {/* Manager ise Okul Bilgisi */}
-                    {userType === "manager" && (
-                        <Grid item xs={12}>
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            marginBottom: 3,
+                            fontWeight: "bold",
+                            fontSize:"16px",
+                            color: "#333",
+                        }}
+                    >
+                        Kişisel Bilgiler
+                    </Typography>
+
+                    <Grid container spacing={3} style={{marginTop:"5px"}}>
+                        {/* First Name and Last Name */}
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Okul"
-                                name="school"
-                                value={userData.school}
+                                label="İsim"
+                                name="firstName"
+                                value={userData.firstName}
+                                onChange={handleInputChange}
                                 variant="outlined"
+                                disabled={!isEditingPersonalInfo}
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: "12px",
                                     },
-                                    "& .MuiInputLabel-outlined": {
-                                        color: "#666",
-                                    },
-                                    "& .MuiOutlinedInput-input": {
-                                        color: "#333",
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Soyisim"
+                                name="lastName"
+                                value={userData.lastName}
+                                onChange={handleInputChange}
+                                variant="outlined"
+                                disabled={!isEditingPersonalInfo}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
                                     },
                                 }}
                             />
                         </Grid>
-                    )}
 
-                    {/* Bilgileri Güncelleme Butonu */}
-                    <Grid item xs={12}>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            onClick={handleUpdate}
-                            sx={{
-                                padding: "12px",
-                                borderRadius: "12px",
-                                background: "linear-gradient(135deg, #6a11cb, #2575fc)",
-                                color: "#fff",
-                                marginLeft:"25%",
-                                width:"50%",
-                                fontWeight: "bold",
-                                "&:hover": {
-                                    background: "linear-gradient(135deg, #2575fc, #6a11cb)",
-                                },
-                            }}
-                        >
-                            Bilgileri Güncelle
-                        </Button>
+                        {/* Email and Phone */}
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="E-Mail"
+                                name="email"
+                                value={userData.email}
+                                onChange={handleInputChange}
+                                variant="outlined"
+                                disabled={!isEditingPersonalInfo}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                    },
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Telefon"
+                                name="phone"
+                                value={userData.phone}
+                                onChange={handleInputChange}
+                                variant="outlined"
+                                disabled={!isEditingPersonalInfo}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                    },
+                                }}
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
+                </Paper>
+
+                {/* Third Card: Password Change */}
+                <Paper
+                    sx={{
+                        padding: 3,
+                        borderRadius: "12px",
+                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
+                        position: "relative",
+                    }}
+                >
+                    {/* Edit Button */}
+                    <Button
+                        onClick={handleUpdatePassword}
+                        endIcon={<BorderColorIcon style={{fontSize:"15px"}} />}
+                        sx={{
+                            position: "absolute",
+                            top: 16,
+                            right: 16,
+                            padding: "8px 16px",
+                            borderRadius: "20px",
+                            bgcolor:"white",
+                            color: "gray",
+                            border:"1px solid gray",
+                            textTransform: "none", 
+                            fontSize:"13px"
+                        }}
+                    >
+                        {isEditingPassword ? "Kaydet" : "Düzenle"}
+                    </Button>
+
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            marginBottom: 3,
+                            fontWeight: "bold",
+                            fontSize:"16px",
+                            color: "#333",
+                        }}
+                    >
+                        Şifre Değiştir
+                    </Typography>
+
+                    <Grid container spacing={3} style={{marginTop:"5px"}}>
+                        {/* Old Password */}
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Eski Şifre"
+                                name="oldPassword"
+                                type="password"
+                                value={passwordData.oldPassword}
+                                onChange={handlePasswordChange}
+                                variant="outlined"
+                                disabled={!isEditingPassword}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                    },
+                                }}
+                            />
+                        </Grid>
+
+                        {/* New Password */}
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Yeni Şifre"
+                                name="newPassword"
+                                type="password"
+                                value={passwordData.newPassword}
+                                onChange={handlePasswordChange}
+                                variant="outlined"
+                                disabled={!isEditingPassword}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                    },
+                                }}
+                            />
+                        </Grid>
+
+                        {/* Confirm New Password */}
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Yeni Şifre Onay"
+                                name="confirmPassword"
+                                type="password"
+                                value={passwordData.confirmPassword}
+                                onChange={handlePasswordChange}
+                                variant="outlined"
+                                disabled={!isEditingPassword}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                    },
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                </Paper>
             </Paper>
         </Box>
     );

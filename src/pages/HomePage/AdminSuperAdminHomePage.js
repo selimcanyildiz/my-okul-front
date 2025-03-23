@@ -88,24 +88,21 @@ const AdminSuperAdminHomePage = () => {
             >
                 <Box>
                     <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-                        {userType === "manager" ? <Box
+                        <Box
                             component="img"
                             src="/images/school.jpg" // Logo dosyasının yolu
                             alt="Logo"
                             sx={{
-                                width: "100%", // Logo genişliği
-                                height: 40, // Logo yüksekliği
+                                height: 70, // Logo yüksekliği
                                 marginRight: 2, // Logo ile metin arasındaki boşluk
                             }}
-                        /> : <Typography variant="h6" sx={{ color: "black" }}>
-                            Admin Paneli
-                        </Typography>}
+                        />
                     </Box>
 
                     {/* Menü Butonları */}
                     <Button
                         sx={{
-                            color: activeMenu === 'home' ? "primary.main" : "black",
+                            color: activeMenu === 'home' ? "#28245c" : "gray",
                             marginBottom: 2,
                             display: 'flex', // Flex kullanarak içeriği yan yana hizala
                             alignItems: "center", // Dikeyde ortala
@@ -122,7 +119,7 @@ const AdminSuperAdminHomePage = () => {
                                 top: 0,
                                 height: "100%",
                                 width: "4px",
-                                backgroundColor: activeMenu === 'home' ? "primary.main" : "transparent",
+                                backgroundColor: activeMenu === 'home' ? "#28245c" : "transparent",
                                 borderRadius: "2px",
                             },
                         }}
@@ -134,7 +131,7 @@ const AdminSuperAdminHomePage = () => {
 
                     {userType === "admin" && <Button
                         sx={{
-                            color: activeMenu === 'addSchool' ? "primary.main" : "black",
+                            color: activeMenu === 'addSchool' ? "#28245c" : "gray",
                             marginBottom: 2,
                             display: 'flex', // Flex kullanarak içeriği yan yana hizala
                             alignItems: "center", // Dikeyde ortala
@@ -151,7 +148,7 @@ const AdminSuperAdminHomePage = () => {
                                 top: 0,
                                 height: "100%",
                                 width: "4px",
-                                backgroundColor: activeMenu === 'addSchool' ? "primary.main" : "transparent",
+                                backgroundColor: activeMenu === 'addSchool' ? "#28245c" : "transparent",
                                 borderRadius: "2px",
                             },
                         }}
@@ -163,7 +160,7 @@ const AdminSuperAdminHomePage = () => {
 
                     <Button
                         sx={{
-                            color: activeMenu === 'addStudent' ? "primary.main" : "black",
+                            color: activeMenu === 'addStudent' ? "#28245c" : "gray",
                             marginBottom: 2,
                             display: 'flex', // Flex kullanarak içeriği yan yana hizala
                             alignItems: "center", // Dikeyde ortala
@@ -180,7 +177,7 @@ const AdminSuperAdminHomePage = () => {
                                 top: 0,
                                 height: "100%",
                                 width: "4px",
-                                backgroundColor: activeMenu === 'addStudent' ? "primary.main" : "transparent",
+                                backgroundColor: activeMenu === 'addStudent' ? "#28245c" : "transparent",
                                 borderRadius: "2px",
                             },
                         }}
@@ -192,7 +189,7 @@ const AdminSuperAdminHomePage = () => {
 
                     <Button
                         sx={{
-                            color: activeMenu === 'sms' ? "primary.main" : "black",
+                            color: activeMenu === 'sms' ? "#28245c" : "gray",
                             marginBottom: 2,
                             display: 'flex', // Flex kullanarak içeriği yan yana hizala
                             alignItems: "center", // Dikeyde ortala
@@ -209,7 +206,7 @@ const AdminSuperAdminHomePage = () => {
                                 top: 0,
                                 height: "100%",
                                 width: "4px",
-                                backgroundColor: activeMenu === 'sms' ? "primary.main" : "transparent",
+                                backgroundColor: activeMenu === 'sms' ? "#28245c" : "transparent",
                                 borderRadius: "2px",
                             },
                         }}
@@ -224,7 +221,7 @@ const AdminSuperAdminHomePage = () => {
                 <Box sx={{ marginTop: "auto", marginBottom: 2 }}>
                     <Button
                         sx={{
-                            color: activeMenu === 'settings' ? "primary.main" : "black",
+                            color: activeMenu === 'settings' ? "#28245c" : "gray",
                             marginBottom: 2,
                             display: 'flex', // Flex kullanarak içeriği yan yana hizala
                             alignItems: "center", // Dikeyde ortala
@@ -241,7 +238,7 @@ const AdminSuperAdminHomePage = () => {
                                 top: 0,
                                 height: "100%",
                                 width: "4px",
-                                backgroundColor: activeMenu === 'settings' ? "primary.main" : "transparent",
+                                backgroundColor: activeMenu === 'settings' ? "#28245c" : "transparent",
                                 borderRadius: "2px",
                             },
                         }}
@@ -252,7 +249,7 @@ const AdminSuperAdminHomePage = () => {
                     </Button>
                     <Button
                         sx={{
-                            color: "black",
+                            color: "gray",
                             display: 'flex', // Flex kullanarak içeriği yan yana hizala
                             alignItems: "center", // Dikeyde ortala
                             justifyContent: "flex-start", // Sola hizala
@@ -302,11 +299,11 @@ const AdminSuperAdminHomePage = () => {
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
                         <Typography variant="h5" sx={{ color: "black" }}>
-                            {userType === "manager" ? "Selim Can" : "Celal Sarı"}
+                            {userType === "manager" ? "Selim Can" : "My Okulları"}
                         </Typography>
-                        {userType === "manager" && <Typography variant="body2" sx={{ color: "gray" }}>
-                            Özel ABC Okulu
-                        </Typography>}
+                        <Typography variant="body2" sx={{ color: "gray" }}>
+                            {userType === "manager" ? "My Kolej İzmir" : "Admin"}
+                        </Typography>
                     </Box>
                 </Box>
 

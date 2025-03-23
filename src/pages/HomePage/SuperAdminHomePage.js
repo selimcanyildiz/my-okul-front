@@ -90,26 +90,32 @@ const SuperAdminHomePage = () => {
         <Box sx={{ marginTop: 1, padding: 2 }}>
             <Grid container spacing={3}>
                 {/* Toplam Öğrenci Sayısı */}
-                <Grid item xs={4}>
+                {userType === "admin" && <Grid item xs={3}>
+                    <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
+                        <Typography variant="h6">Kurum Sayısı</Typography>
+                        <Typography variant="h4" sx={{ color: "primary.main" }}>{15}</Typography>
+                    </Paper>
+                </Grid>}
+                <Grid item xs={userType === "admin" ? 3 : 4}>
                     <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
                         <Typography variant="h6">Toplam Öğrenci</Typography>
-                        <Typography variant="h4" sx={{ color: "primary.main" }}>{totalStudents}</Typography>
+                        <Typography variant="h4" sx={{ color: "primary.main" }}>{userType === "admin" ? 4000 : totalStudents}</Typography>
                     </Paper>
                 </Grid>
 
                 {/* Aktif Öğrenci Sayısı */}
-                <Grid item xs={4}>
+                <Grid item xs={userType === "admin" ? 3 : 4}>
                     <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
                         <Typography variant="h6">Aktif Öğrenci</Typography>
-                        <Typography variant="h4" sx={{ color: "green" }}>{activeStudents}</Typography>
+                        <Typography variant="h4" sx={{ color: "green" }}>{userType === "admin" ? 3700 : activeStudents}</Typography>
                     </Paper>
                 </Grid>
 
                 {/* Pasif Öğrenci Sayısı */}
-                <Grid item xs={4}>
+                <Grid item xs={userType === "admin" ? 3 : 4}>
                     <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
                         <Typography variant="h6">Pasif Öğrenci</Typography>
-                        <Typography variant="h4" sx={{ color: "red" }}>{inactiveStudents}</Typography>
+                        <Typography variant="h4" sx={{ color: "red" }}>{userType === "admin" ? 300 : inactiveStudents}</Typography>
                     </Paper>
                 </Grid>
             </Grid>
@@ -161,7 +167,7 @@ const SuperAdminHomePage = () => {
                     </Grid>
                 </Grid>
 
-                <TableContainer component={Paper} style={{marginTop:"20px"}}>
+                <TableContainer component={Paper} style={{ marginTop: "20px" }}>
                     <Table>
                         <TableHead>
                             <TableRow>
