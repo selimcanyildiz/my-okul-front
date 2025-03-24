@@ -27,7 +27,7 @@ const AddStudentModal = ({ openModal, handleCloseModal, handleInputChange, newSt
 
         // Eğer kullanıcı manager ise, okul bilgisini otomatik doldur
         if (storedUserType === "manager") {
-            setSelectedSchool("Abc Koleji"); // Örnek olarak sabit bir okul adı
+            setSelectedSchool("My Kolej İzmir"); // Örnek olarak sabit bir okul adı
         }
     }, [navigate]);
 
