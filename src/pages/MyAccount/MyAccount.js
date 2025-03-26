@@ -20,6 +20,11 @@ const navigate = useNavigate();
     setAnchorEl(null); // Menüyi kapat
   };
 
+  const handleHomePage = () => {
+    handleClose(); // Menü kapat
+    navigate("/anasayfa"); // Hesabım sayfasına git
+  }
+
   const handleMyAccount = () => {
     handleClose(); // Menü kapat
     navigate("/hesabim"); // Hesabım sayfasına git
@@ -107,6 +112,7 @@ const navigate = useNavigate();
                 open={Boolean(anchorEl)} // Menü açılma durumu
                 onClose={handleClose} // Menü kapanınca
               >
+                <MenuItem onClick={handleHomePage}>Ana Sayfa</MenuItem>
                 <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem>
                 <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
               </Menu>
