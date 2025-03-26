@@ -411,7 +411,7 @@ const Settings = () => {
                 </Paper>
 
                 {/* Fourth Card: Platform Info */}
-                <Paper
+                {userType === "student" && <Paper
                     sx={{
                         padding: 3,
                         marginTop: 4,
@@ -509,7 +509,8 @@ const Settings = () => {
                         </Grid>
 
                     </Grid>
-                </Paper>
+                </Paper>}
+                
             </Paper>
         </Box>
     );
