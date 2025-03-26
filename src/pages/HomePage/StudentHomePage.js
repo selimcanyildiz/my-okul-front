@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Grid, Box, Typography, Menu, MenuItem } from "@mui/material";
+import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import DownloadIcon from '@mui/icons-material/Download';
+import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
 
 const StudentHomePage = () => {
@@ -128,9 +129,10 @@ const StudentHomePage = () => {
           {/* Öğrenci Bilgileri */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "10px" }}>
             <Box sx={{ textAlign: "right" }}>
-              <Typography onClick={handleClick} variant="body1" sx={{ fontWeight: "bold", cursor: "pointer" }}>
+              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
                 Selimcan Yıldız
               </Typography>
+              
               <Menu
                 anchorEl={anchorEl} // Menü açılacak yer
                 open={Boolean(anchorEl)} // Menü açılma durumu
@@ -143,6 +145,12 @@ const StudentHomePage = () => {
                 Özel ABC Okulu
               </Typography>
             </Box>
+          </Box>
+
+          <Box>
+          <IconButton onClick={handleClick} sx={{ color: "black" }}>
+                <PersonIcon />
+              </IconButton>
           </Box>
         </Box>
       </Box>
@@ -228,7 +236,8 @@ const StudentHomePage = () => {
             border={1}
             borderColor="grey.300"
             borderRadius={2}
-            onClick={() => handleLoginClick("bookr")}
+            // onClick={() => handleLoginClick("bookr")}
+            onClick={() => window.open("https://bookrclass.com", "_blank")}
             p={2}
             sx={{
               backgroundColor: "#436BF0",

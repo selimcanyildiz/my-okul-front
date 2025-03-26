@@ -187,7 +187,7 @@ const AdminSuperAdminHomePage = () => {
                         Öğrenci Bilgileri
                     </Button>
 
-                    <Button
+                    {userType === "admin" && <Button
                         sx={{
                             color: activeMenu === 'sms' ? "#28245c" : "gray",
                             marginBottom: 2,
@@ -214,7 +214,7 @@ const AdminSuperAdminHomePage = () => {
                         onClick={() => handleMenuClick('sms')}
                     >
                         Sms Ayarları
-                    </Button>
+                    </Button>}
                 </Box>
 
                 {/* Ayarlar ve Çıkış Yap Butonları */}
