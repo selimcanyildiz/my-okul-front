@@ -60,6 +60,16 @@ const Settings = () => {
                     email: "selimcan@example.com",
                     phone: "0 (555) 987 65 43",
                 });
+            } else if (storedUserType === "student") {
+                setUserData({
+                    name: "Selim Can Yıldız",
+                    tcNumber: "62458456123",
+                    password: "student123",
+                    firstName: "Selim Can",
+                    lastName: "Yıldız",
+                    email: "selimcan@example.com",
+                    phone: "0 (535) 154 95 84",
+                });
             }
         } else {
             navigate("/"); // Redirect to homepage if no user type
@@ -154,7 +164,7 @@ const Settings = () => {
                                 variant="body2"
                                 sx={{ color: "#666" }}
                             >
-                                {userType === "admin" ? "Admin" : "Yetkili"}
+                                {userType === "admin" ? "Admin" : userType === "manager" ? "Yetkili" : "Öğrenci"}
                             </Typography>
                         </Grid>
 
@@ -199,18 +209,18 @@ const Settings = () => {
                     {/* Edit Button */}
                     <Button
                         onClick={handleUpdatePersonalInfo}
-                        endIcon={<BorderColorIcon style={{fontSize:"15px"}} />}
+                        endIcon={<BorderColorIcon style={{ fontSize: "15px" }} />}
                         sx={{
                             position: "absolute",
                             top: 16,
                             right: 16,
                             padding: "8px 16px",
                             borderRadius: "20px",
-                            bgcolor:"white",
+                            bgcolor: "white",
                             color: "gray",
-                            border:"1px solid gray",
-                            textTransform: "none", 
-                            fontSize:"13px"
+                            border: "1px solid gray",
+                            textTransform: "none",
+                            fontSize: "13px"
                         }}
                     >
                         {isEditingPersonalInfo ? "Kaydet" : "Düzenle"}
@@ -221,14 +231,14 @@ const Settings = () => {
                         sx={{
                             marginBottom: 3,
                             fontWeight: "bold",
-                            fontSize:"16px",
+                            fontSize: "16px",
                             color: "#333",
                         }}
                     >
                         Kişisel Bilgiler
                     </Typography>
 
-                    <Grid container spacing={3} style={{marginTop:"5px"}}>
+                    <Grid container spacing={3} style={{ marginTop: "5px" }}>
                         {/* First Name and Last Name */}
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -311,18 +321,18 @@ const Settings = () => {
                     {/* Edit Button */}
                     <Button
                         onClick={handleUpdatePassword}
-                        endIcon={<BorderColorIcon style={{fontSize:"15px"}} />}
+                        endIcon={<BorderColorIcon style={{ fontSize: "15px" }} />}
                         sx={{
                             position: "absolute",
                             top: 16,
                             right: 16,
                             padding: "8px 16px",
                             borderRadius: "20px",
-                            bgcolor:"white",
+                            bgcolor: "white",
                             color: "gray",
-                            border:"1px solid gray",
-                            textTransform: "none", 
-                            fontSize:"13px"
+                            border: "1px solid gray",
+                            textTransform: "none",
+                            fontSize: "13px"
                         }}
                     >
                         {isEditingPassword ? "Kaydet" : "Düzenle"}
@@ -333,14 +343,14 @@ const Settings = () => {
                         sx={{
                             marginBottom: 3,
                             fontWeight: "bold",
-                            fontSize:"16px",
+                            fontSize: "16px",
                             color: "#333",
                         }}
                     >
                         Şifre Değiştir
                     </Typography>
 
-                    <Grid container spacing={3} style={{marginTop:"5px"}}>
+                    <Grid container spacing={3} style={{ marginTop: "5px" }}>
                         {/* Old Password */}
                         <Grid item xs={12} sm={4}>
                             <TextField
@@ -397,6 +407,107 @@ const Settings = () => {
                                 }}
                             />
                         </Grid>
+                    </Grid>
+                </Paper>
+
+                {/* Fourth Card: Platform Info */}
+                <Paper
+                    sx={{
+                        padding: 3,
+                        marginTop: 4,
+                        borderRadius: "12px",
+                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
+                    }}
+                >
+                    <Grid container spacing={2} alignItems="center">
+                        {/* Platform 1 */}
+                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
+                            >
+                                Eğitim Parkı
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                kullanici_adi_egitim
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                şifre_egitim
+                            </Typography>
+                        </Grid>
+
+                        {/* Platform 2 */}
+                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
+                            >
+                                Bookr Class
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                kullanici_adi_bookr
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                şifre_bookr
+                            </Typography>
+                        </Grid>
+
+                        {/* Platform 3 */}
+                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
+                            >
+                                Rokodemi
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                kullanici_adi_rokodemi
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                şifre_rokodemi
+                            </Typography>
+                        </Grid>
+
+                        {/* Platform 4 */}
+                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Typography
+                                variant="h6"
+                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
+                            >
+                                Eyotek
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                kullanici_adi_eyotek
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "#666", textAlign: 'center' }}
+                            >
+                                şifre_eyotek
+                            </Typography>
+                        </Grid>
+
                     </Grid>
                 </Paper>
             </Paper>

@@ -142,7 +142,7 @@ const StudentHomePage = () => {
                 <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
               </Menu>
               <Typography variant="body2" sx={{ color: "gray" }}>
-                Özel ABC Okulu
+                My Kolej İzmir
               </Typography>
             </Box>
           </Box>

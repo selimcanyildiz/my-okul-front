@@ -1,161 +1,129 @@
 import React, { useState } from "react";
-import { TextField, Button, Card, CardContent, Typography, Grid, IconButton, InputAdornment } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import DownloadIcon from '@mui/icons-material/Download';
+import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
+import Settings from "../HomePage/Settings";
 
 const MyAccount = () => {
-  const navigate = useNavigate();
 
-  const [editMode, setEditMode] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    ad: "Ali",
-    soyad: "Yılmaz",
-    sifre: "password123",
-    okul: "Örnek Üniversitesi",
-    mail: "ali.yilmaz@example.com",
-    telefon: "555-123-4567",
-    paneller: [
-      { ad: "A Panel", kullaniciAdi: "Selim", sifre: "password1" },
-      { ad: "B Panel", kullaniciAdi: "Selim1", sifre: "password2" },
-      { ad: "C Panel", kullaniciAdi: "Selim2", sifre: "password3" },
-      { ad: "D Panel", kullaniciAdi: "Selim3", sifre: "password4" },
-    ],
-  });
+const navigate = useNavigate();
 
-  // Her panel için ayrı bir şifre göster/gizle durumu
-  const [showPasswords, setShowPasswords] = useState({});
+  const [anchorEl, setAnchorEl] = useState(null); // Menü anchor elementi
 
-  const handleChange = (e) => {
-    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget); // Menü aç
   };
 
-  const handlePanelChange = (index, field, value) => {
-    const updatedPanels = [...userInfo.paneller];
-    updatedPanels[index][field] = value;
-    setUserInfo({ ...userInfo, paneller: updatedPanels });
+  const handleClose = () => {
+    setAnchorEl(null); // Menüyi kapat
   };
 
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
+  const handleMyAccount = () => {
+    handleClose(); // Menü kapat
+    navigate("/hesabim"); // Hesabım sayfasına git
   };
 
-  // Yalnızca ilgili şifreyi açıp kapatır
-  const togglePasswordVisibility = (index) => {
-    setShowPasswords((prevState) => ({
-      ...prevState,
-      [index]: !prevState[index],
-    }));
+  const handleLogout = () => {
+    handleClose(); // Menü kapat
+    navigate("/");
   };
-
   return (
     <>
-      <Grid container justifyContent="flex-end" alignItems="center" style={{ padding: '10px 0' }}>
-        <Grid item>
-          <Button
-            style={{ color: "#152147", marginRight:"20px",border: "1px solid gray", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
-            onClick={() => navigate("/anasayfa")}
-            startIcon={<KeyboardBackspaceIcon />}
-          >
-            Geri Dön
-          </Button>
-        </Grid>
-      </Grid>
-      <Card sx={{ maxWidth: "70%", mx: "auto", mt: 1, p: 1 }}>
-        <CardContent>
-          <Typography variant="h5" align="center" gutterBottom>
-            Hesabım
-          </Typography>
+      <Box
+        sx={{
+          backgroundColor: "white",
+          padding: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)", // Hafif bir gölge efekti
+        }}
+      >
+        {/* Sol: Logo */}
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <img
+            src="/images/school.jpg" // Logo resmi
+            alt="School Logo"
+            style={{ width: "170px", height: "60px", marginRight: "16px" }} // Logo boyutu ve sağ boşluk
+          />
+        </Box>
 
-          {/* Kullanıcı Bilgileri */}
-          <Typography variant="h6" sx={{ mt: 2 }}>
-            Kullanıcı Bilgileri
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={4}>
-              <TextField label="Ad" name="ad" value={userInfo.ad} onChange={handleChange} fullWidth InputProps={{ readOnly: !editMode }} />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField label="Soyad" name="soyad" value={userInfo.soyad} onChange={handleChange} fullWidth InputProps={{ readOnly: !editMode }} />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Şifre"
-                name="sifre"
-                type="password"
-                value={userInfo.sifre}
-                onChange={handleChange}
-                fullWidth
-                InputProps={{ readOnly: !editMode }}
-              />
-            </Grid>
-          </Grid>
+        {/* Sağ: Butonlar ve Öğrenci Bilgileri */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* Butonlar */}
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button
+              sx={{
+                borderRadius: "100%", // Tam yuvarlak buton
+                minWidth: "36px", // Butonun minimum genişliği
+                height: "36px", // Butonun yüksekliği
+                bgcolor: "primary.main", // Arka plan rengi
+                background: "#E0E0E0", // Gradient arka plan
+                color: "black", // İkon rengi
+                // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Gölge efekti
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <DownloadIcon onClick={() => {
+                window.location.href = "https://denemeback.onrender.com/download-extension"; // Zip dosyasını indirme URL'sine git
+              }} sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
+            </Button>
 
-          {/* Okul Bilgisi */}
-          <Typography variant="h6" sx={{ mt: 3 }}>
-            Okul Bilgisi
-          </Typography>
-          <TextField label="Okul" name="okul" value={userInfo.okul} onChange={handleChange} fullWidth InputProps={{ readOnly: !editMode }} />
+            <Button
+              sx={{
+                borderRadius: "100%", // Tam yuvarlak buton
+                minWidth: "36px", // Butonun minimum genişliği
+                height: "36px", // Butonun yüksekliği
+                bgcolor: "primary.main", // Arka plan rengi
+                background: "#E0E0E0", // Gradient arka plan
+                color: "black", // İkon rengi
+                marginLeft: "10px",
+                // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Gölge efekti
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ArrowOutwardIcon sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
+            </Button>
+          </Box>
 
-          {/* İletişim Bilgileri */}
-          <Typography variant="h6" sx={{ mt: 3 }}>
-            İletişim Bilgileri
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField label="Telefon" name="telefon" value={userInfo.telefon} onChange={handleChange} fullWidth InputProps={{ readOnly: !editMode }} />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField label="Mail" name="mail" value={userInfo.mail} onChange={handleChange} fullWidth InputProps={{ readOnly: !editMode }} />
-            </Grid>
-          </Grid>
+          {/* Öğrenci Bilgileri */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "10px" }}>
+            <Box sx={{ textAlign: "right" }}>
+              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                Selimcan Yıldız
+              </Typography>
 
-          {/* Platform Bilgileri */}
-          <Typography variant="h6" sx={{ mt: 3 }}>
-            Platform Bilgileri
-          </Typography>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            {userInfo.paneller.map((panel, index) => (
-              <Grid container item xs={12} spacing={1} key={index} alignItems="center">
-                <Grid item xs={4}>
-                  <Typography>{panel.ad}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    value={panel.kullaniciAdi}
-                    onChange={(e) => handlePanelChange(index, "kullaniciAdi", e.target.value)}
-                    fullWidth
-                    InputProps={{ readOnly: !editMode }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    type={showPasswords[index] ? "text" : "password"}
-                    value={panel.sifre}
-                    onChange={(e) => handlePanelChange(index, "sifre", e.target.value)}
-                    fullWidth
-                    InputProps={{
-                      readOnly: !editMode,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={() => togglePasswordVisibility(index)} edge="end">
-                            {showPasswords[index] ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            ))}
-          </Grid>
+              <Menu
+                anchorEl={anchorEl} // Menü açılacak yer
+                open={Boolean(anchorEl)} // Menü açılma durumu
+                onClose={handleClose} // Menü kapanınca
+              >
+                <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem>
+                <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
+              </Menu>
+              <Typography variant="body2" sx={{ color: "gray" }}>
+                My Kolej İzmir
+              </Typography>
+            </Box>
+          </Box>
 
-          {/* Düzenle/Kaydet Butonu */}
-          <Button variant="contained" color="primary" onClick={toggleEditMode} fullWidth sx={{ mt: 3 }}>
-            {editMode ? "Kaydet" : "Düzenle"}
-          </Button>
-        </CardContent>
-      </Card>
+          <Box>
+            <IconButton onClick={handleClick} sx={{ color: "black" }}>
+              <PersonIcon />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
+      <Settings />
     </>
   );
 };
