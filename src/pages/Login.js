@@ -12,40 +12,36 @@ const Giris = () => {
   const [hata, setHata] = useState(""); // Hata mesajı için state
   const [beniHatirla, setBeniHatirla] = useState(false); // Beni hatırla state
 
-  const handleLogin = () => {
-    if (kullaniciAdi.length !== 11) {
-      setHata("TC Kimlik No 11 haneli olmalıdır.");
-      return;
-    }
-  
-    if (kullaniciAdi === "11111111111" && sifre === "1") {
-      // Öğrenci
-      localStorage.setItem("userType", "student");
-      navigate("/anasayfa");
-    } else if (kullaniciAdi === "22222222222" && sifre === "2") {
-      // Yönetici
-      localStorage.setItem("userType", "manager");
-      navigate("/anasayfa");
-    } else if (kullaniciAdi === "33333333333" && sifre === "3") {
-      // Admin
-      localStorage.setItem("userType", "admin");
-      navigate("/anasayfa");
-    } else {
-      alert("Kullanıcı adı veya şifre hatalı.");
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: kullaniciAdi, password: sifre }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("userType", data.user_type); // Assuming the API returns a user_type field
+        navigate("/anasayfa");
+      } else {
+        setHata(data.message || "Kullanıcı adı veya şifre hatalı.");
+      }
+    } catch (error) {
+      setHata("Sunucuyla bağlantı kurulamadı. Lütfen tekrar deneyin.");
     }
   };
-  
+
   const handleForgotPassword = () => {
     navigate("/sifremi-unuttum");
   };
 
   const handleKullaniciAdiChange = (e) => {
     const value = e.target.value;
-    // Sadece sayıları kabul et ve en fazla 11 karaktere izin ver
-    if (/^\d*$/.test(value) && value.length <= 11) {
-      setKullaniciAdi(value);
-      setHata(""); // Hata mesajını temizle
-    }
+    setKullaniciAdi(value);
+    setHata(""); // Hata mesajını temizle
   };
 
   return (
@@ -88,7 +84,6 @@ const Giris = () => {
               backgroundImage: "url(/images/loginbg.png)", // Resim ekledik
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              // border: "1px solid black",
               borderRadius: "8px", // Kartın kenarları yuvarlak
             }}
           />
@@ -188,8 +183,6 @@ const Giris = () => {
               </Button>
             </Box>
 
-
-
             {/* Giriş Yap Butonu */}
             <Button
               fullWidth
@@ -202,18 +195,6 @@ const Giris = () => {
             </Button>
           </Box>
         </Box>
-        {/* <Box sx={{ position: "absolute", top: 10, right: 10, display: "flex", flexDirection: "row", gap: 2 }}>
-          <Button
-            style={{ border: "1px solid gray", color: "black", borderRadius: "20px", fontSize: "12px", textTransform: "none" }}
-            startIcon={<DownloadIcon />}
-            onClick={() => {
-              window.location.href = "https://denemeback.onrender.com/download-extension"; // Zip dosyasını indirme URL'sine git
-            }}
-          >
-            Zip Dosyasını İndir
-          </Button>
-
-        </Box> */}
       </Paper>
     </Box>
   );

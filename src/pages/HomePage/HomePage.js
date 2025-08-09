@@ -19,7 +19,7 @@ const HomePage = () => {
 
   return (
     <>
-    {userType === "student" ? <StudentHomePage /> : <AdminSuperAdminHomePage />}
+    {userType !== "student" ? <StudentHomePage /> : <AdminSuperAdminHomePage />}
     </>
   );
 };
