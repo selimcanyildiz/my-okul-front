@@ -232,7 +232,7 @@ const StudentHomePage = () => {
             border={1}
             borderColor="grey.300"
             borderRadius={2}
-            onClick={() => handleLoginClick("bookr")}  // Buradaki isim backend'deki platform kontrolüyle uyuşmalı
+            onClick={() => handleLoginClick("kolibri")}  // Buradaki isim backend'deki platform kontrolüyle uyuşmalı
             p={2}
             sx={{
               backgroundColor: "#2196F3",  // Mavi arkaplan
@@ -242,7 +242,7 @@ const StudentHomePage = () => {
             }}
           >
             <Box>
-              <Typography variant="h3" style={{ fontWeight: 550 }}>BookR Class</Typography>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Kolibri</Typography>
               <Typography
                 variant="body2"
                 gutterBottom
