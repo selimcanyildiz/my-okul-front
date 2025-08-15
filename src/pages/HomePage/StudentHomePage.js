@@ -37,7 +37,7 @@ const StudentHomePage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:8000/login-to-platform", {
+      const res = await fetch("https://my-okul-back.onrender.com/login-to-platform", {
         method: "POST",
         headers: {
           "Authorization": "Bearer " + token,
