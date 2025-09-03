@@ -104,7 +104,7 @@ const navigate = useNavigate();
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "10px" }}>
             <Box sx={{ textAlign: "right" }}>
               <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                Selimcan Yıldız
+                Abdülhamit Yıldırım
               </Typography>
 
               <Menu

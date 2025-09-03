@@ -31,8 +31,8 @@ const SuperAdminHomePage = () => {
     const students = [
         {
             id: 1,
-            name: "Selimcan Yıldız",
-            school: "Abc Koleji",
+            name: "Abdülhamit Yıldırım",
+            school: "My Okul Ankara",
             branch: "8 / B",
             lastLogin: "24 Mart 2025 21:30",
             status: "active"
@@ -141,7 +141,7 @@ const SuperAdminHomePage = () => {
                                 sx={{ borderRadius: "20px" }}
                             >
                                 <MenuItem value="">Tüm Okullar</MenuItem>
-                                <MenuItem value="Abc Koleji">ABC Koleji</MenuItem>
+                                <MenuItem value="My Okul Ankara">My Okul Ankara</MenuItem>
                                 <MenuItem value="Def Koleji">Def Koleji</MenuItem>
                                 <MenuItem value="Ghı Koleji">Ghı Koleji</MenuItem>
                                 <MenuItem value="My Kolej">My Kolej</MenuItem>

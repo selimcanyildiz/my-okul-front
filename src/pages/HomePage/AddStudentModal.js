@@ -19,7 +19,7 @@ const AddStudentModal = ({ openModal, handleCloseModal, handleInputChange, newSt
 
         // Örnek okul listesi (API'den çekilebilir)
         setSchools([
-            { id: 1, name: "Abc Koleji" },
+            { id: 1, name: "My Okul Ankara" },
             { id: 2, name: "Def Koleji" },
             { id: 3, name: "Ghı Koleji" },
             { id: 4, name: "My Kolej" },

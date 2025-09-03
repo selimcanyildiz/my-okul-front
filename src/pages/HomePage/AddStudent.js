@@ -9,8 +9,8 @@ const AddStudent = () => {
     const [students, setStudents] = useState([
         {
             id: 1,
-            studentName: "Selimcan Yıldız",
-            schoolName: "Abc Koleji",
+            studentName: "Abdülhamit Yıldırım",
+            schoolName: "My Okul Ankara",
             tcNo: "15489548745",
             branch: "8 / B",
             date: "24 Mart 2025 21:30",
