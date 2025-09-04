@@ -179,7 +179,7 @@ const StudentHomePage = () => {
             </Box>
             <Box>
               <img
-                src="/images/bilisimgaraji.png" // Bilişim Garajı logosu URL'si
+                src="/images/bisim-garaji-logo.png" // Bilişim Garajı logosu URL'si
                 alt="Bilişim Garajı Logo"
                 style={{ width: 130, height: 80, marginRight: "10px" }}
               />
@@ -246,6 +246,179 @@ const StudentHomePage = () => {
           </Box>
         </Grid>
 
+        <Grid item xs={12} md={5.75}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            border={1}
+            borderColor="grey.300"
+            borderRadius={2}
+            onClick={() => handleLoginClick("sınavza")}  // Buradaki isim backend'deki platform kontrolüyle uyuşmalı
+            p={2}
+            sx={{
+              backgroundColor: "#7330A6",  // Mavi arkaplan
+              color: "white",
+              borderRadius: "20px",
+              cursor: "pointer"
+            }}
+          >
+            <Box>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Sınavza</Typography>
+              <Typography
+                variant="body2"
+                gutterBottom
+                style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}
+              >
+                Platforma giriş yapmak için tıklayınız.
+              </Typography>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                </Typography>
+                <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                </Typography>
+              </Box>
+
+              <Button
+                startIcon={<ArrowOutwardIcon />}
+                sx={{
+                  backgroundColor: "none",
+                  border: "none",
+                  color: "white",
+                  fontSize: "16px",
+                }}
+              >
+                GİRİŞ YAP
+              </Button>
+            </Box>
+            <Box>
+              <img
+                src="/images/sinavza-logo.png"  // Kendi BookR logonu buraya yerleştirebilirsin
+                alt="BookR Logo"
+                style={{ width: 130, height: 80, marginRight: "10px" }}
+              />
+            </Box>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={5.75}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            border={1}
+            borderColor="grey.300"
+            borderRadius={2}
+            onClick={() => handleLoginClick("morpa")}  // Buradaki isim backend'deki platform kontrolüyle uyuşmalı
+            p={2}
+            sx={{
+              backgroundColor: "#9D47FF",  // Mavi arkaplan
+              color: "white",
+              borderRadius: "20px",
+              cursor: "pointer"
+            }}
+          >
+            <Box>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Morpa</Typography>
+              <Typography
+                variant="body2"
+                gutterBottom
+                style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}
+              >
+                Platforma giriş yapmak için tıklayınız.
+              </Typography>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                </Typography>
+                <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                </Typography>
+              </Box>
+
+              <Button
+                startIcon={<ArrowOutwardIcon />}
+                sx={{
+                  backgroundColor: "none",
+                  border: "none",
+                  color: "white",
+                  fontSize: "16px",
+                }}
+              >
+                GİRİŞ YAP
+              </Button>
+            </Box>
+            <Box>
+              <img
+                src="/images/morpa-logo.png"  // Kendi BookR logonu buraya yerleştirebilirsin
+                alt="BookR Logo"
+                style={{ width: 130, height: 80, marginRight: "10px" }}
+              />
+            </Box>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={5.75}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            border={1}
+            borderColor="grey.300"
+            borderRadius={2}
+            onClick={() => handleLoginClick("cambridge")}  // Buradaki isim backend'deki platform kontrolüyle uyuşmalı
+            p={2}
+            sx={{
+              backgroundColor: "#6abaad",  // Mavi arkaplan
+              color: "white",
+              borderRadius: "20px",
+              cursor: "pointer"
+            }}
+          >
+            <Box>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Cambridge</Typography>
+              <Typography
+                variant="body2"
+                gutterBottom
+                style={{ marginTop: "10px", marginBottom: "40px", color: "white", fontWeight: 550, fontSize: "12px", letterSpacing: "1px" }}
+              >
+                Platforma giriş yapmak için tıklayınız.
+              </Typography>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                </Typography>
+                <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                </Typography>
+              </Box>
+
+              <Button
+                startIcon={<ArrowOutwardIcon />}
+                sx={{
+                  backgroundColor: "none",
+                  border: "none",
+                  color: "white",
+                  fontSize: "16px",
+                }}
+              >
+                GİRİŞ YAP
+              </Button>
+            </Box>
+            <Box>
+              <img
+                src="/images/cambridge.png"  // Kendi BookR logonu buraya yerleştirebilirsin
+                alt="BookR Logo"
+                style={{ width: 130, height: 80, marginRight: "10px" }}
+              />
+            </Box>
+          </Box>
+        </Grid>
 
 
       </Grid>
