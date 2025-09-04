@@ -426,7 +426,7 @@ const Settings = () => {
                                 variant="h6"
                                 sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
                             >
-                                Eğitim Parkı
+                                Bilişim Garajı
                             </Typography>
                             <Typography
                                 variant="body2"

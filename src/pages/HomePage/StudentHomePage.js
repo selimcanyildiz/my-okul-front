@@ -87,42 +87,6 @@ const StudentHomePage = () => {
         {/* Sağ: Butonlar ve Öğrenci Bilgileri */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           {/* Butonlar */}
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button
-              sx={{
-                borderRadius: "100%", // Tam yuvarlak buton
-                minWidth: "36px", // Butonun minimum genişliği
-                height: "36px", // Butonun yüksekliği
-                bgcolor: "primary.main", // Arka plan rengi
-                background: "#E0E0E0", // Gradient arka plan
-                color: "black", // İkon rengi
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <DownloadIcon onClick={() => {
-                window.location.href = "https://denemeback.onrender.com/download-extension"; // Zip dosyasını indirme URL'sine git
-              }} sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
-            </Button>
-
-            <Button
-              sx={{
-                borderRadius: "100%", // Tam yuvarlak buton
-                minWidth: "36px", // Butonun minimum genişliği
-                height: "36px", // Butonun yüksekliği
-                bgcolor: "primary.main", // Arka plan rengi
-                background: "#E0E0E0", // Gradient arka plan
-                color: "black", // İkon rengi
-                marginLeft: "10px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <ArrowOutwardIcon sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
-            </Button>
-          </Box>
 
           {/* Öğrenci Bilgileri */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "10px" }}>
@@ -159,7 +123,7 @@ const StudentHomePage = () => {
       </Grid>
 
       <Grid container spacing={4} style={{ padding: 20 }} >
-        {/* Eğitim Parkı Butonu */}
+        {/* Bilişim Garajı Butonu */}
         <Grid item xs={12} md={5.75}>
           <Box
             display="flex"
@@ -171,14 +135,14 @@ const StudentHomePage = () => {
             onClick={() => handleLoginClick("bilisimgaraji")}
             p={2}
             sx={{
-              backgroundColor: "#ED6D2D",
+              backgroundColor: "#F6E902",
               color: "white",
               borderRadius: "20px",
               cursor: "pointer"
             }}
           >
             <Box>
-              <Typography variant="h3" style={{ fontWeight: 550 }}>Eğitim Parkı</Typography>
+              <Typography variant="h3" style={{ fontWeight: 550 }}>Bilişim Garajı</Typography>
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -215,8 +179,8 @@ const StudentHomePage = () => {
             </Box>
             <Box>
               <img
-                src="/images/egitimpark.png" // Eğitim Parkı logosu URL'si
-                alt="Eğitim Parkı Logo"
+                src="/images/bilisimgaraji.png" // Bilişim Garajı logosu URL'si
+                alt="Bilişim Garajı Logo"
                 style={{ width: 130, height: 80, marginRight: "10px" }}
               />
             </Box>
@@ -274,7 +238,7 @@ const StudentHomePage = () => {
             </Box>
             <Box>
               <img
-                src="/images/bookr_logo.png"  // Kendi BookR logonu buraya yerleştirebilirsin
+                src="/images/bookr.png"  // Kendi BookR logonu buraya yerleştirebilirsin
                 alt="BookR Logo"
                 style={{ width: 130, height: 80, marginRight: "10px" }}
               />
