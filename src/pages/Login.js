@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const Giris = () => {
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const [kullaniciAdi, setKullaniciAdi] = useState("");
   const [sifre, setSifre] = useState("");
@@ -14,7 +15,7 @@ const Giris = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://mypanel.myokullari.com/api:8000/login", {
+      const res = await fetch(`${apiUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: kullaniciAdi, password: sifre }),
