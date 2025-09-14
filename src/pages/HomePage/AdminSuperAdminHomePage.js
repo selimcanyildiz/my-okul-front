@@ -18,6 +18,8 @@ const AdminSuperAdminHomePage = () => {
     const navigate = useNavigate();
 
     const [userType, setUserType] = useState(null);
+    const [user, setUser] = useState({});
+    const [school, setSchool] = useState(null); // Okul bilgisi için state
     const [activeMenu, setActiveMenu] = useState('home');
 
     const handleMenuClick = (menu) => setActiveMenu(menu);
@@ -25,7 +27,7 @@ const AdminSuperAdminHomePage = () => {
     const renderContent = () => {
         switch (activeMenu) {
             case 'home':
-                return userType === "manager" ? <AdminHomePage /> : <SuperAdminHomePage />;
+                return user.role === "sysadmin" ? <AdminHomePage /> : <SuperAdminHomePage />;
             case 'addSchool':
                 return <AddSchool />;
             case 'addStudent':
@@ -40,9 +42,27 @@ const AdminSuperAdminHomePage = () => {
     };
 
     useEffect(() => {
-        const storedUserType = localStorage.getItem("userType");
-        if (storedUserType) {
-            setUserType(storedUserType);
+        const user = JSON.parse(localStorage.getItem("user"));
+        setUser(user);
+
+        if (user) {
+            setUserType(user.role);
+
+            // Yetkili ise okul bilgisini çek
+            if (user.role === "yetkili") {
+                fetch(`http://localhost/schools/by_admin/${user.id}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error("Okul bilgisi alınamadı");
+                        return res.json();
+                    })
+                    .then(data => {
+                        setSchool(data.school);
+                    })
+                    .catch(err => {
+                        console.error("Okul bilgisi çekilirken hata:", err);
+                    });
+            }
+
         } else {
             navigate("/");
         }
@@ -71,7 +91,7 @@ const AdminSuperAdminHomePage = () => {
             <Box
                 sx={{
                     width: "200px",
-                    height: "100vh", // Tam ekran yüksekliği
+                    height: "100vh",
                     backgroundColor: "white",
                     color: "black",
                     display: "flex",
@@ -80,33 +100,29 @@ const AdminSuperAdminHomePage = () => {
                     paddingTop: 2,
                     paddingLeft: 2,
                     paddingRight: 2,
-                    position: "fixed", // Sabit menü
+                    position: "fixed",
                     left: 0,
                     top: 0,
-                    overflowY: "auto", // Menü içeriği kaydırılabilir
+                    overflowY: "auto",
                 }}
             >
                 <Box>
                     <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
                         <Box
                             component="img"
-                            src="/images/school.jpg" // Logo dosyasının yolu
+                            src="/images/school.jpg"
                             alt="Logo"
-                            sx={{
-                                height: 70, // Logo yüksekliği
-                                marginRight: 2, // Logo ile metin arasındaki boşluk
-                            }}
+                            sx={{ height: 70, marginRight: 2 }}
                         />
                     </Box>
 
-                    {/* Menü Butonları */}
                     <Button
                         sx={{
                             color: activeMenu === 'home' ? "#28245c" : "gray",
                             marginBottom: 2,
-                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
-                            alignItems: "center", // Dikeyde ortala
-                            justifyContent: "flex-start", // Sola hizala
+                            display: 'flex',
+                            alignItems: "center",
+                            justifyContent: "flex-start",
                             position: "relative",
                             textTransform: "capitalize",
                             textAlign: "left",
@@ -123,19 +139,19 @@ const AdminSuperAdminHomePage = () => {
                                 borderRadius: "2px",
                             },
                         }}
-                        startIcon={<HomeIcon />} // İkonu ekle
+                        startIcon={<HomeIcon />}
                         onClick={() => handleMenuClick('home')}
                     >
                         Ana Sayfa
                     </Button>
 
-                    {userType === "admin" && <Button
+                    {user.role === "sysadmin" && <Button
                         sx={{
                             color: activeMenu === 'addSchool' ? "#28245c" : "gray",
                             marginBottom: 2,
-                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
-                            alignItems: "center", // Dikeyde ortala
-                            justifyContent: "flex-start", // Sola hizala
+                            display: 'flex',
+                            alignItems: "center",
+                            justifyContent: "flex-start",
                             position: "relative",
                             textTransform: "capitalize",
                             textAlign: "left",
@@ -152,7 +168,7 @@ const AdminSuperAdminHomePage = () => {
                                 borderRadius: "2px",
                             },
                         }}
-                        startIcon={<SchoolIcon />} // İkonu ekle
+                        startIcon={<SchoolIcon />}
                         onClick={() => handleMenuClick('addSchool')}
                     >
                         Kurum Bilgileri
@@ -162,9 +178,9 @@ const AdminSuperAdminHomePage = () => {
                         sx={{
                             color: activeMenu === 'addStudent' ? "#28245c" : "gray",
                             marginBottom: 2,
-                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
-                            alignItems: "center", // Dikeyde ortala
-                            justifyContent: "flex-start", // Sola hizala
+                            display: 'flex',
+                            alignItems: "center",
+                            justifyContent: "flex-start",
                             position: "relative",
                             textTransform: "capitalize",
                             textAlign: "left",
@@ -181,51 +197,21 @@ const AdminSuperAdminHomePage = () => {
                                 borderRadius: "2px",
                             },
                         }}
-                        startIcon={<SupervisorAccountIcon />} // İkonu ekle
+                        startIcon={<SupervisorAccountIcon />}
                         onClick={() => handleMenuClick('addStudent')}
                     >
                         Öğrenci Bilgileri
                     </Button>
-
-                    {userType === "admin" && <Button
-                        sx={{
-                            color: activeMenu === 'sms' ? "#28245c" : "gray",
-                            marginBottom: 2,
-                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
-                            alignItems: "center", // Dikeyde ortala
-                            justifyContent: "flex-start", // Sola hizala
-                            position: "relative",
-                            textTransform: "capitalize",
-                            textAlign: "left",
-                            paddingLeft: "20px",
-                            width: "100%",
-                            "&::before": {
-                                content: '""',
-                                position: "absolute",
-                                left: 0,
-                                top: 0,
-                                height: "100%",
-                                width: "4px",
-                                backgroundColor: activeMenu === 'sms' ? "#28245c" : "transparent",
-                                borderRadius: "2px",
-                            },
-                        }}
-                        startIcon={<MessageIcon />} // İkonu ekle
-                        onClick={() => handleMenuClick('sms')}
-                    >
-                        Sms Ayarları
-                    </Button>}
                 </Box>
 
-                {/* Ayarlar ve Çıkış Yap Butonları */}
                 <Box sx={{ marginTop: "auto", marginBottom: 2 }}>
                     <Button
                         sx={{
                             color: activeMenu === 'settings' ? "#28245c" : "gray",
                             marginBottom: 2,
-                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
-                            alignItems: "center", // Dikeyde ortala
-                            justifyContent: "flex-start", // Sola hizala
+                            display: 'flex',
+                            alignItems: "center",
+                            justifyContent: "flex-start",
                             position: "relative",
                             textTransform: "capitalize",
                             textAlign: "left",
@@ -242,7 +228,7 @@ const AdminSuperAdminHomePage = () => {
                                 borderRadius: "2px",
                             },
                         }}
-                        startIcon={<SettingsApplicationsIcon />} // İkonu ekle
+                        startIcon={<SettingsApplicationsIcon />}
                         onClick={() => handleMenuClick('settings')}
                     >
                         Ayarlar
@@ -250,14 +236,14 @@ const AdminSuperAdminHomePage = () => {
                     <Button
                         sx={{
                             color: "gray",
-                            display: 'flex', // Flex kullanarak içeriği yan yana hizala
-                            alignItems: "center", // Dikeyde ortala
-                            justifyContent: "flex-start", // Sola hizala
-                            width: "100%", // Tam genişlik
-                            textTransform: "capitalize", // Sadece baş harfler büyük
-                            paddingLeft: "20px", // Sol padding
+                            display: 'flex',
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            width: "100%",
+                            textTransform: "capitalize",
+                            paddingLeft: "20px",
                         }}
-                        startIcon={<ExitToAppIcon />} // Çıkış Yap ikonu
+                        startIcon={<ExitToAppIcon />}
                         onClick={() => navigate("/")}
                     >
                         Çıkış Yap
@@ -271,12 +257,12 @@ const AdminSuperAdminHomePage = () => {
                     flex: 1,
                     display: "flex",
                     flexDirection: "column",
-                    position: "fixed", // Sağ içerik alanını sabit tut
-                    top: 0, // Yukarıya sabitle
-                    left: "200px", // Sol menü genişliği kadar sağa kaydır
-                    right: 0, // Sağa kadar genişlet
-                    bottom: 0, // Aşağıya kadar genişlet
-                    overflowY: "auto", // İçerik alanını kaydırılabilir yap
+                    position: "fixed",
+                    top: 0,
+                    left: "200px",
+                    right: 0,
+                    bottom: 0,
+                    overflowY: "auto",
                 }}
             >
                 {/* Üst Menü */}
@@ -287,9 +273,9 @@ const AdminSuperAdminHomePage = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        position: "sticky", // Üst menüyü sabit tut
+                        position: "sticky",
                         top: 0,
-                        zIndex: 1, // Üst menüyü diğer içeriklerin üzerinde tut
+                        zIndex: 1,
                     }}
                 >
                     <Box>
@@ -299,15 +285,14 @@ const AdminSuperAdminHomePage = () => {
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
                         <Typography variant="h5" sx={{ color: "black" }}>
-                            {userType === "manager" ? "Selim Can" : "My Okulları"}
+                            {user?.full_name}
                         </Typography>
                         <Typography variant="body2" sx={{ color: "gray" }}>
-                            {userType === "manager" ? "My Kolej İzmir" : "Admin"}
+                            {school?.name}
                         </Typography>
                     </Box>
                 </Box>
 
-                {/* İçerik Alanı (Scrollable) */}
                 <Box sx={{ flex: 1, overflowY: "auto", padding: 2 }}>
                     {renderContent()}
                 </Box>

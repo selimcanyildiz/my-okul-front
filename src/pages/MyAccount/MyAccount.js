@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -7,8 +7,12 @@ import { useNavigate } from "react-router-dom";
 import Settings from "../HomePage/Settings";
 
 const MyAccount = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState({});
+  const [school, setSchool] = useState(null);
 
   const [anchorEl, setAnchorEl] = useState(null); // Menü anchor elementi
 
@@ -34,6 +38,41 @@ const navigate = useNavigate();
     handleClose(); // Menü kapat
     navigate("/");
   };
+
+  useEffect(() => {
+      const fetchData = async () => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+          setUser(user);
+  
+          const token = localStorage.getItem("token");
+          try {
+            const res = await fetch(`${apiUrl}/schools/${user.school_id}`, {
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              },
+            });
+  
+            if (!res.ok) {
+              const errorText = await res.text();
+              throw new Error(`HTTP ${res.status}: ${errorText}`);
+            }
+  
+            const data = await res.json();
+            setSchool(data); // 🔹 school state'i güncelleniyor
+          } catch (err) {
+            console.error("Okul bilgisi alınırken hata:", err.message);
+          }
+  
+        } else {
+          navigate("/");
+        }
+      };
+  
+      fetchData();
+    }, [navigate]);
+
+
   return (
     <>
       <Box
@@ -60,51 +99,10 @@ const navigate = useNavigate();
 
         {/* Sağ: Butonlar ve Öğrenci Bilgileri */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          {/* Butonlar */}
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button
-              sx={{
-                borderRadius: "100%", // Tam yuvarlak buton
-                minWidth: "36px", // Butonun minimum genişliği
-                height: "36px", // Butonun yüksekliği
-                bgcolor: "primary.main", // Arka plan rengi
-                background: "#E0E0E0", // Gradient arka plan
-                color: "black", // İkon rengi
-                // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Gölge efekti
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <DownloadIcon onClick={() => {
-                window.location.href = "https://denemeback.onrender.com/download-extension"; // Zip dosyasını indirme URL'sine git
-              }} sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
-            </Button>
-
-            <Button
-              sx={{
-                borderRadius: "100%", // Tam yuvarlak buton
-                minWidth: "36px", // Butonun minimum genişliği
-                height: "36px", // Butonun yüksekliği
-                bgcolor: "primary.main", // Arka plan rengi
-                background: "#E0E0E0", // Gradient arka plan
-                color: "black", // İkon rengi
-                marginLeft: "10px",
-                // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)", // Gölge efekti
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <ArrowOutwardIcon sx={{ fontSize: "24px" }} /> {/* İkonu direkt butonun içine ekle */}
-            </Button>
-          </Box>
-
-          {/* Öğrenci Bilgileri */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "10px" }}>
             <Box sx={{ textAlign: "right" }}>
               <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                Abdülhamit Yıldırım
+                {user.ad} {user.soyad}
               </Typography>
 
               <Menu
@@ -117,7 +115,7 @@ const navigate = useNavigate();
                 <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
               </Menu>
               <Typography variant="body2" sx={{ color: "gray" }}>
-                My Kolej İzmir
+                {school?.name}
               </Typography>
             </Box>
           </Box>

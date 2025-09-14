@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import DownloadIcon from '@mui/icons-material/Download';
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
 
 const StudentHomePage = () => {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState({});
+  const [school, setSchool] = useState(null);
 
   const [anchorEl, setAnchorEl] = useState(null); // Menü anchor elementi
 
@@ -60,6 +62,39 @@ const StudentHomePage = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        setUser(user);
+
+        const token = localStorage.getItem("token");
+        try {
+          const res = await fetch(`${apiUrl}/schools/${user.school_id}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+
+          if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errorText}`);
+          }
+
+          const data = await res.json();
+          setSchool(data); // 🔹 school state'i güncelleniyor
+        } catch (err) {
+          console.error("Okul bilgisi alınırken hata:", err.message);
+        }
+
+      } else {
+        navigate("/");
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
+
   return (
     <>
       <Box
@@ -92,7 +127,7 @@ const StudentHomePage = () => {
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginLeft: "10px" }}>
             <Box sx={{ textAlign: "right" }}>
               <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                Abdülhamit Yıldırım
+                {user.ad} {user.soyad}
               </Typography>
 
               <Menu
@@ -105,7 +140,7 @@ const StudentHomePage = () => {
                 <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
               </Menu>
               <Typography variant="body2" sx={{ color: "gray" }}>
-                My Kolej İzmir
+                {school?.name}
               </Typography>
             </Box>
           </Box>
@@ -155,10 +190,10 @@ const StudentHomePage = () => {
               {/* Kullanıcı Adı ve Şifre Alanları */}
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.bgkull}</Typography>
                 </Typography>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.bgsif}</Typography>
                 </Typography>
               </Box>
 
@@ -217,10 +252,10 @@ const StudentHomePage = () => {
 
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.klbkull}</Typography>
                 </Typography>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.klbsif}</Typography>
                 </Typography>
               </Box>
 
@@ -275,10 +310,10 @@ const StudentHomePage = () => {
 
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.sınavzakull}</Typography>
                 </Typography>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.sınavzasif}</Typography>
                 </Typography>
               </Box>
 
@@ -333,10 +368,10 @@ const StudentHomePage = () => {
 
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>kullanici_adi</Typography>
+                  Kullanıcı Adı: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.morpakull}</Typography>
                 </Typography>
                 <Typography variant="body1" sx={{ color: "white", fontWeight: "bold" }}>
-                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>********</Typography>
+                  Şifre: <Typography component="span" sx={{ color: "white", fontWeight: "normal" }}>{user.morpasif}</Typography>
                 </Typography>
               </Box>
 

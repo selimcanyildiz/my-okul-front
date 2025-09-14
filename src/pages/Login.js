@@ -25,7 +25,8 @@ const Giris = () => {
 
       if (res.ok) {
         localStorage.setItem("token", data.access_token);
-        localStorage.setItem("userType", data.user_type); // Assuming the API returns a user_type field
+        localStorage.setItem("userType", data.user.role ? data.user.role : "student");
+        localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/anasayfa");
       } else {
         setHata(data.message || "Kullanıcı adı veya şifre hatalı.");
