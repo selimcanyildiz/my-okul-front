@@ -5,6 +5,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
 
 const StudentHomePage = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+  
   const navigate = useNavigate();
 
   const [user, setUser] = useState({});
