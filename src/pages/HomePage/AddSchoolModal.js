@@ -40,36 +40,9 @@ const AddSchoolModal = ({ openModal, handleCloseModal, handleInputChange, newSch
                             onChange={handleInputChange}
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Adres"
-                            variant="outlined"
-                            name="address"
-                            value={newSchool.address}
-                            onChange={handleInputChange}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            fullWidth
-                            label="İl"
-                            variant="outlined"
-                            name="city"
-                            value={newSchool.city}
-                            onChange={handleInputChange}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            fullWidth
-                            label="İlçe"
-                            variant="outlined"
-                            name="district"
-                            value={newSchool.district}
-                            onChange={handleInputChange}
-                        />
-                    </Grid>
+
+
+
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
@@ -93,46 +66,71 @@ const AddSchoolModal = ({ openModal, handleCloseModal, handleInputChange, newSch
                     <Grid item xs={12}>
                         <TextField
                             fullWidth
-                            label="Yetkili TC No"
+                            label="Telefon No"
+                            variant="outlined"
+                            name="phone"
+                            value={newSchool.phone}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, ''); // sadece rakam
+                                if (value.length <= 11) {
+                                    handleInputChange({ target: { name: "phone", value } });
+                                }
+                            }}
+                            inputProps={{ maxLength: 11 }}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            label="TC No"
                             variant="outlined"
                             name="tcNo"
                             value={newSchool.tcNo}
-                            onChange={handleInputChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Kullanıcı Adı"
-                            variant="outlined"
-                            name="username"
-                            value={newSchool.username}
-                            onChange={handleInputChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            label="Şifre"
-                            variant="outlined"
-                            name="password"
-                            type={showPassword ? "text" : "password"} // Şifre görünürlüğüne göre type değiştir
-                            value={newSchool.password}
-                            onChange={handleInputChange}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={handleClickShowPassword}
-                                            edge="end"
-                                        >
-                                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, ''); // sadece rakam
+                                if (value.length <= 11) {
+                                    handleInputChange({ target: { name: "tcNo", value } });
+                                }
                             }}
+                            inputProps={{ maxLength: 11 }}
                         />
                     </Grid>
+
+
+                    {/* Username ve şifre artık backend tarafından oluşturulacak */}
+                    {newSchool.username && newSchool.password && (
+                        <>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Kullanıcı Adı"
+                                    variant="outlined"
+                                    value={newSchool.username}
+                                    InputProps={{ readOnly: true }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Şifre"
+                                    variant="outlined"
+                                    type={showPassword ? "text" : "password"}
+                                    value={newSchool.password}
+                                    InputProps={{
+                                        readOnly: true,
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton onClick={handleClickShowPassword} edge="end">
+                                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+                        </>
+                    )}
                 </Grid>
 
                 <Box sx={{ marginTop: 2, display: "flex", justifyContent: "flex-end" }}>

@@ -25,7 +25,7 @@ import * as XLSX from "xlsx";
 
 const AddStudent = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
-  
+
   const [students, setStudents] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [newStudent, setNewStudent] = useState({});
@@ -56,7 +56,7 @@ const AddStudent = () => {
 
       // Öğrencileri çek (sysadmin ise tüm öğrenciler, yetkili ise kendi okulu)
       const res = await fetch(
-        user.role === "sysadmin"
+        (user.role === "sysadmin" || user.role === "admin")
           ? `${apiUrl}/students/all`
           : `${apiUrl}/students/by_school/${schoolId}`,
         {
@@ -68,14 +68,17 @@ const AddStudent = () => {
 
       const data = await res.json();
 
-      const formattedData = data.map((s) => ({
+      const formattedData = (user.role === "yetkili" ? data : data.students).map((s) => ({
         id: s.id,
         studentName: `${s.ad} ${s.soyad}`,
         schoolName: s.school?.name || "",
         tcNo: s.tc,
-        class: s.branch.split("/")[0].trim(),
-        branch: s.branch.split("/")[1]?.trim() || "",
+        class: s.branch?.split("/")[0].trim() || "",
+        branch: s.branch?.split("/")[1]?.trim() || "",
+        last_login: s.last_login || "",
+        parentPhone: s.parent_phone || "",
       }));
+
 
       setStudents(formattedData);
 
@@ -184,8 +187,6 @@ const AddStudent = () => {
     );
   });
 
-  console.log(filteredStudents)
-
   const classOptions = [...new Set(students.map(s => s.class))];
   const branchOptions = [...new Set(students.filter(s => s.class === selectedClass).map(s => s.branch))];
 
@@ -245,7 +246,7 @@ const AddStudent = () => {
                 <TableCell sx={{ textAlign: "center" }}>{student.tcNo}</TableCell>
                 <TableCell sx={{ textAlign: "center" }}>{student.class}</TableCell>
                 <TableCell sx={{ textAlign: "center" }}>{student.branch}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{student.date}</TableCell>
+                <TableCell sx={{ textAlign: "center" }}>{student.last_login}</TableCell>
                 <TableCell sx={{ textAlign: "center" }}>
                   <IconButton color="primary" onClick={() => handleEditStudent(student)}><EditIcon /></IconButton>
                 </TableCell>

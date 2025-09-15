@@ -15,6 +15,8 @@ import SmsSettings from "./SmsSettings";
 import Settings from "./Settings";
 
 const AdminSuperAdminHomePage = () => {
+    const apiUrl = process.env.REACT_APP_API_URL;
+
     const navigate = useNavigate();
 
     const [userType, setUserType] = useState(null);
@@ -50,12 +52,13 @@ const AdminSuperAdminHomePage = () => {
 
             // Yetkili ise okul bilgisini çek
             if (user.role === "yetkili") {
-                fetch(`http://localhost/schools/by_admin/${user.id}`)
+                fetch(`${apiUrl}/schools/by_admin/${user.id}`)
                     .then(res => {
                         if (!res.ok) throw new Error("Okul bilgisi alınamadı");
                         return res.json();
                     })
                     .then(data => {
+                        console.log(data)
                         setSchool(data.school);
                     })
                     .catch(err => {
