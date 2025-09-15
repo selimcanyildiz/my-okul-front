@@ -128,6 +128,7 @@ const AddStudent = () => {
         program_tipi: getProgramTipi(row.sube_seviye),
         sube_seviye: row.ŞUBE?.toString(),
         sube_sinif: row.SINIF?.toString(),
+        okul_adi: row.okul_adi?.toString(),
         bgkull: row.bgkull || "",
         bgsif: row.bgsif || "",
         klbkull: row.klbkull || "",

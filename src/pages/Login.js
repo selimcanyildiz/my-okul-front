@@ -119,7 +119,16 @@ const Giris = () => {
             </Typography>
           </Box>
 
-          <Box component="form" noValidate autoComplete="off" sx={{ mx: 7 }}>
+          <Box
+            component="form"
+            noValidate
+            autoComplete="off"
+            sx={{ mx: 7 }}
+            onSubmit={(e) => {
+              e.preventDefault(); // Sayfa yenilenmesini engelle
+              handleLogin();
+            }}
+          >
             {/* Kullanıcı Adı */}
             <TextField
               fullWidth
@@ -128,8 +137,8 @@ const Giris = () => {
               margin="normal"
               value={kullaniciAdi}
               onChange={handleKullaniciAdiChange}
-              error={!!hata} // Hata varsa kırmızı çerçeve
-              helperText={hata} // Hata mesajını göster
+              error={!!hata}
+              helperText={hata}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -170,7 +179,7 @@ const Giris = () => {
                   <Checkbox
                     checked={beniHatirla}
                     onChange={(e) => setBeniHatirla(e.target.checked)}
-                    sx={{ transform: "scale(0.8)" }} // Checkbox'ı küçültme
+                    sx={{ transform: "scale(0.8)" }}
                   />
                 }
                 label={<Typography style={{ fontSize: "12px" }} variant="body2" color="textSecondary">Beni Hatırla</Typography>}
@@ -188,14 +197,15 @@ const Giris = () => {
             {/* Giriş Yap Butonu */}
             <Button
               fullWidth
+              type="submit"  // 🔑 submit tipi
               variant="contained"
               color="primary"
               sx={{ fontSize: "0.7rem", padding: "8px" }}
-              onClick={handleLogin}
             >
               Giriş Yap
             </Button>
           </Box>
+
         </Box>
       </Paper>
     </Box>
