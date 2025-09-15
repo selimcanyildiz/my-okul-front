@@ -33,6 +33,7 @@ const AddStudent = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
+  const [userSchoolId, setUserSchoolId] = useState();
 
   // Backend'den öğrencileri çek
   const fetchStudents = async () => {
@@ -52,6 +53,7 @@ const AddStudent = () => {
 
         const schoolData = await schoolRes.json();
         schoolId = schoolData.school?.id;
+        setUserSchoolId(schoolData.school?.id)
       }
 
       // Öğrencileri çek (sysadmin ise tüm öğrenciler, yetkili ise kendi okulu)
@@ -141,7 +143,7 @@ const AddStudent = () => {
         morpakull: row.morpakull || "",
         morpasif: row.morpasif || "",
         parent_phone: row.irtibat_tel,
-        school_id: 2
+        school_id: userSchoolId
       }));
 
       setStudents(formatted);
@@ -199,16 +201,16 @@ const AddStudent = () => {
         <Grid item xs={2}>
           <FormControl fullWidth>
             <InputLabel>Sınıf</InputLabel>
-            <Select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} label="Sınıf">
-              {classOptions.map(cls => <MenuItem key={cls} value={cls}>{cls}</MenuItem>)}
+            <Select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)} label="Şube">
+              {branchOptions.map(br => <MenuItem key={br} value={br}>{br}</MenuItem>)}
             </Select>
           </FormControl>
         </Grid>
         <Grid item xs={2}>
           <FormControl fullWidth>
             <InputLabel>Şube</InputLabel>
-            <Select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)} label="Şube">
-              {branchOptions.map(br => <MenuItem key={br} value={br}>{br}</MenuItem>)}
+            <Select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} label="Sınıf">
+              {classOptions.map(cls => <MenuItem key={cls} value={cls}>{cls}</MenuItem>)}
             </Select>
           </FormControl>
         </Grid>
