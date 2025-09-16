@@ -53,13 +53,16 @@ const Giris = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        backgroundImage: "url(/images/background.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       <Paper
         elevation={3}
         sx={{
           display: "flex",
-          width: "80%",
+          width: "70%",
           maxWidth: 1200,
           height: "70%",
           borderRadius: 2,
@@ -72,7 +75,7 @@ const Giris = () => {
         <Box
           sx={{
             flex: 1,
-            backgroundColor: "#f0f3f7",
+            background: "linear-gradient(135deg, #141A30, #5038ED)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -110,7 +113,7 @@ const Giris = () => {
           }}
         >
           <Box sx={{ mx: 2 }}>
-            <Typography style={{ marginTop: "20px" }} variant="h5" gutterBottom align="center">
+            <Typography style={{ marginTop: "20px", fontWeight: 900 }} variant="h5" gutterBottom align="center">
               GİRİŞ EKRANI
             </Typography>
 
@@ -132,7 +135,7 @@ const Giris = () => {
             {/* Kullanıcı Adı */}
             <TextField
               fullWidth
-              label="TC Kimlik No"
+              placeholder="TC Kimlik Numarası"
               variant="outlined"
               margin="normal"
               value={kullaniciAdi}
@@ -142,16 +145,20 @@ const Giris = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Person />
+                    <Person style={{color:"#1C1C1C"}} />
                   </InputAdornment>
                 ),
+                sx: {
+                  borderRadius: "12px",  // Yuvarlak köşeler
+                  backgroundColor:"#F0EDFFCC"
+                },
               }}
             />
 
             {/* Şifre */}
             <TextField
               fullWidth
-              label="Şifre"
+              placeholder="Şifre"
               variant="outlined"
               margin="normal"
               type={showPassword ? "text" : "password"}
@@ -160,7 +167,7 @@ const Giris = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock />
+                    <Lock style={{color:"#1C1C1C"}}/>
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -170,8 +177,13 @@ const Giris = () => {
                     </IconButton>
                   </InputAdornment>
                 ),
+                sx: {
+                  borderRadius: "12px", // Yuvarlak köşeler
+                  backgroundColor:"#F0EDFFCC"
+                },
               }}
             />
+
 
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <FormControlLabel
@@ -195,15 +207,29 @@ const Giris = () => {
             </Box>
 
             {/* Giriş Yap Butonu */}
-            <Button
-              fullWidth
-              type="submit"  // 🔑 submit tipi
-              variant="contained"
-              color="primary"
-              sx={{ fontSize: "0.7rem", padding: "8px" }}
-            >
-              Giriş Yap
-            </Button>
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: "#141A30", // siyah arka plan
+                  color: "#ffffff",           // beyaz yazı
+                  fontSize: "0.8rem",
+                  padding: "10px 30px",
+                  borderRadius: "12px",       // yuvarlak köşeler
+                  textTransform: "none",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)", // gölge ekledik
+                  "&:hover": {
+                    backgroundColor: "#333333", // hover rengi
+                    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.5)", // hover sırasında gölge artar
+                  },
+                }}
+              >
+                Giriş Yap
+              </Button>
+            </Box>
+
+
           </Box>
 
         </Box>
