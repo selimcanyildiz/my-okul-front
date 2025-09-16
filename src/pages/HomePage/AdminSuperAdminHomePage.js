@@ -27,20 +27,21 @@ const AdminSuperAdminHomePage = () => {
     const handleMenuClick = (menu) => setActiveMenu(menu);
 
     const renderContent = () => {
-        switch (activeMenu) {
-            case 'home':
-                return user.role === "sysadmin" ? <AdminHomePage /> : <SuperAdminHomePage />;
-            case 'addSchool':
-                return <AddSchool />;
-            case 'addStudent':
-                return <AddStudent />;
-            case 'sms':
-                return <SmsSettings />;
-            case 'settings':
-                return <Settings />;
-            default:
-                return null;
+        if (activeMenu === "home") {
+            if (user.role === "sysadmin") {
+                return <AdminHomePage />;
+            } else {
+                if (!school) {
+                    return <Typography>Okul bilgisi yükleniyor...</Typography>;
+                }
+                return <SuperAdminHomePage schoolId={school.id} />;
+            }
         }
+        if (activeMenu === "addSchool") return <AddSchool />;
+        if (activeMenu === "addStudent") return <AddStudent />;
+        if (activeMenu === "sms") return <SmsSettings />;
+        if (activeMenu === "settings") return <Settings />;
+        return null;
     };
 
     useEffect(() => {

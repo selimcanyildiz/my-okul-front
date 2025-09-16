@@ -142,7 +142,7 @@ const AddStudent = () => {
         sınavzasif: row.sınavzasif || "",
         morpakull: row.morpakull || "",
         morpasif: row.morpasif || "",
-        parent_phone: row.irtibat_tel,
+        parent_phone: row.irtibat_tel.toString(),
         school_id: userSchoolId
       }));
 

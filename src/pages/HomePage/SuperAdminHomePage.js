@@ -17,12 +17,13 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const SuperAdminHomePage = () => {
+const SuperAdminHomePage = ({ schoolId }) => {
     const navigate = useNavigate();
     const apiUrl = process.env.REACT_APP_API_URL;
 
     const [userType, setUserType] = useState(null);
     const [selectedSchool, setSelectedSchool] = useState("");
+    const [schools, setSchools] = useState([]); // okul listesi
     const [selectedStatus, setSelectedStatus] = useState("");
     const [students, setStudents] = useState([]);
     const [stats, setStats] = useState({
@@ -32,11 +33,18 @@ const SuperAdminHomePage = () => {
         total_schools: 0,
     });
 
-    const filteredStudents = students.filter((student) => {
-        const schoolMatch = selectedSchool ? student.school === selectedSchool : true;
-        const statusMatch = selectedStatus ? student.status === selectedStatus : true;
-        return schoolMatch && statusMatch;
-    });
+    // stats verisini çek
+    const fetchStats = async (school) => {
+        try {
+            const res = await fetch(`${apiUrl}/stats?school_id=${school}`);
+            if (!res.ok) throw new Error("Stats verisi alınamadı");
+            const data = await res.json();
+            setStats(data);
+            setStudents(data.recent_logins || []);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     useEffect(() => {
         const storedUserType = localStorage.getItem("userType");
@@ -44,50 +52,85 @@ const SuperAdminHomePage = () => {
             setUserType(storedUserType);
         } else {
             navigate("/");
+            return;
         }
 
-        // backendden stats bilgilerini çek
-        const fetchStats = async () => {
-            try {
-                const res = await fetch(`${apiUrl}/stats`); // endpointini buraya yaz
-                if (!res.ok) throw new Error("Stats verisi alınamadı");
-                const data = await res.json();
-                setStats(data);
-                setStudents(data.recent_logins)
-            } catch (err) {
-                console.error(err);
-            }
-        };
+        if (storedUserType === "sysadmin") {
+            const fetchSchools = async () => {
+                try {
+                    const res = await fetch(`${apiUrl}/schools`);
+                    if (!res.ok) throw new Error("Okullar alınamadı");
+                    const data = await res.json();
+                    const allOption = { id: 0, name: "Tümü" };
+                    setSchools([allOption, ...data]);
+                    setSelectedSchool(0);
+                    fetchStats(0);
+                } catch (err) {
+                    console.error(err);
+                }
+            };
 
-        fetchStats();
-    }, [navigate]);
+            fetchSchools();
+        } else {
+            fetchStats(schoolId);
+        }
+    }, [navigate, apiUrl, schoolId]);
+
+    useEffect(() => {
+        if (userType === "sysadmin" && selectedSchool) {
+            fetchStats(selectedSchool);
+        }
+    }, [selectedSchool]);
 
     return (
         <Box sx={{ marginTop: 1, padding: 2 }}>
-            <Grid container spacing={3}>
-                {/* Toplam Öğrenci Sayısı */}
-                {userType === "sysadmin" && <Grid item xs={3}>
-                    <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
-                        <Typography variant="h6">Kurum Sayısı</Typography>
-                        <Typography variant="h4" sx={{ color: "primary.main" }}>{stats.total_schools}</Typography>
-                    </Paper>
-                </Grid>}
+            <Grid container spacing={3} alignItems="center">
+                {userType === "sysadmin" && (
+                    <Grid item xs={12}>
+                        <FormControl sx={{ minWidth: 300 }}>
+                            <InputLabel id="school-select-label">Okul Seçin</InputLabel>
+                            <Select
+                                labelId="school-select-label"
+                                value={selectedSchool} // number olarak state
+                                onChange={(e) => {
+                                    const schoolId = Number(e.target.value); // string → number
+                                    setSelectedSchool(schoolId); // state değişiyor
+                                    fetchStats(schoolId);        // yeni okul verilerini çek
+                                }}
+                                sx={{ borderRadius: "20px" }}
+                            >
+                                {schools.map((school) => (
+                                    <MenuItem key={school.id} value={school.id}>
+                                        {school.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+
+                        </FormControl>
+                    </Grid>
+                )}
+
+                {/* Kartlar */}
+                {userType === "sysadmin" && (
+                    <Grid item xs={3}>
+                        <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
+                            <Typography variant="h6">Kurum Sayısı</Typography>
+                            <Typography variant="h4" sx={{ color: "primary.main" }}>{stats.total_schools}</Typography>
+                        </Paper>
+                    </Grid>
+                )}
                 <Grid item xs={userType === "sysadmin" ? 3 : 4}>
                     <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
                         <Typography variant="h6">Toplam Öğrenci</Typography>
                         <Typography variant="h4" sx={{ color: "primary.main" }}>{stats.total_students}</Typography>
                     </Paper>
                 </Grid>
-
-                {/* Aktif Öğrenci Sayısı */}
                 <Grid item xs={userType === "sysadmin" ? 3 : 4}>
                     <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
                         <Typography variant="h6">Aktif Öğrenci</Typography>
                         <Typography variant="h4" sx={{ color: "green" }}>{stats.active_students}</Typography>
                     </Paper>
                 </Grid>
-
-                {/* Pasif Öğrenci Sayısı */}
                 <Grid item xs={userType === "sysadmin" ? 3 : 4}>
                     <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
                         <Typography variant="h6">Pasif Öğrenci</Typography>
@@ -99,32 +142,12 @@ const SuperAdminHomePage = () => {
             {/* Öğrenci Tablosu */}
             <Box sx={{ marginTop: 4 }}>
                 <Grid container alignItems="center" justifyContent="space-between">
-                    {/* Sol: Son Giriş Tarihleri Başlığı */}
                     <Grid item>
                         <Typography variant="h6">Son Giriş Tarihleri</Typography>
                     </Grid>
-
-                    {/* Sağ: Filtreleme Seçenekleri */}
-                    <Grid item sx={{ display: "flex", gap: 2 }}>
-                        {/* Durum Seçme Dropdown'u */}
-                        <FormControl sx={{ minWidth: 200 }}>
-                            <InputLabel id="status-select-label">Durum Seçin</InputLabel>
-                            <Select
-                                labelId="status-select-label"
-                                label="Durum Seçin"
-                                value={selectedStatus}
-                                onChange={(e) => setSelectedStatus(e.target.value)}
-                                sx={{ borderRadius: "20px" }}
-                            >
-                                <MenuItem value="">Tüm Durumlar</MenuItem>
-                                <MenuItem value="">Aktif</MenuItem>
-                                <MenuItem value="inactive">Pasif</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
                 </Grid>
 
-                <TableContainer component={Paper} style={{ marginTop: "20px" }}>
+                <TableContainer component={Paper} sx={{ marginTop: 2 }}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -136,7 +159,7 @@ const SuperAdminHomePage = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredStudents.map((student) => (
+                            {students.map((student) => (
                                 <TableRow key={student.id}>
                                     <TableCell>{student.name}</TableCell>
                                     <TableCell>{student.school}</TableCell>
@@ -145,11 +168,11 @@ const SuperAdminHomePage = () => {
                                     <TableCell>
                                         <Typography
                                             sx={{
-                                                color: student.status !== "active" ? "green" : "red",
-                                                fontWeight: "bold"
+                                                color: student.status === "active" ? "green" : "red",
+                                                fontWeight: "bold",
                                             }}
                                         >
-                                            {student.status !== "active" ? "Aktif" : "Pasif"}
+                                            {student.status === "active" ? "Aktif" : "Pasif"}
                                         </Typography>
                                     </TableCell>
                                 </TableRow>
