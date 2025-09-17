@@ -187,6 +187,7 @@ const AddStudent = () => {
       if (!res.ok) throw new Error("Sunucu hatası: " + res.status);
       const data = await res.json();
       console.log("Eklenen öğrenciler:", data);
+      fetchStudents();
       alert("Öğrenciler başarıyla yüklendi!");
     } catch (err) {
       console.error(err);
