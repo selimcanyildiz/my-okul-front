@@ -21,6 +21,8 @@ import {
   DialogContent,
   DialogActions,
   InputAdornment,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -43,8 +45,14 @@ const AddStudent = () => {
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
   const [userSchoolId, setUserSchoolId] = useState();
+  const [userSchoolName, setUserSchoolName] = useState();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" veya "error"
+
 
 
   // Backend'den öğrencileri çek
@@ -66,6 +74,7 @@ const AddStudent = () => {
         const schoolData = await schoolRes.json();
         schoolId = schoolData.school?.id;
         setUserSchoolId(schoolData.school?.id)
+        setUserSchoolName(schoolData.school.name)
       }
 
       // Öğrencileri çek (sysadmin ise tüm öğrenciler, yetkili ise kendi okulu)
@@ -115,17 +124,106 @@ const AddStudent = () => {
 
   const handleInputChange = (e) => { setNewStudent({ ...newStudent, [e.target.name]: e.target.value }); };
 
-  const handleAddStudent = () => {
-    if (isEditMode) {
-      setStudents(students.map(s => s.id === newStudent.id ? newStudent : s));
-    } else {
-      const newStudentData = { ...newStudent, id: students.length + 1 };
-      setStudents([...students, newStudentData]);
+  const handleAddStudent = async () => {
+    try {
+      const studentData = {
+        ...newStudent,
+        program_tipi: newStudent.program_tipi?.toString() || "",
+        okul_adi: userSchoolName,
+        school_id: userSchoolId
+      };
+
+      if (!isEditMode) {
+        // Yeni öğrenci ekleme
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/students/add`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(studentData),
+        });
+
+        if (!response.ok) throw new Error("Öğrenci eklenirken hata oluştu");
+
+        const result = await response.json();
+
+        setSnackbarMessage("Öğrenci başarıyla eklendi!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+
+        handleCloseModal();
+      } else {
+        // Öğrenci düzenleme
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/students/update/${newStudent.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(studentData),
+        });
+
+        if (!response.ok) throw new Error("Öğrenci güncellenirken hata oluştu");
+
+        const result = await response.json();
+
+        setSnackbarMessage("Öğrenci başarıyla güncellendi!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+
+        handleCloseModal();
+      }
+
+      fetchStudents(); // listeyi güncelle
+    } catch (error) {
+      console.error("Hata:", error);
+
+      setSnackbarMessage(error.message || "Bir hata oluştu");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
-    handleCloseModal();
   };
 
-  const handleEditStudent = (student) => { setNewStudent(student); setIsEditMode(true); setOpenModal(true); };
+
+  const handleEditClick = async (studentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${apiUrl}/students/${studentId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Öğrenci bilgileri alınamadı");
+
+      const data = await res.json();
+
+      // state'i doldur
+      setNewStudent({
+        id: data.id,
+        tc: data.tc,
+        ogrenci_no: data.ogrenci_no,
+        ad: data.ad,
+        soyad: data.soyad,
+        cinsiyet: data.cinsiyet || "",
+        program_tipi: data.program_tipi || "",
+        sube_seviye: data.sube_seviye || "",
+        sube_sinif: data.sube_sinif || "",
+        okul_adi: data.okul_adi || "",
+        bgkull: data.bgkull || "",
+        bgsif: data.bgsif || "",
+        klbkull: data.klbkull || "",
+        klbsif: data.klbsif || "",
+        sınavzakull: data.sınavzakull || "",
+        sınavzasif: data.sınavzasif || "",
+        morpakull: data.morpakull || "",
+        morpasif: data.morpasif || "",
+        cambridgekull: data.cambridgekull || "",
+        cambridgesif: data.cambridgesif || "",
+        parent_phone: data.parent_phone || "",
+        school_id: data.school_id || userSchoolId,
+      });
+
+      setIsEditMode(true);
+      setOpenModal(true);
+
+    } catch (err) {
+      console.error(err);
+      alert("Öğrenci bilgileri alınamadı!");
+    }
+  };
 
   // Excel yükleme
   const handleFileUpload = (e) => {
@@ -186,7 +284,6 @@ const AddStudent = () => {
       });
       if (!res.ok) throw new Error("Sunucu hatası: " + res.status);
       const data = await res.json();
-      console.log("Eklenen öğrenciler:", data);
       fetchStudents();
       alert("Öğrenciler başarıyla yüklendi!");
     } catch (err) {
@@ -208,7 +305,6 @@ const AddStudent = () => {
 
       const data = await response.json();
       fetchStudents();
-      console.log("Silme başarılı:", data);
       return data;
     } catch (error) {
       console.error("Hata:", error.message);
@@ -250,7 +346,7 @@ const AddStudent = () => {
               Excel Yükle
               <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
             </Button>
-            <Button style={{color:"white"}} sx={{bgcolor:"green", borderRadius:"20px"}} startIcon={<CheckIcon style={{color:"white"}} />} onClick={handleSubmit} disabled={students.length === 0}>Onayla</Button>
+            <Button style={{ color: "white" }} sx={{ bgcolor: "green", borderRadius: "20px" }} startIcon={<CheckIcon style={{ color: "white" }} />} onClick={handleSubmit} disabled={students.length === 0}>Onayla</Button>
           </Grid>
         </Grid>
 
@@ -316,7 +412,7 @@ const AddStudent = () => {
                     {student.last_login ? "Aktif" : "Pasif"}
                   </TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    <IconButton color="primary" onClick={() => handleEditStudent(student)}>
+                    <IconButton color="primary" onClick={() => handleEditClick(student.id)}>
                       <MoreVertIcon style={{ color: "#28245C" }} />
                     </IconButton>
                     <IconButton
@@ -375,6 +471,17 @@ const AddStudent = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

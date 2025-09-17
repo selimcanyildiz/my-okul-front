@@ -3,9 +3,10 @@ import { Box, Button, Typography } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import SchoolIcon from '@mui/icons-material/School';
-import MessageIcon from '@mui/icons-material/Message';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import MessageIcon from '@mui/icons-material/Message';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import { useNavigate } from "react-router-dom";
 import AdminHomePage from "./AdminHomePage";
 import SuperAdminHomePage from "./SuperAdminHomePage";
@@ -59,7 +60,6 @@ const AdminSuperAdminHomePage = () => {
                         return res.json();
                     })
                     .then(data => {
-                        console.log(data)
                         setSchool(data.school);
                     })
                     .catch(err => {
@@ -116,7 +116,7 @@ const AdminSuperAdminHomePage = () => {
                             component="img"
                             src="/images/school.png"
                             alt="Logo"
-                            sx={{ height: 70, marginRight: 4 , width:"90%" }}
+                            sx={{ height: 70, marginRight: 4, width: "90%" }}
                         />
                     </Box>
 
@@ -206,6 +206,64 @@ const AdminSuperAdminHomePage = () => {
                     >
                         Öğrenci Bilgileri
                     </Button>
+                    <Button
+                        sx={{
+                            color: activeMenu === 'report' ? "#28245c" : "gray",
+                            marginBottom: 2,
+                            display: 'flex',
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            position: "relative",
+                            textTransform: "capitalize",
+                            textAlign: "left",
+                            paddingLeft: "20px",
+                            width: "100%",
+                            "&::before": {
+                                content: '""',
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                height: "100%",
+                                width: "4px",
+                                backgroundColor: activeMenu === 'report' ? "#28245c" : "transparent",
+                                borderRadius: "2px",
+                            },
+                        }}
+                        startIcon={<AssessmentIcon />}
+                    // onClick={() => handleMenuClick('report')}
+                    >
+                        Raporlama
+                    </Button>
+                    {user.role === "sysadmin" && <Button
+                        sx={{
+                            color: activeMenu === 'sms' ? "#28245c" : "gray",
+                            marginBottom: 2,
+                            display: 'flex',
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            position: "relative",
+                            textTransform: "capitalize",
+                            textAlign: "left",
+                            paddingLeft: "20px",
+                            width: "100%",
+                            "&::before": {
+                                content: '""',
+                                position: "absolute",
+                                left: 0,
+                                top: 0,
+                                height: "100%",
+                                width: "4px",
+                                backgroundColor: activeMenu === 'sms' ? "#28245c" : "transparent",
+                                borderRadius: "2px",
+                            },
+                        }}
+                        startIcon={<MessageIcon />}
+                    // onClick={() => handleMenuClick('sms')}
+                    >
+                        SMS Ayarları
+                    </Button>}
+
+
                 </Box>
 
                 <Box sx={{ marginTop: "auto", marginBottom: 2 }}>
@@ -280,17 +338,17 @@ const AdminSuperAdminHomePage = () => {
                         position: "sticky",
                         top: 0,
                         zIndex: 1,
-                        marginTop:"20px"
+                        marginTop: "20px"
                     }}
                 >
                     <Box>
-                        <Typography variant="body1" sx={{ color: "black", fontWeight: "bold", marginTop:"-10px", marginLeft:"20px" }}>
+                        <Typography variant="body1" sx={{ color: "black", fontWeight: "bold", marginTop: "-10px", marginLeft: "20px" }}>
                             {getMenuLabel()}
                         </Typography>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-                        <Typography variant="h6" sx={{ color: "black", fontSize:"18px" }}>
-                            {user?.full_name || "Recep Özgül" }
+                        <Typography variant="h6" sx={{ color: "black", fontSize: "18px" }}>
+                            {user?.full_name || "Recep Özgül"}
                         </Typography>
                         <Typography variant="body2" sx={{ color: "gray" }}>
                             {school?.name || "Sistem Admini"}

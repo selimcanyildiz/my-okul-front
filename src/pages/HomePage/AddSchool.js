@@ -3,6 +3,7 @@ import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableH
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AddSchoolModal from "./AddSchoolModal";
 
 const AddSchool = () => {
@@ -78,6 +79,28 @@ const AddSchool = () => {
     }
   };
 
+  const handleDeleteSchool = async (schoolId) => {
+    if (!window.confirm("Bu okul ve tüm öğrencileri silinecek! Devam edilsin mi?")) return;
+
+    try {
+      const res = await fetch(`${apiUrl}/schools/delete/${schoolId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+
+      alert(data.message);
+
+      // Tablodan sil
+      setSchools(schools.filter(s => s.id !== schoolId));
+    } catch (err) {
+      console.error("Okul silinirken hata:", err.message);
+      alert("Okul silinirken hata oluştu!");
+    }
+  };
+
   const filteredSchools = schools.filter(s =>
     s.name?.toLowerCase().includes(searchText.toLowerCase()) ||
     s.admin.full_name?.toLowerCase().includes(searchText.toLowerCase())
@@ -131,6 +154,15 @@ const AddSchool = () => {
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEditSchool(s)}>
                     <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      handleDeleteSchool(s.id);
+                      // setOpenConfirm(true);
+                    }}
+                  >
+                    <DeleteIcon style={{ color: "#28245C" }} />
                   </IconButton>
                 </TableCell>
               </TableRow>

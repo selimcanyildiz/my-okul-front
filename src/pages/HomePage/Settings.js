@@ -7,24 +7,21 @@ import {
     TextField,
     Button,
     Avatar,
+    Alert,
+    Snackbar
 } from "@mui/material";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { useNavigate } from "react-router-dom";
 
-// Placeholder logo (replace with your actual logo URL)
 const logoUrl = "https://via.placeholder.com/40";
 
 const Settings = () => {
     const navigate = useNavigate();
-    const [userType, setUserType] = useState("");
-    const [userData, setUserData] = useState({
-        name: "",
-        tcNumber: "",
-        password: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    const [user, setUser] = useState({
+        platforms: {}
     });
     const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
     const [isEditingPassword, setIsEditingPassword] = useState(false);
@@ -34,485 +31,239 @@ const Settings = () => {
         confirmPassword: "",
     });
 
-    // Fetch user type from localStorage
-    useEffect(() => {
-        const storedUserType = localStorage.getItem("userType");
-        if (storedUserType) {
-            setUserType(storedUserType);
-            // Load sample data based on user type
-            if (storedUserType === "admin") {
-                setUserData({
-                    name: "Ali Yılmaz",
-                    tcNumber: "12345678901",
-                    password: "admin123",
-                    firstName: "Ali",
-                    lastName: "Yılmaz",
-                    email: "aliyilmaz@example.com",
-                    phone: "0 (550) 123 45 67",
-                });
-            } else if (storedUserType === "manager") {
-                setUserData({
-                    name: "Selim Can",
-                    tcNumber: "98765432109",
-                    password: "manager123",
-                    firstName: "Selim",
-                    lastName: "Can",
-                    email: "selimcan@example.com",
-                    phone: "0 (555) 987 65 43",
-                });
-            } else if (storedUserType === "student") {
-                setUserData({
-                    name: "Selim Can Yıldız",
-                    tcNumber: "62458456123",
-                    password: "student123",
-                    firstName: "Selim Can",
-                    lastName: "Yıldız",
-                    email: "selimcan@example.com",
-                    phone: "0 (535) 154 95 84",
-                });
-            }
-        } else {
-            navigate("/"); // Redirect to homepage if no user type
-        }
-    }, [navigate]);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-    // Handle input changes for personal info
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (!storedUser || !storedUser.id) {
+            navigate("/");
+            return;
+        }
+        const token = localStorage.getItem("token");
+
+        fetch(`${apiUrl}/students/${storedUser.id}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Öğrenci bilgileri alınamadı");
+                return res.json();
+            })
+            .then(data => {
+                setUser({
+                    id: storedUser.id,
+                    name: `${data.ad} ${data.soyad}`,
+                    tcNumber: data.tc,
+                    password: data.password,
+                    firstName: data.ad,
+                    lastName: data.soyad,
+                    email: data.email || "",
+                    phone: data.parent_phone || "",
+                    platforms: {
+                        bilisimgaraji: { username: data.bilisimgarajikull, password: data.bilisimgarajisif },
+                        kolibri: { username: data.kolibrikull, password: data.kolibrisif },
+                        morpa: { username: data.morpakull, password: data.morpasif },
+                        sınavza: { username: data.sınavzakull, password: data.sınavzasif },
+                        cambridge: { username: data.cambridgekull, password: data.cambridgesif },
+                    }
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                setSnackbarMessage("Öğrenci bilgileri alınamadı.");
+                setSnackbarSeverity("error");
+                setSnackbarOpen(true);
+            });
+
+    }, [apiUrl, navigate]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setUserData({
-            ...userData,
-            [name]: value,
-        });
+        setUser(prev => ({ ...prev, [name]: value }));
     };
 
-    // Handle input changes for password
     const handlePasswordChange = (e) => {
         const { name, value } = e.target;
-        setPasswordData({
-            ...passwordData,
-            [name]: value,
-        });
+        setPasswordData(prev => ({ ...prev, [name]: value }));
     };
 
-    // Handle update action for personal info
-    const handleUpdatePersonalInfo = () => {
-        if (isEditingPersonalInfo) {
-            console.log("Updated Personal Information:", userData);
-            alert("Kişisel bilgileriniz güncellendi!");
+    const handleTogglePassword = async () => {
+    if (isEditingPassword) {
+        if (passwordData.oldPassword !== user.password) {
+            setSnackbarMessage("Eski şifreniz yanlış!");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+            return;
         }
-        setIsEditingPersonalInfo(!isEditingPersonalInfo);
-    };
 
-    // Handle update action for password
-    const handleUpdatePassword = () => {
-        if (isEditingPassword) {
-            if (passwordData.newPassword !== passwordData.confirmPassword) {
-                alert("Yeni şifreler eşleşmiyor!");
-                return;
-            }
-            console.log("Updated Password:", passwordData);
-            alert("Şifreniz güncellendi!");
+        if (passwordData.newPassword.length < 6) {
+            setSnackbarMessage("Yeni şifre en az 6 karakter olmalıdır!");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+            return;
         }
-        setIsEditingPassword(!isEditingPassword);
-    };
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setSnackbarMessage("Yeni şifreler eşleşmiyor!");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${apiUrl}/students/update_password/${user.id}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ new_password: passwordData.newPassword }),
+            });
+            if (!res.ok) throw new Error("Şifre güncellenirken hata oluştu");
+
+            const updatedUser = { ...user, password: passwordData.newPassword };
+            setUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            setSnackbarMessage("Şifreniz başarıyla güncellendi!");
+            setSnackbarSeverity("success");
+            setSnackbarOpen(true);
+            setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+        } catch (err) {
+            setSnackbarMessage(err.message || "Şifre güncellenirken hata oluştu");
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
+        }
+    }
+    setIsEditingPassword(!isEditingPassword);
+};
+
 
     return (
-        <Box
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "100vh",
-                backgroundColor: "#f5f5f5",
-                padding: 2,
-            }}
-        >
-            <Paper
-                sx={{
-                    padding: 4,
-                    borderRadius: "16px",
-                    width: "100%",
-                }}
+        <>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <Paper sx={{ padding: "150px", borderRadius: "16px", width: "100%", marginTop: "-100px" }}>
+
+                    {/* First Card */}
+                    <Paper sx={{ padding: 3, marginBottom: 4, borderRadius: "12px", boxShadow: "0px 2px 10px rgba(0,0,0,0.1)" }}>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={2}><PersonOutlineIcon style={{fontSize:"45px", padding:"10px", marginTop:"10px"}} /></Grid>
+                            <Grid item xs={3}>
+                                <Typography variant="h6" sx={{ fontWeight: "bold" }}>{user.name}</Typography>
+                                <Typography variant="body2" sx={{ color: "#666" }}>Öğrenci</Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Typography variant="h6" sx={{ fontWeight: "bold" }}>TC Kimlik No</Typography>
+                                <Typography variant="body2">{user.tcNumber}</Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography variant="h6" sx={{ color: "#666", fontWeight: "bold" }}>Şifre</Typography>
+                                <Typography variant="body2">{user.password}</Typography>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+
+                    {/* Personal Info Card */}
+                    <Paper sx={{ padding: 3, marginBottom: 4, borderRadius: "12px", boxShadow: "0px 2px 10px rgba(0,0,0,0.1)", position: "relative" }}>
+                        <Typography variant="h5" sx={{ marginBottom: 3, fontWeight: "bold", fontSize: "16px" }}>Kişisel Bilgiler</Typography>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} sm={6}>
+                                <Typography>Ad</Typography>
+                                <TextField fullWidth name="firstName" value={user.firstName} onChange={handleInputChange} disabled={!isEditingPersonalInfo} />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Typography>Soyad</Typography>
+                                <TextField fullWidth name="lastName" value={user.lastName} onChange={handleInputChange} disabled={!isEditingPersonalInfo} />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <Typography>Telefon</Typography>
+                                <TextField fullWidth name="phone" value={user.phone} onChange={handleInputChange} disabled={!isEditingPersonalInfo} />
+                            </Grid>
+                        </Grid>
+                    </Paper>
+
+                    {/* Password Card */}
+                    <Paper sx={{ padding: 3, borderRadius: "12px", boxShadow: "0px 2px 10px rgba(0,0,0,0.1)", position: "relative" }}>
+                        <Button style={{ border: "1px solid gray", borderRadius: "20px", color: isEditingPassword ? "white" : "black", backgroundColor: isEditingPassword ? "green" : "white" }} onClick={handleTogglePassword} endIcon={<BorderColorIcon style={{ fontSize: "15px" }} />}
+                            sx={{ position: "absolute", top: 16, right: 16 }}>
+                            {isEditingPassword ? "Kaydet" : "Düzenle"}
+                        </Button>
+                        <Typography variant="h5" sx={{ marginBottom: 3, fontWeight: "bold", fontSize: "16px" }}>Şifre Değiştir</Typography>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} sm={4}>
+                                <TextField fullWidth label="Eski Şifre" name="oldPassword" type="password" value={passwordData.oldPassword} onChange={handlePasswordChange} disabled={!isEditingPassword} />
+                            </Grid>
+                            <Grid item xs={12} sm={4}>
+                                <TextField fullWidth label="Yeni Şifre" name="newPassword" type="password" value={passwordData.newPassword} onChange={handlePasswordChange} disabled={!isEditingPassword} />
+                            </Grid>
+                            <Grid item xs={12} sm={4}>
+                                <TextField fullWidth label="Yeni Şifre Onay" name="confirmPassword" type="password" value={passwordData.confirmPassword} onChange={handlePasswordChange} disabled={!isEditingPassword} />
+                            </Grid>
+                        </Grid>
+                    </Paper>
+
+                    {/* Platforms Card */}
+                    <Paper sx={{ padding: 3, borderRadius: "12px", boxShadow: "0px 2px 10px rgba(0,0,0,0.1)", marginTop: 4 }}>
+                        <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold", fontSize: "16px" }}>
+                            Platform Bilgileri
+                        </Typography>
+
+                        {user?.platforms && (
+                            <>
+                                {/* Başlık Satırı */}
+                                <Grid container spacing={2} sx={{ mb: 1, fontWeight: "600", pb: 1, borderBottom: "2px solid #ccc" }}>
+                                    <Grid item xs={4}>Panel Adı</Grid>
+                                    <Grid item xs={4}>Kullanıcı Adı</Grid>
+                                    <Grid item xs={4}>Şifre</Grid>
+                                </Grid>
+
+                                {/* Platform Satırları */}
+                                {Object.keys(user.platforms).map((platform, index, array) => (
+                                    <Grid
+                                        container
+                                        spacing={2}
+                                        key={platform}
+                                        sx={{
+                                            mb: 1,
+                                            alignItems: "center",
+                                            borderBottom: index !== array.length - 1 ? "1px solid #eee" : "none", // son satır hariç çizgi
+                                            py: 1
+                                        }}
+                                    >
+                                        <Grid item xs={4} style={{ fontWeight: "bold" }}>
+                                            {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            {user.platforms[platform].username || "-"}
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            {user.platforms[platform].password || "-"}
+                                        </Grid>
+                                    </Grid>
+                                ))}
+                            </>
+                        )}
+                    </Paper>
+
+
+
+                </Paper>
+            </Box>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >
-                {/* First Card: Logo, Name, TC, and Password */}
-                <Paper
-                    sx={{
-                        padding: 3,
-                        marginBottom: 4,
-                        borderRadius: "12px",
-                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-                    }}
-                >
-                    <Grid container spacing={2} alignItems="center">
-                        {/* Logo */}
-                        <Grid item xs={2}>
-                            <Avatar
-                                src={logoUrl}
-                                sx={{ width: 40, height: 40 }}
-                            />
-                        </Grid>
-
-                        {/* Name and Role */}
-                        <Grid item xs={3}>
-                            <Typography
-                                variant="h6"
-                                sx={{ fontWeight: "bold", color: "#333" }}
-                            >
-                                {userData.name}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666" }}
-                            >
-                                {userType === "admin" ? "Admin" : userType === "manager" ? "Yetkili" : "Öğrenci"}
-                            </Typography>
-                        </Grid>
-
-                        {/* TC Kimlik No */}
-                        <Grid item xs={3}>
-                            <Typography
-                                variant="body2"
-                                sx={{ fontWeight: "bold", color: "#333" }}
-                            >
-                                TC Kimlik No
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "#333" }}>
-                                {userData.tcNumber}
-                            </Typography>
-                        </Grid>
-
-                        {/* Password */}
-                        <Grid item xs={4}>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", fontWeight: "bold" }}
-                            >
-                                Şifre
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "#333" }}>
-                                {userData.password}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </Paper>
-
-                {/* Second Card: Personal Information */}
-                <Paper
-                    sx={{
-                        padding: 3,
-                        marginBottom: 4,
-                        borderRadius: "12px",
-                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-                        position: "relative",
-                    }}
-                >
-                    {/* Edit Button */}
-                    <Button
-                        onClick={handleUpdatePersonalInfo}
-                        endIcon={<BorderColorIcon style={{ fontSize: "15px" }} />}
-                        sx={{
-                            position: "absolute",
-                            top: 16,
-                            right: 16,
-                            padding: "8px 16px",
-                            borderRadius: "20px",
-                            bgcolor: "white",
-                            color: "gray",
-                            border: "1px solid gray",
-                            textTransform: "none",
-                            fontSize: "13px"
-                        }}
-                    >
-                        {isEditingPersonalInfo ? "Kaydet" : "Düzenle"}
-                    </Button>
-
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            marginBottom: 3,
-                            fontWeight: "bold",
-                            fontSize: "16px",
-                            color: "#333",
-                        }}
-                    >
-                        Kişisel Bilgiler
-                    </Typography>
-
-                    <Grid container spacing={3} style={{ marginTop: "5px" }}>
-                        {/* First Name and Last Name */}
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                fullWidth
-                                label="İsim"
-                                name="firstName"
-                                value={userData.firstName}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={!isEditingPersonalInfo}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "12px",
-                                    },
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                fullWidth
-                                label="Soyisim"
-                                name="lastName"
-                                value={userData.lastName}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={!isEditingPersonalInfo}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "12px",
-                                    },
-                                }}
-                            />
-                        </Grid>
-
-                        {/* Email and Phone */}
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                fullWidth
-                                label="E-Mail"
-                                name="email"
-                                value={userData.email}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={!isEditingPersonalInfo}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "12px",
-                                    },
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                fullWidth
-                                label="Telefon"
-                                name="phone"
-                                value={userData.phone}
-                                onChange={handleInputChange}
-                                variant="outlined"
-                                disabled={!isEditingPersonalInfo}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "12px",
-                                    },
-                                }}
-                            />
-                        </Grid>
-                    </Grid>
-                </Paper>
-
-                {/* Third Card: Password Change */}
-                <Paper
-                    sx={{
-                        padding: 3,
-                        borderRadius: "12px",
-                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-                        position: "relative",
-                    }}
-                >
-                    {/* Edit Button */}
-                    <Button
-                        onClick={handleUpdatePassword}
-                        endIcon={<BorderColorIcon style={{ fontSize: "15px" }} />}
-                        sx={{
-                            position: "absolute",
-                            top: 16,
-                            right: 16,
-                            padding: "8px 16px",
-                            borderRadius: "20px",
-                            bgcolor: "white",
-                            color: "gray",
-                            border: "1px solid gray",
-                            textTransform: "none",
-                            fontSize: "13px"
-                        }}
-                    >
-                        {isEditingPassword ? "Kaydet" : "Düzenle"}
-                    </Button>
-
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            marginBottom: 3,
-                            fontWeight: "bold",
-                            fontSize: "16px",
-                            color: "#333",
-                        }}
-                    >
-                        Şifre Değiştir
-                    </Typography>
-
-                    <Grid container spacing={3} style={{ marginTop: "5px" }}>
-                        {/* Old Password */}
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                fullWidth
-                                label="Eski Şifre"
-                                name="oldPassword"
-                                type="password"
-                                value={passwordData.oldPassword}
-                                onChange={handlePasswordChange}
-                                variant="outlined"
-                                disabled={!isEditingPassword}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "12px",
-                                    },
-                                }}
-                            />
-                        </Grid>
-
-                        {/* New Password */}
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                fullWidth
-                                label="Yeni Şifre"
-                                name="newPassword"
-                                type="password"
-                                value={passwordData.newPassword}
-                                onChange={handlePasswordChange}
-                                variant="outlined"
-                                disabled={!isEditingPassword}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "12px",
-                                    },
-                                }}
-                            />
-                        </Grid>
-
-                        {/* Confirm New Password */}
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                fullWidth
-                                label="Yeni Şifre Onay"
-                                name="confirmPassword"
-                                type="password"
-                                value={passwordData.confirmPassword}
-                                onChange={handlePasswordChange}
-                                variant="outlined"
-                                disabled={!isEditingPassword}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "12px",
-                                    },
-                                }}
-                            />
-                        </Grid>
-                    </Grid>
-                </Paper>
-
-                {/* Fourth Card: Platform Info */}
-                {userType === "student" && <Paper
-                    sx={{
-                        padding: 3,
-                        marginTop: 4,
-                        borderRadius: "12px",
-                        boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-                    }}
-                >
-                    <Grid container spacing={2} alignItems="center">
-                        {/* Platform 1 */}
-                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Typography
-                                variant="h6"
-                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
-                            >
-                                Bilişim Garajı
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                kullanici_adi_egitim
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                şifre_egitim
-                            </Typography>
-                        </Grid>
-
-                        {/* Platform 2 */}
-                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Typography
-                                variant="h6"
-                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
-                            >
-                                Bookr Class
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                kullanici_adi_bookr
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                şifre_bookr
-                            </Typography>
-                        </Grid>
-
-                        {/* Platform 3 */}
-                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Typography
-                                variant="h6"
-                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
-                            >
-                                Rokodemi
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                kullanici_adi_rokodemi
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                şifre_rokodemi
-                            </Typography>
-                        </Grid>
-
-                        {/* Platform 4 */}
-                        <Grid item xs={3} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Typography
-                                variant="h6"
-                                sx={{ fontWeight: "bold", color: "#333", textAlign: 'center' }}
-                            >
-                                Eyotek
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                kullanici_adi_eyotek
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "#666", textAlign: 'center' }}
-                            >
-                                şifre_eyotek
-                            </Typography>
-                        </Grid>
-
-                    </Grid>
-                </Paper>}
-                
-            </Paper>
-        </Box>
+                <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        </>
     );
 };
 

@@ -16,12 +16,14 @@ import {
     MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import PieChart from "../../components/PieChart";
 
 const SuperAdminHomePage = ({ schoolId }) => {
     const navigate = useNavigate();
     const apiUrl = process.env.REACT_APP_API_URL;
 
     const [userType, setUserType] = useState(null);
+    const [user, setUser] = useState();
     const [selectedSchool, setSelectedSchool] = useState("");
     const [schools, setSchools] = useState([]); // okul listesi
     const [selectedStatus, setSelectedStatus] = useState("");
@@ -47,6 +49,8 @@ const SuperAdminHomePage = ({ schoolId }) => {
     };
 
     useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem("user"));
+        setUser(userData)
         const storedUserType = localStorage.getItem("userType");
         if (storedUserType) {
             setUserType(storedUserType);
@@ -85,102 +89,127 @@ const SuperAdminHomePage = ({ schoolId }) => {
     return (
         <Box sx={{ marginTop: 1, padding: 2 }}>
             <Grid container spacing={3} alignItems="center">
-                {userType === "sysadmin" && (
-                    <Grid item xs={12}>
-                        <FormControl sx={{ minWidth: 300 }}>
-                            <InputLabel id="school-select-label">Okul Seçin</InputLabel>
-                            <Select
-                                labelId="school-select-label"
-                                value={selectedSchool} // number olarak state
-                                onChange={(e) => {
-                                    const schoolId = Number(e.target.value); // string → number
-                                    setSelectedSchool(schoolId); // state değişiyor
-                                    fetchStats(schoolId);        // yeni okul verilerini çek
-                                }}
-                                sx={{ borderRadius: "20px" }}
-                            >
-                                {schools.map((school) => (
-                                    <MenuItem key={school.id} value={school.id}>
-                                        {school.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
+                {user?.role === "sysadmin" && <Grid item xs={user.role === "sysadmin" ? 3 : 4}>
+                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
+                        <Box sx={{ mr: 2 }}>
+                            <img
+                                src="/images/kurum-sayisi.png"
+                                alt="Kurum"
+                                style={{ width: 50, height: 50 }}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Kurum Sayısı</Typography>
+                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.total_schools}</Typography>
+                        </Box>
+                    </Paper>
+                </Grid>}
 
-                        </FormControl>
-                    </Grid>
-                )}
 
-                {/* Kartlar */}
-                {userType === "sysadmin" && (
-                    <Grid item xs={3}>
-                        <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
-                            <Typography variant="h6">Kurum Sayısı</Typography>
-                            <Typography variant="h4" sx={{ color: "primary.main" }}>{stats.total_schools}</Typography>
-                        </Paper>
-                    </Grid>
-                )}
-                <Grid item xs={userType === "sysadmin" ? 3 : 4}>
-                    <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
-                        <Typography variant="h6">Toplam Öğrenci</Typography>
-                        <Typography variant="h4" sx={{ color: "primary.main" }}>{stats.total_students}</Typography>
+                <Grid item xs={user?.role === "sysadmin" ? 3 : 4}>
+                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
+                        <Box sx={{ mr: 2 }}>
+                            <img
+                                src="/images/toplam-sayisi.png"
+                                alt="Kurum"
+                                style={{ width: 50, height: 50 }}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Toplam Öğrenci Sayısı</Typography>
+                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.total_students}</Typography>
+                        </Box>
                     </Paper>
                 </Grid>
-                <Grid item xs={userType === "sysadmin" ? 3 : 4}>
-                    <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
-                        <Typography variant="h6">Aktif Öğrenci</Typography>
-                        <Typography variant="h4" sx={{ color: "green" }}>{stats.active_students}</Typography>
+
+                <Grid item xs={user?.role === "sysadmin" ? 3 : 4}>
+                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
+                        <Box sx={{ mr: 2 }}>
+                            <img
+                                src="/images/aktif-sayisi.png"
+                                alt="Kurum"
+                                style={{ width: 50, height: 50 }}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Aktif Öğrenci Sayısı</Typography>
+                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.active_students}</Typography>
+                        </Box>
                     </Paper>
                 </Grid>
-                <Grid item xs={userType === "sysadmin" ? 3 : 4}>
-                    <Paper sx={{ padding: 1, textAlign: "center", borderRadius: "16px" }}>
-                        <Typography variant="h6">Pasif Öğrenci</Typography>
-                        <Typography variant="h4" sx={{ color: "red" }}>{stats.passive_students}</Typography>
+
+                <Grid item xs={user?.role === "sysadmin" ? 3 : 4}>
+                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
+                        <Box sx={{ mr: 2 }}>
+                            <img
+                                src="/images/pasif-sayisi.png"
+                                alt="Kurum"
+                                style={{ width: 50, height: 50 }}
+                            />
+                        </Box>
+                        <Box>
+                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Pasif Öğrenci Sayısı</Typography>
+                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.passive_students}</Typography>
+                        </Box>
                     </Paper>
                 </Grid>
+
+
+
             </Grid>
 
             {/* Öğrenci Tablosu */}
             <Box sx={{ marginTop: 4 }}>
-                <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item>
+                <Grid container spacing={2}>
+                    {/* Sol taraf: Tablo */}
+                    <Grid item xs={12} md={8}>
                         <Typography variant="h6">Son Giriş Tarihleri</Typography>
+
+                        <TableContainer component={Paper} sx={{ marginTop: 2 }}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Öğrenci Adı</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Okul</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Sınıf</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Son Giriş Tarihi</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {students.map((student) => (
+                                        <TableRow key={student.id}>
+                                            <TableCell>{student.name}</TableCell>
+                                            <TableCell>{student.school}</TableCell>
+                                            <TableCell>{student.branch}</TableCell>
+                                            <TableCell>{student.lastLogin}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+
+                    {/* Sağ taraf: Chart */}
+                    <Grid item xs={12} md={4}>
+                        <Paper sx={{ p: 2, textAlign: "center" }}>
+                            <PieChart
+                                data={[
+                                    { name: "Aktif Öğrenci", value: stats.active_students },
+                                    { name: "Pasif Öğrenci", value: stats.passive_students },
+                                ]}
+                                total={stats.active_students + stats.passive_students}
+                                selectedSchool={selectedSchool}
+                                setSelectedSchool={setSelectedSchool}
+                                schools={schools}
+                                user={user}
+                            />
+                        </Paper>
                     </Grid>
                 </Grid>
-
-                <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ fontWeight: "bold" }}>Öğrenci Adı</TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>Okul</TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>Sınıf</TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>Son Giriş Tarihi</TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>Durum</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {students.map((student) => (
-                                <TableRow key={student.id}>
-                                    <TableCell>{student.name}</TableCell>
-                                    <TableCell>{student.school}</TableCell>
-                                    <TableCell>{student.branch}</TableCell>
-                                    <TableCell>{student.lastLogin}</TableCell>
-                                    <TableCell>
-                                        <Typography
-                                            sx={{
-                                                color: student.status === "active" ? "green" : "red",
-                                                fontWeight: "bold",
-                                            }}
-                                        >
-                                            {student.status === "active" ? "Aktif" : "Pasif"}
-                                        </Typography>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
             </Box>
+
+
+
         </Box>
     );
 };

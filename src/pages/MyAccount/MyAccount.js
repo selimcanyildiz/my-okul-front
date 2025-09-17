@@ -40,37 +40,37 @@ const MyAccount = () => {
   };
 
   useEffect(() => {
-      const fetchData = async () => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user) {
-          setUser(user);
-  
-          const token = localStorage.getItem("token");
-          try {
-            const res = await fetch(`${apiUrl}/schools/${user.school_id}`, {
-              headers: {
-                "Authorization": `Bearer ${token}`,
-              },
-            });
-  
-            if (!res.ok) {
-              const errorText = await res.text();
-              throw new Error(`HTTP ${res.status}: ${errorText}`);
-            }
-  
-            const data = await res.json();
-            setSchool(data); // 🔹 school state'i güncelleniyor
-          } catch (err) {
-            console.error("Okul bilgisi alınırken hata:", err.message);
+    const fetchData = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        setUser(user);
+
+        const token = localStorage.getItem("token");
+        try {
+          const res = await fetch(`${apiUrl}/schools/${user.school_id}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+
+          if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errorText}`);
           }
-  
-        } else {
-          navigate("/");
+
+          const data = await res.json();
+          setSchool(data); // 🔹 school state'i güncelleniyor
+        } catch (err) {
+          console.error("Okul bilgisi alınırken hata:", err.message);
         }
-      };
-  
-      fetchData();
-    }, [navigate]);
+
+      } else {
+        navigate("/");
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
 
 
   return (
@@ -89,7 +89,7 @@ const MyAccount = () => {
         }}
       >
         {/* Sol: Logo */}
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => navigate("/anasayfa")}>
           <img
             src="/images/school.png" // Logo resmi
             alt="School Logo"

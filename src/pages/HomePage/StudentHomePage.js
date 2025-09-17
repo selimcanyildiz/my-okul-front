@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
+import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Alert, Snackbar } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import PersonIcon from '@mui/icons-material/Person';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
@@ -11,7 +11,15 @@ const StudentHomePage = () => {
 
   const [user, setUser] = useState({});
   const [school, setSchool] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null); // Menü anchor
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // Şifre değişikliği ile ilgili state
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -19,35 +27,6 @@ const StudentHomePage = () => {
   const handleHomePage = () => { handleClose(); navigate("/anasayfa"); };
   const handleMyAccount = () => { handleClose(); navigate("/hesabim"); };
   const handleLogout = () => { handleClose(); navigate("/"); };
-
-  const platformNames = {
-    bilisimgaraji: "Bilişim Garajı",
-    kolibri: "Kolibri",
-    morpa: "Morpa Kampüs",
-    sınavza: "Sınavza",
-    cambridge: "Cambridge"
-  };
-
-
-  const handleLoginClick = async (platformName) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${apiUrl}/login-to-platform`, {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer " + token,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ platformName }),
-      });
-      const data = await res.json();
-      if (data.redirect_url) window.open(data.redirect_url, "_blank");
-      else alert("Yönlendirme URL'si alınamadı.");
-    } catch (error) {
-      console.error("Hata:", error);
-      alert("Bir hata oluştu: " + error.message);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +41,11 @@ const StudentHomePage = () => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
           setSchool(data);
+
+          // Şifre default mu kontrol et
+          if (userData.password === "123456") {
+            setOpenPasswordDialog(true);
+          }
         } catch (err) {
           console.error("Okul bilgisi alınırken hata:", err.message);
         }
@@ -70,7 +54,81 @@ const StudentHomePage = () => {
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [navigate, apiUrl]);
+
+  const handlePasswordChange = async () => {
+    if (!newPassword || !confirmPassword) {
+      setSnackbarMessage("Lütfen yeni şifreyi giriniz.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setSnackbarMessage("Şifreler eşleşmiyor!");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${apiUrl}/students/update_password/${user.id}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ new_password: newPassword }),
+      });
+
+
+      if (!res.ok) throw new Error("Şifre güncellenirken hata oluştu");
+
+      // Başarılı
+      const updatedUser = { ...user, password: newPassword };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      setOpenPasswordDialog(false);
+      setSnackbarMessage("Şifreniz başarıyla güncellendi!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+
+    } catch (err) {
+      console.error(err);
+      setSnackbarMessage(err.message || "Şifre güncellenirken hata oluştu");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const handleLoginClick = async (platformName) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${apiUrl}/login-to-platform`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ platformName }),
+      });
+
+      const data = await res.json();
+
+      if (data.redirect_url) {
+        window.open(data.redirect_url, "_blank");
+      } else {
+        alert("Yönlendirme URL'si alınamadı.");
+      }
+    } catch (error) {
+      console.error("Hata:", error);
+      alert("Bir hata oluştu: " + error.message);
+    }
+  };
+
+  const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sınavza: "Sınavza", cambridge: "Cambridge" };
 
   return (
     <Box
@@ -118,8 +176,7 @@ const StudentHomePage = () => {
             </Typography>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
               <MenuItem onClick={handleHomePage}>Ana Sayfa</MenuItem>
-              {/* <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem> */}
-              <MenuItem>Hesabım</MenuItem>
+              <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem>
               <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
             </Menu>
           </Box>
@@ -193,10 +250,10 @@ const StudentHomePage = () => {
                 </Typography>
 
                 <Box sx={{ display: "flex", gap: 7, mt: 3 }}>
-                  <Typography variant="body1" sx={{ fontWeight: "bold",  fontSize:"20px" }}>
+                  <Typography variant="body1" sx={{ fontWeight: "bold", fontSize: "20px" }}>
                     Kullanıcı Adı: <Typography component="span" sx={{ fontWeight: "normal" }}>{user[platform + "kull"] || "kullanıcı"}</Typography>
                   </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: "bold",  fontSize:"20px" }}>
+                  <Typography variant="body1" sx={{ fontWeight: "bold", fontSize: "20px" }}>
                     Şifre: <Typography component="span" sx={{ fontWeight: "normal" }}>{user[platform + "sif"] || "*****"}</Typography>
                   </Typography>
                 </Box>
@@ -215,6 +272,55 @@ const StudentHomePage = () => {
           </Grid>
         ))}
       </Grid>
+
+      <Dialog open={openPasswordDialog} onClose={() => { }} disableEscapeKeyDown>
+        <DialogTitle>Zorunlu Şifre Değişikliği</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ mb: 2 }}>Lütfen default şifrenizi değiştirin.</Typography>
+          <TextField
+            label="Yeni Şifre"
+            type="password"
+            fullWidth
+            sx={{ mb: 2 }}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            error={newPassword.length > 0 && newPassword.length < 6}
+            helperText={newPassword.length > 0 && newPassword.length < 6 ? "Şifre en az 6 karakter olmalıdır" : ""}
+          />
+          <TextField
+            label="Yeni Şifre (Tekrar)"
+            type="password"
+            fullWidth
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={confirmPassword.length > 0 && confirmPassword !== newPassword}
+            helperText={confirmPassword.length > 0 && confirmPassword !== newPassword ? "Şifreler eşleşmiyor" : ""}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handlePasswordChange}
+            variant="contained"
+            color="primary"
+            disabled={newPassword.length < 6 || newPassword !== confirmPassword} // butonu disable ediyoruz
+          >
+            Kaydet
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
 
     </Box>
 

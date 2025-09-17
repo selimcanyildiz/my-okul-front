@@ -92,6 +92,7 @@ const Giris = () => {
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
               borderRadius: "10%",
+              padding:"0 50px"
             }}
           />
         </Box>
