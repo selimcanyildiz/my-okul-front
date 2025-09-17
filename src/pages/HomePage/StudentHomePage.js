@@ -118,7 +118,8 @@ const StudentHomePage = () => {
             </Typography>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
               <MenuItem onClick={handleHomePage}>Ana Sayfa</MenuItem>
-              <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem>
+              {/* <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem> */}
+              <MenuItem>Hesabım</MenuItem>
               <MenuItem onClick={handleLogout}>Çıkış Yap</MenuItem>
             </Menu>
           </Box>

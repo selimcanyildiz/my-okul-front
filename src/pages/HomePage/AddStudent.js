@@ -249,7 +249,7 @@ const AddStudent = () => {
               Excel Yükle
               <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
             </Button>
-            <Button sx={{bgcolor:"green", borderRadius:"20px", color:"white"}} startIcon={<CheckIcon style={{color:"white"}} />} onClick={handleSubmit} disabled={students.length === 0}>Onayla</Button>
+            <Button style={{color:"white"}} sx={{bgcolor:"green", borderRadius:"20px"}} startIcon={<CheckIcon style={{color:"white"}} />} onClick={handleSubmit} disabled={students.length === 0}>Onayla</Button>
           </Grid>
         </Grid>
 

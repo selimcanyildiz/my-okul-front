@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField, Grid } from "@mui/material";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField, Grid, InputAdornment } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/Search';
+import AddIcon from '@mui/icons-material/Add';
 import AddSchoolModal from "./AddSchoolModal";
 
 const AddSchool = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
-  
+
   const [schools, setSchools] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -87,12 +89,22 @@ const AddSchool = () => {
     <Box sx={{ marginTop: 1, padding: 2 }}>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
         <Grid item xs={2}>
-          <Button variant="contained" color="primary" onClick={handleOpenModal} fullWidth>
+          <Button startIcon={<AddIcon />} sx={{ borderRadius: "20px", bgcolor: "#28245C", color: "white" }} variant="contained" color="primary" onClick={handleOpenModal} fullWidth>
             Kurum Ekle
           </Button>
         </Grid>
         <Grid item xs={4}>
-          <TextField label="Ara" variant="outlined" value={searchText} onChange={(e) => setSearchText(e.target.value)} fullWidth />
+          {/* <TextField label="Ara" variant="outlined" value={searchText} onChange={(e) => setSearchText(e.target.value)} fullWidth /> */}
+          <TextField placeholder="Ara" InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon style={{ color: "#1C1C1C" }} />
+              </InputAdornment>
+            ),
+            sx: {
+              borderRadius: "12px", // Yuvarlak köşeler
+            },
+          }} variant="outlined" value={searchText} onChange={(e) => setSearchText(e.target.value)} fullWidth />
         </Grid>
       </Grid>
 
