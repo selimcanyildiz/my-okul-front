@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import PersonIcon from '@mui/icons-material/Person';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
 import { useNavigate } from "react-router-dom";
 
 const StudentHomePage = () => {
@@ -122,7 +123,7 @@ const StudentHomePage = () => {
             </Menu>
           </Box>
           <IconButton onClick={handleClick} sx={{ color: "black" }}>
-            <PersonIcon />
+            <ClearAllIcon />
           </IconButton>
         </Box>
       </Box>

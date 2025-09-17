@@ -15,11 +15,20 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  InputAdornment,
 } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
-import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import SearchIcon from '@mui/icons-material/Search';
+import CheckIcon from '@mui/icons-material/Check';
+import AddIcon from '@mui/icons-material/Add';
 import AddStudentModal from "./AddStudentModal";
 import * as XLSX from "xlsx";
 
@@ -34,6 +43,9 @@ const AddStudent = () => {
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
   const [userSchoolId, setUserSchoolId] = useState();
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
+
 
   // Backend'den öğrencileri çek
   const fetchStudents = async () => {
@@ -75,6 +87,7 @@ const AddStudent = () => {
         studentName: `${s.ad} ${s.soyad}`,
         schoolName: s.school?.name || "",
         tcNo: s.tc,
+        password: s.password,
         class: s.branch?.split("/")[0].trim() || "",
         branch: s.branch?.split("/")[1]?.trim() || "",
         last_login: s.last_login || "",
@@ -181,6 +194,27 @@ const AddStudent = () => {
     }
   };
 
+  const deleteStudent = async (studentId) => {
+    try {
+      const response = await fetch(`${apiUrl}/students/delete/${studentId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Silme başarısız");
+      }
+
+      const data = await response.json();
+      fetchStudents();
+      console.log("Silme başarılı:", data);
+      return data;
+    } catch (error) {
+      console.error("Hata:", error.message);
+      throw error;
+    }
+  };
+
   const filteredStudents = students.filter((student) => {
     return (
       student.studentName?.toLowerCase().includes(searchText.toLowerCase()) &&
@@ -193,80 +227,154 @@ const AddStudent = () => {
   const branchOptions = [...new Set(students.filter(s => s.class === selectedClass).map(s => s.branch))];
 
   return (
-    <Box sx={{ marginTop: 1, padding: 2 }}>
-      <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-        <Grid item xs={2}>
-          <Button variant="contained" color="primary" onClick={handleOpenModal} fullWidth>Öğrenci Ekle</Button>
-        </Grid>
-        <Grid item xs={2}>
-          <FormControl fullWidth>
-            <InputLabel>Sınıf</InputLabel>
-            <Select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)} label="Şube">
-              {branchOptions.map(br => <MenuItem key={br} value={br}>{br}</MenuItem>)}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={2}>
-          <FormControl fullWidth>
-            <InputLabel>Şube</InputLabel>
-            <Select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} label="Sınıf">
-              {classOptions.map(cls => <MenuItem key={cls} value={cls}>{cls}</MenuItem>)}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={2}>
-          <TextField label="Ara" variant="outlined" value={searchText} onChange={(e) => setSearchText(e.target.value)} fullWidth />
-        </Grid>
-        <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-          <Button startIcon={<DownloadIcon />} variant="outlined" color="primary" style={{ borderRadius: "20px" }}>Excel İndir</Button>
-          <Button startIcon={<UploadIcon />} variant="outlined" color="primary" component="label" style={{ borderRadius: "20px" }}>
-            Excel Yükle
-            <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
-          </Button>
-          <Button onClick={handleSubmit} disabled={students.length === 0}>Yükle</Button>
-        </Grid>
-      </Grid>
+    <>
+      <Box sx={{ marginTop: 1, padding: 2 }}>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Öğrenci Adı</TableCell>
-              <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Okul Adı</TableCell>
-              <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>TC No</TableCell>
-              <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Sınıf</TableCell>
-              <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Şube</TableCell>
-              <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Son Giriş</TableCell>
-              <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>İşlemler</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredStudents.map(student => (
-              <TableRow key={student.id}>
-                <TableCell sx={{ textAlign: "center" }}>{student.studentName}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{student.schoolName}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{student.tcNo}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{student.class}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{student.branch}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>{student.last_login}</TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <IconButton color="primary" onClick={() => handleEditStudent(student)}><EditIcon /></IconButton>
-                </TableCell>
+        <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
+          <Grid item xs={8}>
+            <TextField placeholder="Ara" InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon style={{ color: "#1C1C1C" }} />
+                </InputAdornment>
+              ),
+              sx: {
+                borderRadius: "12px", // Yuvarlak köşeler
+              },
+            }} variant="outlined" value={searchText} onChange={(e) => setSearchText(e.target.value)} fullWidth />
+          </Grid>
+          <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+            <Button startIcon={<DownloadIcon style={{ color: "#28245C" }} />} variant="outlined" color="primary" style={{ borderRadius: "20px", border: "1px solid #E9E9E9" }}>Excel İndir</Button>
+            <Button startIcon={<UploadIcon style={{ color: "#28245C" }} />} variant="outlined" color="primary" component="label" style={{ borderRadius: "20px", border: "1px solid #E9E9E9" }}>
+              Excel Yükle
+              <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
+            </Button>
+            <Button sx={{bgcolor:"green", borderRadius:"20px", color:"white"}} startIcon={<CheckIcon style={{color:"white"}} />} onClick={handleSubmit} disabled={students.length === 0}>Onayla</Button>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
+          <Grid item xs={2}>
+            <Button startIcon={<AddIcon />} sx={{ borderRadius: "20px", bgcolor: "#28245C", color: "white" }} variant="contained" color="primary" onClick={handleOpenModal} fullWidth>Öğrenci Ekle</Button>
+          </Grid>
+          <Grid item xs={2}>
+            <FormControl fullWidth>
+              <InputLabel>Sınıf</InputLabel>
+              <Select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)} label="Şube">
+                {branchOptions.map(br => <MenuItem key={br} value={br}>{br}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={2}>
+            <FormControl fullWidth>
+              <InputLabel>Şube</InputLabel>
+              <Select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} label="Sınıf">
+                {classOptions.map(cls => <MenuItem key={cls} value={cls}>{cls}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Öğrenci Adı</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Okul Adı</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>TC No</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Şifre</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Sınıf</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Şube</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Son Giriş</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Durum</TableCell>
+                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>İşlemler</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {filteredStudents.map((student, index) => (
+                <TableRow
+                  key={student.id}
+                  sx={{
+                    backgroundColor: index % 2 === 0 ? "white" : "#f5f5f5" // çift satırlar beyaz, tek satırlar açık gri
+                  }}
+                >
+                  <TableCell sx={{ textAlign: "center" }}>{student.studentName}</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>{student.schoolName}</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>{student.tcNo}</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>{student.password}</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>{student.branch}</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>{student.class}</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>{student.last_login}</TableCell>
+                  <TableCell
+                    sx={{
+                      textAlign: "center",
+                      color: student.last_login ? "green" : "red",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {student.last_login ? "Aktif" : "Pasif"}
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    <IconButton color="primary" onClick={() => handleEditStudent(student)}>
+                      <MoreVertIcon style={{ color: "#28245C" }} />
+                    </IconButton>
+                    <IconButton
+                      color="primary"
+                      onClick={() => {
+                        setStudentToDelete(student);
+                        setOpenConfirm(true);
+                      }}
+                    >
+                      <DeleteIcon style={{ color: "#28245C" }} />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
 
-      <AddStudentModal
-        openModal={openModal}
-        handleCloseModal={handleCloseModal}
-        handleInputChange={handleInputChange}
-        newStudent={newStudent}
-        handleAddStudent={handleAddStudent}
-        isEditMode={isEditMode}
-      />
-    </Box>
+          </Table>
+        </TableContainer>
+
+        <AddStudentModal
+          openModal={openModal}
+          handleCloseModal={handleCloseModal}
+          handleInputChange={handleInputChange}
+          newStudent={newStudent}
+          handleAddStudent={handleAddStudent}
+          isEditMode={isEditMode}
+        />
+      </Box>
+
+      <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
+        <DialogTitle>Silme Onayı</DialogTitle>
+        <DialogContent>
+          {studentToDelete && (
+            <p>
+              <b>{studentToDelete.studentName}</b> adlı öğrenciyi silmek istediğinize
+              emin misiniz?
+            </p>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirm(false)} color="primary">
+            Vazgeç
+          </Button>
+          <Button
+            onClick={() => {
+              if (studentToDelete) {
+                deleteStudent(studentToDelete.id);
+              }
+              setOpenConfirm(false);
+              setStudentToDelete(null);
+            }}
+            color="error"
+            variant="contained"
+          >
+            Sil
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

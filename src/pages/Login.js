@@ -65,7 +65,7 @@ const Giris = () => {
           width: "70%",
           maxWidth: 1200,
           height: "70%",
-          borderRadius: 2,
+          borderRadius: "24px",
           position: "relative",
           overflow: "hidden",
           backgroundColor: "white",
@@ -84,12 +84,14 @@ const Giris = () => {
         >
           <Box
             sx={{
-              width: "60%",
+              width: "50%",
               height: "80%",
-              backgroundImage: "url(/images/loginbg.png)", // Resim ekledik
+              border: "1px solid white",
+              backgroundColor: "#5a529e",
+              backgroundImage: "url(/images/loginbg.png)",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              borderRadius: "8px", // Kartın kenarları yuvarlak
+              borderRadius: "10%",
             }}
           />
         </Box>
@@ -97,14 +99,11 @@ const Giris = () => {
         {/* Sağ Kısım: Form Alanı */}
         <Box
           sx={{
-            flex: 1,
-            p: 8,
+            flex: 1, // sadece flex: 1 kullanıyoruz
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            maxWidth: 380,
-            margin: "0 auto",
             backgroundColor: "white",
             borderTopRightRadius: 2,
             borderBottomRightRadius: 2,
@@ -139,18 +138,30 @@ const Giris = () => {
               variant="outlined"
               margin="normal"
               value={kullaniciAdi}
-              onChange={handleKullaniciAdiChange}
-              error={!!hata}
-              helperText={hata}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= 11) {
+                  setKullaniciAdi(value);
+                }
+                setHata(""); // hata sıfırlansın
+              }}
+              error={!!hata || (kullaniciAdi.length > 0 && kullaniciAdi.length < 11)}
+              helperText={
+                hata ||
+                (kullaniciAdi.length > 0 && kullaniciAdi.length < 11
+                  ? "TC kimlik numarası 11 haneli olmalıdır."
+                  : "")
+              }
+              inputProps={{ maxLength: 11 }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Person style={{color:"#1C1C1C"}} />
+                    <Person style={{ color: "#1C1C1C" }} />
                   </InputAdornment>
                 ),
                 sx: {
-                  borderRadius: "12px",  // Yuvarlak köşeler
-                  backgroundColor:"#F0EDFFCC"
+                  borderRadius: "12px", // Yuvarlak köşeler
+                  backgroundColor: "#F0EDFFCC"
                 },
               }}
             />
@@ -167,7 +178,7 @@ const Giris = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock style={{color:"#1C1C1C"}}/>
+                    <Lock style={{ color: "#1C1C1C" }} />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -179,7 +190,7 @@ const Giris = () => {
                 ),
                 sx: {
                   borderRadius: "12px", // Yuvarlak köşeler
-                  backgroundColor:"#F0EDFFCC"
+                  backgroundColor: "#F0EDFFCC"
                 },
               }}
             />

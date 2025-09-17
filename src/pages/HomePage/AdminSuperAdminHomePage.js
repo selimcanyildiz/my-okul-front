@@ -114,9 +114,9 @@ const AdminSuperAdminHomePage = () => {
                     <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
                         <Box
                             component="img"
-                            src="/images/school.jpg"
+                            src="/images/school.png"
                             alt="Logo"
-                            sx={{ height: 70, marginRight: 2 }}
+                            sx={{ height: 70, marginRight: 4 , width:"90%" }}
                         />
                     </Box>
 
@@ -280,19 +280,20 @@ const AdminSuperAdminHomePage = () => {
                         position: "sticky",
                         top: 0,
                         zIndex: 1,
+                        marginTop:"20px"
                     }}
                 >
                     <Box>
-                        <Typography variant="body1" sx={{ color: "black", fontWeight: "bold" }}>
+                        <Typography variant="body1" sx={{ color: "black", fontWeight: "bold", marginTop:"-10px", marginLeft:"20px" }}>
                             {getMenuLabel()}
                         </Typography>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-                        <Typography variant="h5" sx={{ color: "black" }}>
-                            {user?.full_name}
+                        <Typography variant="h6" sx={{ color: "black", fontSize:"18px" }}>
+                            {user?.full_name || "Recep Özgül" }
                         </Typography>
                         <Typography variant="body2" sx={{ color: "gray" }}>
-                            {school?.name}
+                            {school?.name || "Sistem Admini"}
                         </Typography>
                     </Box>
                 </Box>

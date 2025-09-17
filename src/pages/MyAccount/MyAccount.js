@@ -91,7 +91,7 @@ const MyAccount = () => {
         {/* Sol: Logo */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <img
-            src="/images/school.jpg" // Logo resmi
+            src="/images/school.png" // Logo resmi
             alt="School Logo"
             style={{ width: "170px", height: "60px", marginRight: "16px" }} // Logo boyutu ve sağ boşluk
           />
