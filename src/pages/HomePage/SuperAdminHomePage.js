@@ -62,7 +62,7 @@ const SuperAdminHomePage = ({ schoolId }) => {
         if (storedUserType === "sysadmin") {
             const fetchSchools = async () => {
                 try {
-                    const res = await fetch(`${apiUrl}/schools`);
+                    const res = await fetch(`${apiUrl}/schools/`);
                     if (!res.ok) throw new Error("Okullar alınamadı");
                     const data = await res.json();
                     const allOption = { id: 0, name: "Tümü" };
