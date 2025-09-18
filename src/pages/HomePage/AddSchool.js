@@ -28,7 +28,7 @@ const AddSchool = () => {
 
   const fetchSchools = async () => {
     try {
-      const res = await fetch(`${apiUrl}/schools`, {
+      const res = await fetch(`${apiUrl}/schools/`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) throw new Error(await res.text());
