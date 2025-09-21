@@ -37,6 +37,9 @@ import * as XLSX from "xlsx";
 const AddStudent = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const [students, setStudents] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [newStudent, setNewStudent] = useState({});
@@ -48,50 +51,70 @@ const AddStudent = () => {
   const [userSchoolName, setUserSchoolName] = useState();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
+  const [schools, setSchools] = useState([]);
+  const [selectedSchoolId, setSelectedSchoolId] = useState(null);
+  const [view, setView] = useState(false);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" veya "error"
 
-
-
-  // Backend'den öğrencileri çek
-  const fetchStudents = async () => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
-
+  const fetchSchools = async () => {
     try {
-      let schoolId = null;
-
-      if (user.role === "yetkili") {
-        // Yetkilinin okulunu al
-        const schoolRes = await fetch(`${apiUrl}/schools/by_admin/${user.id}`, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
-
-        if (!schoolRes.ok) throw new Error(`HTTP ${schoolRes.status}: ${await schoolRes.text()}`);
-
-        const schoolData = await schoolRes.json();
-        schoolId = schoolData.school?.id;
-        setUserSchoolId(schoolData.school?.id)
-        setUserSchoolName(schoolData.school.name)
-      }
-
-      // Öğrencileri çek (sysadmin ise tüm öğrenciler, yetkili ise kendi okulu)
-      const res = await fetch(
-        (user.role === "sysadmin" || user.role === "admin")
-          ? `${apiUrl}/students/all`
-          : `${apiUrl}/students/by_school/${schoolId}`,
-        {
-          headers: { "Authorization": `Bearer ${token}` }
-        }
-      );
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      const res = await fetch(`${apiUrl}/schools/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Okul listesi alınamadı");
 
       const data = await res.json();
+      setSchools(data || []);
 
-      const formattedData = (user.role === "yetkili" ? data : data.students).map((s) => ({
+      if (data && data.length > 0) {
+        const firstSchoolId = data[0].id;
+        setSelectedSchoolId(firstSchoolId);
+        fetchStudents(firstSchoolId);
+      }
+    } catch (err) {
+      console.error("Okullar alınırken hata:", err.message);
+    }
+  };
+
+  const fetchStudents = async (schoolIdParam = null) => {
+    try {
+      let schoolId = schoolIdParam;
+
+      // Eğer user "yetkili" ise önce kendi okulunu al
+      if (user.role === "yetkili") {
+        const schoolRes = await fetch(
+          `${apiUrl}/schools/by_admin/${user.id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!schoolRes.ok) throw new Error(`HTTP ${schoolRes.status}`);
+        const schoolData = await schoolRes.json();
+
+        schoolId = schoolData.school?.id;
+        setUserSchoolId(schoolId);
+        setUserSchoolName(schoolData.school?.name);
+      }
+
+      // Öğrenci listesi endpoint seçimi
+      let studentsUrl;
+      if (user.role === "sysadmin") {
+        studentsUrl = `${apiUrl}/students/by_school/${schoolId}`;
+      } else if (user.role === "admin") {
+        studentsUrl = `${apiUrl}/students/all`;
+      } else {
+        studentsUrl = `${apiUrl}/students/by_school/${schoolId}`;
+      }
+
+      const res = await fetch(studentsUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      const data = await res.json();
+
+      const formattedData = data.map((s) => ({
         id: s.id,
         studentName: `${s.ad} ${s.soyad}`,
         schoolName: s.school?.name || "",
@@ -103,23 +126,28 @@ const AddStudent = () => {
         parentPhone: s.parent_phone || "",
       }));
 
-
       setStudents(formattedData);
 
       if (formattedData.length > 0) {
         setSelectedClass(formattedData[0].class);
         setSelectedBranch(formattedData[0].branch);
       }
-
     } catch (err) {
       console.error("Öğrenciler alınırken hata:", err.message);
     }
   };
 
-
-  useEffect(() => { fetchStudents(); }, []);
+  useEffect(() => {
+    if (!user) return;
+    if (user.role === "sysadmin") {
+      fetchSchools();
+    } else {
+      fetchStudents();
+    }
+  }, []);
 
   const handleOpenModal = () => { setOpenModal(true); setIsEditMode(false); };
+
   const handleCloseModal = () => { setOpenModal(false); setNewStudent({}); };
 
   const handleInputChange = (e) => { setNewStudent({ ...newStudent, [e.target.name]: e.target.value }); };
@@ -135,7 +163,7 @@ const AddStudent = () => {
 
       if (!isEditMode) {
         // Yeni öğrenci ekleme
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/students/add`, {
+        const response = await fetch(`${apiUrl}/students/add`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(studentData),
@@ -152,7 +180,7 @@ const AddStudent = () => {
         handleCloseModal();
       } else {
         // Öğrenci düzenleme
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/students/update/${newStudent.id}`, {
+        const response = await fetch(`${apiUrl}/students/update/${newStudent.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(studentData),
@@ -265,6 +293,7 @@ const AddStudent = () => {
       }
     };
     reader.readAsBinaryString(file);
+    setView(true);
   };
 
   const getProgramTipi = (sinif) => {
@@ -286,6 +315,7 @@ const AddStudent = () => {
       const data = await res.json();
       fetchStudents();
       alert("Öğrenciler başarıyla yüklendi!");
+      setView(false);
     } catch (err) {
       console.error(err);
       alert("Öğrenciler yüklenirken hata oluştu!");
@@ -326,7 +356,24 @@ const AddStudent = () => {
   return (
     <>
       <Box sx={{ marginTop: 1, padding: 2 }}>
-
+        {user.role === "sysadmin" && <Grid item xs={3}>
+          <FormControl fullWidth>
+            <InputLabel>Okul Seç</InputLabel>
+            <Select
+              value={selectedSchoolId || ""}
+              onChange={(e) => {
+                setSelectedSchoolId(e.target.value);
+                fetchStudents(e.target.value);
+              }}
+            >
+              {schools.map((school) => (
+                <MenuItem key={school.id} value={school.id}>
+                  {school.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>}
         <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
           <Grid item xs={8}>
             <TextField placeholder="Ara" InputProps={{
@@ -346,7 +393,7 @@ const AddStudent = () => {
               Excel Yükle
               <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
             </Button>
-            <Button style={{ color: "white" }} sx={{ bgcolor: "green", borderRadius: "20px" }} startIcon={<CheckIcon style={{ color: "white" }} />} onClick={handleSubmit} disabled={students.length === 0}>Onayla</Button>
+            {view && <Button style={{ color: "white" }} sx={{ bgcolor: "green", borderRadius: "20px" }} startIcon={<CheckIcon style={{ color: "white" }} />} onClick={handleSubmit}>Onayla</Button>}
           </Grid>
         </Grid>
 

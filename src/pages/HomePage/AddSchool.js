@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField, Grid, InputAdornment } from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddSchoolModal from "./AddSchoolModal";
 
 const AddSchool = () => {
@@ -153,7 +153,7 @@ const AddSchool = () => {
                 <TableCell>{s.admin.password}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEditSchool(s)}>
-                    <EditIcon />
+                    <MoreVertIcon style={{ color: "#28245C" }} />
                   </IconButton>
                   <IconButton
                     color="primary"

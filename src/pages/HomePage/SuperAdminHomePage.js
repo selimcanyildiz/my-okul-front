@@ -26,7 +26,6 @@ const SuperAdminHomePage = ({ schoolId }) => {
     const [user, setUser] = useState();
     const [selectedSchool, setSelectedSchool] = useState("");
     const [schools, setSchools] = useState([]); // okul listesi
-    const [selectedStatus, setSelectedStatus] = useState("");
     const [students, setStudents] = useState([]);
     const [stats, setStats] = useState({
         total_students: 0,
