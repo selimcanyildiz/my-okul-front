@@ -1,6 +1,18 @@
 import React, { useState } from "react";
-import { TextField, Button, Typography, Box, Paper, IconButton, InputAdornment, Checkbox, FormControlLabel } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Paper,
+  IconButton,
+  InputAdornment,
+  Checkbox,
+  FormControlLabel,
+  useMediaQuery,
+} from "@mui/material";
 import { Visibility, VisibilityOff, Person, Lock } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 
 const Giris = () => {
@@ -10,8 +22,11 @@ const Giris = () => {
   const [kullaniciAdi, setKullaniciAdi] = useState("");
   const [sifre, setSifre] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [hata, setHata] = useState(""); // Hata mesajı için state
-  const [beniHatirla, setBeniHatirla] = useState(false); // Beni hatırla state
+  const [hata, setHata] = useState("");
+  const [beniHatirla, setBeniHatirla] = useState(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleLogin = async () => {
     try {
@@ -25,7 +40,10 @@ const Giris = () => {
 
       if (res.ok) {
         localStorage.setItem("token", data.access_token);
-        localStorage.setItem("userType", data.user.role ? data.user.role : "student");
+        localStorage.setItem(
+          "userType",
+          data.user.role ? data.user.role : "student"
+        );
         localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/anasayfa");
       } else {
@@ -40,84 +58,113 @@ const Giris = () => {
     navigate("/sifremi-unuttum");
   };
 
-  const handleKullaniciAdiChange = (e) => {
-    const value = e.target.value;
-    setKullaniciAdi(value);
-    setHata(""); // Hata mesajını temizle
-  };
-
   return (
     <Box
       sx={{
-        height: "100vh",
+        minHeight: {xs:"", md:"100vh"},
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
         alignItems: "center",
         backgroundImage: "url(/images/background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        py: { xs: 4, md: 0 },
       }}
     >
+      {/* 📱 Mobilde logo Paper dışında */}
+      {isMobile && (
+        <Box
+          sx={{
+            mb: 3,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Box
+            component="img"
+            src="/images/loginbg.png"
+            alt="Logo"
+            sx={{
+              width: 120,
+              height: 120,
+              objectFit: "contain",
+            }}
+          />
+        </Box>
+      )}
+
       <Paper
         elevation={3}
         sx={{
           display: "flex",
-          width: "70%",
+          flexDirection: { xs: "column", md: "row" },
+          width: { xs: "100%", md: "70%" }, // mobilde full width
           maxWidth: 1200,
-          height: "70%",
-          borderRadius: "24px",
-          position: "relative",
+          height: { xs: "auto", md: "70%" },
+          borderRadius: { xs: "24px 24px 0 0", md: "24px" }, // mobilde sadece üst köşe radius
           overflow: "hidden",
           backgroundColor: "white",
+          mx: { xs: 0, md: "auto" }, // mobilde margin yok, md'de yatay ortala
+          my: { xs: 0, md: "auto" }, // mobilde alt üst margin yok, md'de dikey ortala
         }}
       >
-        {/* Sol Kısım: Geçişli Mavi Arka Plan ve Resim */}
-        <Box
-          sx={{
-            flex: 1,
-            background: "linear-gradient(135deg, #141A30, #5038ED)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "10px",
-          }}
-        >
+        {/* 💻 Masaüstünde sol taraf görünsün */}
+        {!isMobile && (
           <Box
             sx={{
-              width: "50%",
-              height: "80%",
-              border: "1px solid white",
-              backgroundColor: "#5a529e",
-              backgroundImage: "url(/images/loginbg.png)",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              borderRadius: "10%",
-              padding:"0 50px"
+              flex: 1,
+              background: "linear-gradient(135deg, #141A30, #5038ED)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              p: 1,
             }}
-          />
-        </Box>
+          >
+            <Box
+              sx={{
+                width: "70%",
+                height: "80%",
+                border: "1px solid white",
+                backgroundColor: "#5a529e",
+                backgroundImage: "url(/images/loginbg.png)",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "contain",
+                borderRadius: "30px",
+              }}
+            />
+          </Box>
+        )}
 
         {/* Sağ Kısım: Form Alanı */}
         <Box
           sx={{
-            flex: 1, // sadece flex: 1 kullanıyoruz
+            flex: 1,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "white",
-            borderTopRightRadius: 2,
-            borderBottomRightRadius: 2,
-            boxShadow: 3,
-            position: "relative",
+            borderRadius: { xs: "24px", md: "0 24px 24px 0" },
+            py: { xs: 4, md: 4 },
           }}
         >
           <Box sx={{ mx: 2 }}>
-            <Typography style={{ marginTop: "20px", fontWeight: 900 }} variant="h5" gutterBottom align="center">
+            <Typography
+              sx={{ mt: 2, fontWeight: 900 }}
+              variant="h5"
+              gutterBottom
+              align="center"
+            >
               GİRİŞ EKRANI
             </Typography>
 
-            <Typography variant="h6" gutterBottom align="center" style={{ fontSize: "13px" }}>
+            <Typography
+              variant="h6"
+              gutterBottom
+              align="center"
+              sx={{ fontSize: "13px" }}
+            >
               Hoşgeldiniz, hesabınızla giriş yapabilirsiniz.
             </Typography>
           </Box>
@@ -126,9 +173,9 @@ const Giris = () => {
             component="form"
             noValidate
             autoComplete="off"
-            sx={{ mx: 7 }}
+            sx={{ mx: { xs: 2, md: 7 }, width: "100%", maxWidth: 400 }}
             onSubmit={(e) => {
-              e.preventDefault(); // Sayfa yenilenmesini engelle
+              e.preventDefault();
               handleLogin();
             }}
           >
@@ -144,9 +191,12 @@ const Giris = () => {
                 if (value.length <= 11) {
                   setKullaniciAdi(value);
                 }
-                setHata(""); // hata sıfırlansın
+                setHata("");
               }}
-              error={!!hata || (kullaniciAdi.length > 0 && kullaniciAdi.length < 11)}
+              error={
+                !!hata ||
+                (kullaniciAdi.length > 0 && kullaniciAdi.length < 11)
+              }
               helperText={
                 hata ||
                 (kullaniciAdi.length > 0 && kullaniciAdi.length < 11
@@ -161,8 +211,8 @@ const Giris = () => {
                   </InputAdornment>
                 ),
                 sx: {
-                  borderRadius: "12px", // Yuvarlak köşeler
-                  backgroundColor: "#F0EDFFCC"
+                  borderRadius: "12px",
+                  backgroundColor: "#F0EDFFCC",
                 },
               }}
             />
@@ -184,20 +234,28 @@ const Giris = () => {
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),
                 sx: {
-                  borderRadius: "12px", // Yuvarlak köşeler
-                  backgroundColor: "#F0EDFFCC"
+                  borderRadius: "12px",
+                  backgroundColor: "#F0EDFFCC",
                 },
               }}
             />
 
-
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <FormControlLabel
                 control={
                   <Checkbox
@@ -206,13 +264,25 @@ const Giris = () => {
                     sx={{ transform: "scale(0.8)" }}
                   />
                 }
-                label={<Typography style={{ fontSize: "12px" }} variant="body2" color="textSecondary">Beni Hatırla</Typography>}
+                label={
+                  <Typography
+                    sx={{ fontSize: "12px" }}
+                    variant="body2"
+                    color="textSecondary"
+                  >
+                    Beni Hatırla
+                  </Typography>
+                }
                 sx={{ color: "gray" }}
               />
               <Button
-                onClick={handleForgotPassword}
+                // onClick={handleForgotPassword}
                 variant="text"
-                sx={{ color: "gray", fontSize: "12px", textTransform: "none" }}
+                sx={{
+                  color: "gray",
+                  fontSize: "12px",
+                  textTransform: "none",
+                }}
               >
                 Şifremi Unuttum ?
               </Button>
@@ -224,26 +294,24 @@ const Giris = () => {
                 type="submit"
                 variant="contained"
                 sx={{
-                  backgroundColor: "#141A30", // siyah arka plan
-                  color: "#ffffff",           // beyaz yazı
+                  backgroundColor: "#141A30",
+                  color: "#ffffff",
                   fontSize: "0.8rem",
-                  padding: "10px 30px",
-                  borderRadius: "12px",       // yuvarlak köşeler
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: "12px",
                   textTransform: "none",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)", // gölge ekledik
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
                   "&:hover": {
-                    backgroundColor: "#333333", // hover rengi
-                    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.5)", // hover sırasında gölge artar
+                    backgroundColor: "#333333",
+                    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.5)",
                   },
                 }}
               >
                 Giriş Yap
               </Button>
             </Box>
-
-
           </Box>
-
         </Box>
       </Paper>
     </Box>
