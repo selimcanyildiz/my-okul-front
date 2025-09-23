@@ -61,14 +61,14 @@ const Giris = () => {
   return (
     <Box
       sx={{
-        minHeight: {xs:"", md:"100vh"},
+        minHeight: { xs: "", md:"100vh"},
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         backgroundImage: "url(/images/background.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        py: { xs: 4, md: 0 },
+        // py: { xs: 4, md: 0 },
       }}
     >
       {/* 📱 Mobilde logo Paper dışında */}
@@ -86,7 +86,7 @@ const Giris = () => {
             alt="Logo"
             sx={{
               width: 120,
-              height: 120,
+              height: "40vh",
               objectFit: "contain",
             }}
           />
@@ -99,7 +99,6 @@ const Giris = () => {
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           width: { xs: "100%", md: "70%" }, // mobilde full width
-          maxWidth: 1200,
           height: { xs: "auto", md: "70%" },
           borderRadius: { xs: "24px 24px 0 0", md: "24px" }, // mobilde sadece üst köşe radius
           overflow: "hidden",
@@ -141,12 +140,14 @@ const Giris = () => {
           sx={{
             flex: 1,
             display: "flex",
+            minHeight:"50vh",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "white",
             borderRadius: { xs: "24px", md: "0 24px 24px 0" },
             py: { xs: 4, md: 4 },
+            px: 4,
           }}
         >
           <Box sx={{ mx: 2 }}>
