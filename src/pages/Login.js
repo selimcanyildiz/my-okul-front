@@ -85,8 +85,8 @@ const Giris = () => {
             src="/images/loginbg.png"
             alt="Logo"
             sx={{
-              width: 120,
-              height: "40vh",
+              width: "200px",
+              height: "200px",
               objectFit: "contain",
             }}
           />
@@ -140,13 +140,13 @@ const Giris = () => {
           sx={{
             flex: 1,
             display: "flex",
-            minHeight:"50vh",
+            minHeight:"70vh",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
             backgroundColor: "white",
             borderRadius: { xs: "24px", md: "0 24px 24px 0" },
-            py: { xs: 4, md: 4 },
+            py: { xs: 3, md: 4 },
             px: 4,
           }}
         >

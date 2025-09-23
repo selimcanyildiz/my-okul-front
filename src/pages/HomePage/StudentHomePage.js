@@ -167,19 +167,28 @@ const StudentHomePage = () => {
           <img
             src="/images/school.png"
             alt="School Logo"
-            style={{ width: "160px", height: "70px", marginRight: "16px" }}
+            style={{
+              width: isMobile ? "150px" : "250px",  // mobilde 150px, normalde 250px
+              height: isMobile ? "50px" : "70px",   // mobilde 50px, normalde 70px
+              marginRight: "16px",
+            }}
           />
         </Box>
 
         {/* Kullanıcı ve Menü */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Box sx={{ textAlign: "right" }}>
-            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-              {user.ad} {user.soyad}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "gray" }}>
-              {school?.name}
-            </Typography>
+            {/* Kullanıcı ve okul bilgisi: sadece masaüstünde göster */}
+            {!isMobile && (
+              <Box sx={{ textAlign: "right" }}>
+                <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  {user.ad} {user.soyad}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "gray" }}>
+                  {school?.name}
+                </Typography>
+              </Box>
+            )}
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
               <MenuItem onClick={handleHomePage}>Ana Sayfa</MenuItem>
               <MenuItem onClick={handleMyAccount}>Hesabım</MenuItem>
@@ -240,10 +249,10 @@ const StudentHomePage = () => {
                 onClick={() => handleLoginClick(platform)}
                 sx={{
                   width: { xs: "100%", md: "100%" },
-                  maxWidth: 400, // tüm kartlar için max genişlik
+                  // maxWidth: 400, // tüm kartlar için max genişlik
                   height: 200, // tüm kartlar için sabit yükseklik
                   display: "flex",
-                  margin:"0 15px 0 -15px",
+                  margin: "0 15px 0 -15px",
                   flexDirection: "column",
                   justifyContent: "space-between",
                   border: 1,
