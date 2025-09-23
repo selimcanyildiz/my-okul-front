@@ -3,6 +3,8 @@ import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton, TextField, D
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import PersonIcon from '@mui/icons-material/Person';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useNavigate } from "react-router-dom";
 
 const StudentHomePage = () => {
@@ -12,6 +14,10 @@ const StudentHomePage = () => {
   const [user, setUser] = useState({});
   const [school, setSchool] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // sm ve altı için mobil
+
 
   // Şifre değişikliği ile ilgili state
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
@@ -187,91 +193,137 @@ const StudentHomePage = () => {
       </Box>
 
       {/* Başlık */}
-      <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h3" sx={{ fontWeight: 700, color: "#152147" }}>
+      <Box
+        sx={{
+          textAlign: "center",
+          px: { xs: 2, md: 0 },
+          mb: 4,
+        }}
+      >
+        <Typography
+          variant={isMobile ? "h6" : "h3"} // Mobilde h6, masaüstünde h3
+          sx={{ fontWeight: 700, color: "#152147" }}
+        >
           MY Okulları'na Hoş Geldiniz!
         </Typography>
-        <Typography variant="h6" sx={{ fontWeight: 500, color: "#152147", mt: 1 }}>
+        <Typography
+          variant={isMobile ? "body1" : "h6"} // Mobilde body1, desktop h6
+          sx={{ fontWeight: 500, color: "#152147", mt: 1 }}
+        >
           Hesaplarınıza giriş yapmak için aşağıdaki butonları kullanabilirsiniz. İyi çalışmalar!
         </Typography>
       </Box>
 
       <Grid
         container
-        spacing={10} // önceden 4 idi, artırdık
+        spacing={4}
         sx={{
           maxWidth: "90%",
           margin: "0 auto",
-          px: 2,
-          marginBottom: "60px",
           justifyContent: "center",
-          overflowX: "hidden",
-          alignItems: "stretch",
+          alignItems: "center",
         }}
       >
-        {["bilisimgaraji", "kolibri", "sınavza", "morpa", "cambridge"].map((platform) => (
-          <Grid item xs={12} md={5.75} key={platform} sx={{ display: "flex" }}>
-            <Box
-              onClick={() => handleLoginClick(platform)}
+        {["bilisimgaraji", "kolibri", "sınavza", "morpa", "cambridge"].map(
+          (platform) => (
+            <Grid
+              item
+              key={platform}
+              xs={12} // mobilde tam genişlik
+              md={5.75}
               sx={{
-                flex: 1,
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                border: 1,
-                borderColor: "grey.300",
-                borderRadius: "30px",
-                cursor: "pointer",
-                p: "30px",
-                backgroundColor: (() => {
-                  switch (platform) {
-                    case "bilisimgaraji": return "#F6E902";
-                    case "kolibri": return "#2196F3";
-                    case "sınavza": return "#7330A6";
-                    case "morpa": return "#9D47FF";
-                    case "cambridge": return "#6abaad";
-                    default: return "#ccc";
-                  }
-                })(),
-                color: "white",
-                minHeight: "150px",
-                overflow: "hidden",
+                justifyContent: "center", // mobil ve desktop ortala
               }}
             >
-              {/* Sol: Metin ve kullanıcı bilgileri */}
-              <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", flex: 1, pr: 2 }}>
-                <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
-                  {platformNames[platform]}
-                </Typography>
+              <Box
+                onClick={() => handleLoginClick(platform)}
+                sx={{
+                  width: { xs: "100%", md: "100%" },
+                  maxWidth: 400, // tüm kartlar için max genişlik
+                  height: 200, // tüm kartlar için sabit yükseklik
+                  display: "flex",
+                  margin:"0 15px 0 -15px",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  border: 1,
+                  borderColor: "grey.300",
+                  borderRadius: "30px",
+                  cursor: "pointer",
+                  p: "20px",
+                  backgroundColor: (() => {
+                    switch (platform) {
+                      case "bilisimgaraji":
+                        return "#F6E902";
+                      case "kolibri":
+                        return "#2196F3";
+                      case "sınavza":
+                        return "#7330A6";
+                      case "morpa":
+                        return "#9D47FF";
+                      case "cambridge":
+                        return "#6abaad";
+                      default:
+                        return "#ccc";
+                    }
+                  })(),
+                  color: "white",
+                  boxSizing: "border-box",
+                }}
+              >
+                {/* Üst: Platform adı ve açıklama */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      {platformNames[platform]}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      Platforma giriş yapmak için tıklayınız.
+                    </Typography>
+                  </Box>
 
-                <Typography variant="body2" sx={{ mb: 2, fontWeight: 550, fontSize: 16 }}>
-                  Platforma giriş yapmak için tıklayınız.
-                </Typography>
-
-                <Box sx={{ display: "flex", gap: 7, mt: 3 }}>
-                  <Typography variant="body1" sx={{ fontWeight: "bold", fontSize: "20px" }}>
-                    Kullanıcı Adı: <Typography component="span" sx={{ fontWeight: "normal" }}>{user[platform + "kull"] || "kullanıcı"}</Typography>
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: "bold", fontSize: "20px" }}>
-                    Şifre: <Typography component="span" sx={{ fontWeight: "normal" }}>{user[platform + "sif"] || "*****"}</Typography>
-                  </Typography>
+                  <Box>
+                    <img
+                      src={`/images/${platform}-logo.png`}
+                      alt={`${platform} Logo`}
+                      style={{ width: 120, height: 60, objectFit: "contain" }}
+                    />
+                  </Box>
                 </Box>
 
+                {/* Alt: Kullanıcı adı ve şifre */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 2,
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Kullanıcı Adı:{" "}
+                    <Typography component="span" sx={{ fontWeight: "normal" }}>
+                      {user[platform + "kull"] || "kullanıcı"}
+                    </Typography>
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    Şifre:{" "}
+                    <Typography component="span" sx={{ fontWeight: "normal" }}>
+                      {user[platform + "sif"] || "*****"}
+                    </Typography>
+                  </Typography>
+                </Box>
               </Box>
-
-              {/* Sağ: Logo */}
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img
-                  src={`/images/${platform}-logo.png`}
-                  alt={`${platform} Logo`}
-                  style={{ width: 220, height: 120, objectFit: "contain" }}
-                />
-              </Box>
-            </Box>
-          </Grid>
-        ))}
+            </Grid>
+          )
+        )}
       </Grid>
+
 
       <Dialog open={openPasswordDialog} onClose={() => { }} disableEscapeKeyDown>
         <DialogTitle>Zorunlu Şifre Değişikliği</DialogTitle>
