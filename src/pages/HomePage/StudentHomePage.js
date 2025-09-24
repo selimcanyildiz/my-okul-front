@@ -252,7 +252,7 @@ const StudentHomePage = () => {
                   // maxWidth: 400, // tüm kartlar için max genişlik
                   height: 200, // tüm kartlar için sabit yükseklik
                   display: "flex",
-                  margin: "0 15px 0 -15px",
+                  margin: "0 15px 20px -15px",
                   flexDirection: "column",
                   justifyContent: "space-between",
                   border: 1,

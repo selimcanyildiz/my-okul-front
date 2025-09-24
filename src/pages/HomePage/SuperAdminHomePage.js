@@ -10,10 +10,6 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PieChart from "../../components/PieChart";
@@ -25,7 +21,7 @@ const SuperAdminHomePage = ({ schoolId }) => {
     const [userType, setUserType] = useState(null);
     const [user, setUser] = useState();
     const [selectedSchool, setSelectedSchool] = useState("");
-    const [schools, setSchools] = useState([]); // okul listesi
+    const [schools, setSchools] = useState([]);
     const [students, setStudents] = useState([]);
     const [stats, setStats] = useState({
         total_students: 0,
@@ -34,7 +30,6 @@ const SuperAdminHomePage = ({ schoolId }) => {
         total_schools: 0,
     });
 
-    // stats verisini çek
     const fetchStats = async (school) => {
         try {
             const res = await fetch(`${apiUrl}/stats?school_id=${school}`);
@@ -72,7 +67,6 @@ const SuperAdminHomePage = ({ schoolId }) => {
                     console.error(err);
                 }
             };
-
             fetchSchools();
         } else {
             fetchStats(schoolId);
@@ -85,110 +79,113 @@ const SuperAdminHomePage = ({ schoolId }) => {
         }
     }, [selectedSchool]);
 
+    const statCards = [
+        { label: "Kurum Sayısı", value: stats.total_schools, icon: "/images/kurum-sayisi.png" },
+        { label: "Toplam Öğrenci Sayısı", value: stats.total_students, icon: "/images/toplam-sayisi.png" },
+        { label: "Aktif Öğrenci Sayısı", value: stats.active_students, icon: "/images/aktif-sayisi.png" },
+        { label: "Pasif Öğrenci Sayısı", value: stats.passive_students, icon: "/images/pasif-sayisi.png" },
+    ];
+
     return (
         <Box sx={{ marginTop: 1, padding: 2 }}>
-            <Grid container spacing={3} alignItems="center">
-                {user?.role === "sysadmin" && <Grid item xs={user.role === "sysadmin" ? 3 : 4}>
-                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
-                        <Box sx={{ mr: 2 }}>
-                            <img
-                                src="/images/kurum-sayisi.png"
-                                alt="Kurum"
-                                style={{ width: 50, height: 50 }}
-                            />
-                        </Box>
-                        <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Kurum Sayısı</Typography>
-                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.total_schools}</Typography>
-                        </Box>
-                    </Paper>
-                </Grid>}
-
-
-                <Grid item xs={user?.role === "sysadmin" ? 3 : 4}>
-                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
-                        <Box sx={{ mr: 2 }}>
-                            <img
-                                src="/images/toplam-sayisi.png"
-                                alt="Kurum"
-                                style={{ width: 50, height: 50 }}
-                            />
-                        </Box>
-                        <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Toplam Öğrenci Sayısı</Typography>
-                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.total_students}</Typography>
-                        </Box>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={user?.role === "sysadmin" ? 3 : 4}>
-                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
-                        <Box sx={{ mr: 2 }}>
-                            <img
-                                src="/images/aktif-sayisi.png"
-                                alt="Kurum"
-                                style={{ width: 50, height: 50 }}
-                            />
-                        </Box>
-                        <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Aktif Öğrenci Sayısı</Typography>
-                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.active_students}</Typography>
-                        </Box>
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={user?.role === "sysadmin" ? 3 : 4}>
-                    <Paper sx={{ padding: 2, borderRadius: "16px", display: "flex", alignItems: "center" }}>
-                        <Box sx={{ mr: 2 }}>
-                            <img
-                                src="/images/pasif-sayisi.png"
-                                alt="Kurum"
-                                style={{ width: 50, height: 50 }}
-                            />
-                        </Box>
-                        <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>Pasif Öğrenci Sayısı</Typography>
-                            <Typography variant="h5" sx={{ color: "primary.main" }}>{stats.passive_students}</Typography>
-                        </Box>
-                    </Paper>
-                </Grid>
-
-
-
+            {/* Stat Cards */}
+            <Grid container spacing={2}>
+                {statCards.map((card, index) => (
+                    <Grid key={index} item xs={12} sm={6} md={3}>
+                        <Paper
+                            sx={{
+                                padding: { xs: 1, sm: 2 },
+                                borderRadius: "16px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Box sx={{ mr: { xs: 1, sm: 2 } }}>
+                                <img
+                                    src={card.icon}
+                                    alt={card.label}
+                                    style={{ width: { xs: 2, sm: 50 }, height: { xs: 2, sm: 50 } }}
+                                />
+                            </Box>
+                            <Box>
+                                <Typography
+                                    variant="subtitle2"
+                                    sx={{ fontWeight: "bold", fontSize: { xs: "0.75rem", sm: "1rem" } }}
+                                >
+                                    {card.label}
+                                </Typography>
+                                <Typography
+                                    variant="h6"
+                                    sx={{ color: "primary.main", fontSize: { xs: "1rem", sm: "1.5rem" } }}
+                                >
+                                    {card.value}
+                                </Typography>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                ))}
             </Grid>
 
             {/* Öğrenci Tablosu */}
             <Box sx={{ marginTop: 4 }}>
                 <Grid container spacing={2}>
-                    {/* Sol taraf: Tablo */}
                     <Grid item xs={12} md={8}>
-                        <Typography variant="h6">Son Giriş Tarihleri</Typography>
+                        <Typography variant="h6" sx={{ mb: 1 }}>Son Giriş Tarihleri</Typography>
 
-                        <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell sx={{ fontWeight: "bold" }}>Öğrenci Adı</TableCell>
-                                        <TableCell sx={{ fontWeight: "bold" }}>Okul</TableCell>
-                                        <TableCell sx={{ fontWeight: "bold" }}>Sınıf</TableCell>
-                                        <TableCell sx={{ fontWeight: "bold" }}>Son Giriş Tarihi</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {students.map((student) => (
-                                        <TableRow key={student.id}>
-                                            <TableCell>{student.name}</TableCell>
-                                            <TableCell>{student.school}</TableCell>
-                                            <TableCell>{student.branch}</TableCell>
-                                            <TableCell>{student.lastLogin}</TableCell>
+                        {/* Mobil için kart format */}
+                        <Box sx={{ display: { xs: "block", md: "none" } }}>
+                            {students.map((student) => (
+                                <Paper key={student.id} sx={{ p: 1, mb: 1, borderRadius: "12px" }}>
+                                    <Grid container spacing={1}>
+                                        <Grid item xs={6}>
+                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Öğrenci Adı</Typography>
+                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.name}</Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Okul</Typography>
+                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.school}</Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Tarih</Typography>
+                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.lastLogin}</Typography>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Sınıf Şube</Typography>
+                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.branch}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
+                            ))}
+                        </Box>
+
+                        {/* Masaüstü tablo */}
+                        <Box sx={{ display: { xs: "none", md: "block" } }}>
+                            <TableContainer component={Paper}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell sx={{ fontWeight: "bold" }}>Öğrenci Adı</TableCell>
+                                            <TableCell sx={{ fontWeight: "bold" }}>Okul</TableCell>
+                                            <TableCell sx={{ fontWeight: "bold" }}>Sınıf</TableCell>
+                                            <TableCell sx={{ fontWeight: "bold" }}>Son Giriş Tarihi</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                    </TableHead>
+                                    <TableBody>
+                                        {students.map((student) => (
+                                            <TableRow key={student.id}>
+                                                <TableCell>{student.name}</TableCell>
+                                                <TableCell>{student.school}</TableCell>
+                                                <TableCell>{student.branch}</TableCell>
+                                                <TableCell>{student.lastLogin}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Box>
                     </Grid>
 
-                    {/* Sağ taraf: Chart */}
+                    {/* Chart */}
                     <Grid item xs={12} md={4}>
                         <Paper sx={{ p: 2, textAlign: "center" }}>
                             <PieChart
@@ -201,14 +198,12 @@ const SuperAdminHomePage = ({ schoolId }) => {
                                 setSelectedSchool={setSelectedSchool}
                                 schools={schools}
                                 user={user}
+                                isMobileChart={true}
                             />
                         </Paper>
                     </Grid>
                 </Grid>
             </Box>
-
-
-
         </Box>
     );
 };

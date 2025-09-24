@@ -123,9 +123,9 @@ const Giris = () => {
               sx={{
                 width: "70%",
                 height: "80%",
-                border: "1px solid white",
-                backgroundColor: "#5a529e",
-                backgroundImage: "url(/images/loginbg.png)",
+                // border: "1px solid white",
+                // backgroundColor: "#5a529e",
+                backgroundImage: "url(/images/mylogo.png)",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "contain",
