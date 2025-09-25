@@ -257,7 +257,7 @@ const Settings = () => {
 
     const PlatformCard = (
         <Paper sx={{ p: 3, borderRadius: "12px" }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: !isMobile ? "bold" : undefined }}>
                 Platform Bilgileri
             </Typography>
             {user?.platforms && (
@@ -267,7 +267,7 @@ const Settings = () => {
                         spacing={2}
                         sx={{
                             mb: 1,
-                            fontWeight: "600",
+                            fontWeight: !isMobile ? "bold" : undefined ,
                             pb: 1,
                             borderBottom: "2px solid #ccc",
                         }}
@@ -295,7 +295,7 @@ const Settings = () => {
                                 py: 1,
                             }}
                         >
-                            <Grid item xs={4} style={{ fontWeight: "bold" }}>
+                            <Grid item xs={4} style={{ fontWeight: !isMobile ? "bold" : undefined  }}>
                                 {platform.charAt(0).toUpperCase() + platform.slice(1)}
                             </Grid>
                             <Grid item xs={4}>

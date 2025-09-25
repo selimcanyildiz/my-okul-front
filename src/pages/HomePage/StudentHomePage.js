@@ -275,7 +275,7 @@ const StudentHomePage = () => {
           alignItems: "center",
         }}
       >
-        {["bilisimgaraji", "kolibri", "sınavza", "morpa", "cambridge", "eyotek"].map(
+        {["bilisimgaraji", "kolibri", "morpa", "sınavza", "cambridge", "eyotek"].map(
           (platform) => (
             <Grid
               item
@@ -339,10 +339,10 @@ const StudentHomePage = () => {
                     <Typography variant="body2" sx={{ mt: 1 }}>
                       Platforma giriş yapmak için tıklayınız.
                     </Typography>
-                    {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1 }}>
+                    {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1, fontSize:"12px"}}>
                       Masaüstü cihazlardan direkt giriş yapılır. Mobil cihazlardan uygulamaya yönlendirilirsiniz.
                     </Typography>}
-                    {(platform === "sınavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1 }}>
+                    {(platform === "sınavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1, fontSize:"12px" }}>
                       Platforma yönlendirilirsiniz. Kullanıcı adınızı ve şifrenizi kendiniz girmeniz gerekmektedir.
                     </Typography>}
                   </Box>
