@@ -109,32 +109,74 @@ const StudentHomePage = () => {
     }
   };
 
+  // const handleLoginClick = async (platformName) => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const res = await fetch(`${apiUrl}/login-to-platform`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Authorization": `Bearer ${token}`,
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify({ platformName }),
+  //     });
+
+  //     const data = await res.json();
+
+  //     if (data.redirect_url) {
+  //       window.open(data.redirect_url, "_blank");
+  //     } else {
+  //       alert("Yönlendirme URL'si alınamadı.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Hata:", error);
+  //     alert("Bir hata oluştu: " + error.message);
+  //   }
+  // };
+
   const handleLoginClick = async (platformName) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${apiUrl}/login-to-platform`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ platformName }),
-      });
+  try {
+    // Bazı platformlar için direkt yönlendirme yap
+    const directRedirects = {
+      eyotek: "https://mykolej.eyotek.com/v1/",
+      cambridge: "https://www.cambridgeone.org/",
+      sınavza: "https://www.sinavza.com",
+    };
 
-      const data = await res.json();
-
-      if (data.redirect_url) {
-        window.open(data.redirect_url, "_blank");
-      } else {
-        alert("Yönlendirme URL'si alınamadı.");
-      }
-    } catch (error) {
-      console.error("Hata:", error);
-      alert("Bir hata oluştu: " + error.message);
+    if (directRedirects[platformName]) {
+      window.open(directRedirects[platformName], "_blank");
+      return; // burada dur, backend'e gitme
     }
-  };
 
-  const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sınavza: "Sınavza", cambridge: "Cambridge" };
+    // SSO entegrasyonu olan platformlar için backend'e istek at
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${apiUrl}/login-to-platform`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ platformName }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.redirect_url) {
+      window.open(data.redirect_url, "_blank");
+    } else {
+      // Backend'den gelen hata mesajını göster
+      const errorMsg = data.detail || data.error || "Bilinmeyen bir hata oluştu.";
+      setSnackbarMessage(errorMsg);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  } catch (error) {
+    console.error("Hata:", error);
+    alert("Bir hata oluştu: " + error.message);
+  }
+};
+
+  const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sınavza: "Sınavza", cambridge: "Cambridge", eyotek: "Eyotek" };
 
   return (
     <Box
@@ -233,7 +275,7 @@ const StudentHomePage = () => {
           alignItems: "center",
         }}
       >
-        {["bilisimgaraji", "kolibri", "sınavza", "morpa", "cambridge"].map(
+        {["bilisimgaraji", "kolibri", "sınavza", "morpa", "cambridge", "eyotek"].map(
           (platform) => (
             <Grid
               item
@@ -272,6 +314,8 @@ const StudentHomePage = () => {
                         return "#9D47FF";
                       case "cambridge":
                         return "#6abaad";
+                      case "eyotek":
+                        return "#D78022";
                       default:
                         return "#ccc";
                     }
@@ -295,6 +339,12 @@ const StudentHomePage = () => {
                     <Typography variant="body2" sx={{ mt: 1 }}>
                       Platforma giriş yapmak için tıklayınız.
                     </Typography>
+                    {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1 }}>
+                      Bilgisayardan giriş yapın
+                    </Typography>}
+                    {(platform === "sınavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1 }}>
+                      Bu platform için yönlendirmeden sonra manuel giriş yapın
+                    </Typography>}
                   </Box>
 
                   <Box>

@@ -22,8 +22,10 @@ import {
   DialogActions,
   InputAdornment,
   Snackbar,
-  Alert
+  Alert,
+  useMediaQuery
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -36,6 +38,8 @@ import * as XLSX from "xlsx";
 
 const AddStudent = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
@@ -375,7 +379,7 @@ const AddStudent = () => {
           </FormControl>
         </Grid>}
         <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-          <Grid item xs={8}>
+          <Grid item xs={!isMobile ? 8 : 12}>
             <TextField placeholder="Ara" InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -387,21 +391,21 @@ const AddStudent = () => {
               },
             }} variant="outlined" value={searchText} onChange={(e) => setSearchText(e.target.value)} fullWidth />
           </Grid>
-          <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          {!isMobile && <Grid item xs={4} sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
             <Button startIcon={<DownloadIcon style={{ color: "#28245C" }} />} variant="outlined" color="primary" style={{ borderRadius: "20px", border: "1px solid #E9E9E9" }}>Excel İndir</Button>
             <Button startIcon={<UploadIcon style={{ color: "#28245C" }} />} variant="outlined" color="primary" component="label" style={{ borderRadius: "20px", border: "1px solid #E9E9E9" }}>
               Excel Yükle
               <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
             </Button>
             {view && <Button style={{ color: "white" }} sx={{ bgcolor: "green", borderRadius: "20px" }} startIcon={<CheckIcon style={{ color: "white" }} />} onClick={handleSubmit}>Onayla</Button>}
-          </Grid>
+          </Grid>}
         </Grid>
 
         <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-          <Grid item xs={2}>
+          {!isMobile && <Grid item xs={2}>
             <Button startIcon={<AddIcon />} sx={{ borderRadius: "20px", bgcolor: "#28245C", color: "white" }} variant="contained" color="primary" onClick={handleOpenModal} fullWidth>Öğrenci Ekle</Button>
-          </Grid>
-          <Grid item xs={2}>
+          </Grid>}
+          <Grid item xs={!isMobile ? 2 : 6}>
             <FormControl fullWidth>
               <InputLabel>Sınıf</InputLabel>
               <Select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)} label="Şube">
@@ -409,7 +413,7 @@ const AddStudent = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={!isMobile ? 2 : 6}>
             <FormControl fullWidth>
               <InputLabel>Şube</InputLabel>
               <Select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} label="Sınıf">
@@ -424,14 +428,14 @@ const AddStudent = () => {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Öğrenci Adı</TableCell>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Okul Adı</TableCell>
+                {!isMobile && <> <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Okul Adı</TableCell></>}
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>TC No</TableCell>
                 <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Şifre</TableCell>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Sınıf</TableCell>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Şube</TableCell>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Son Giriş</TableCell>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Durum</TableCell>
-                <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>İşlemler</TableCell>
+                {!isMobile && <><TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Sınıf</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Şube</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Son Giriş</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>Durum</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>İşlemler</TableCell></>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -443,35 +447,37 @@ const AddStudent = () => {
                   }}
                 >
                   <TableCell sx={{ textAlign: "center" }}>{student.studentName}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{student.schoolName}</TableCell>
+                  {!isMobile &&
+                    <TableCell sx={{ textAlign: "center" }}>{student.schoolName}</TableCell>}
                   <TableCell sx={{ textAlign: "center" }}>{student.tcNo}</TableCell>
                   <TableCell sx={{ textAlign: "center" }}>{student.password}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{student.branch}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{student.class}</TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>{student.last_login}</TableCell>
-                  <TableCell
-                    sx={{
-                      textAlign: "center",
-                      color: student.last_login ? "green" : "red",
-                      fontWeight: "bold"
-                    }}
-                  >
-                    {student.last_login ? "Aktif" : "Pasif"}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "center" }}>
-                    <IconButton color="primary" onClick={() => handleEditClick(student.id)}>
-                      <MoreVertIcon style={{ color: "#28245C" }} />
-                    </IconButton>
-                    <IconButton
-                      color="primary"
-                      onClick={() => {
-                        setStudentToDelete(student);
-                        setOpenConfirm(true);
+                  {!isMobile && <><TableCell sx={{ textAlign: "center" }}>{student.branch}</TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>{student.class}</TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>{student.last_login}</TableCell>
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                        color: student.last_login ? "green" : "red",
+                        fontWeight: "bold"
                       }}
                     >
-                      <DeleteIcon style={{ color: "#28245C" }} />
-                    </IconButton>
-                  </TableCell>
+                      {student.last_login ? "Aktif" : "Pasif"}
+                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      <IconButton color="primary" onClick={() => handleEditClick(student.id)}>
+                        <MoreVertIcon style={{ color: "#28245C" }} />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          setStudentToDelete(student);
+                          setOpenConfirm(true);
+                        }}
+                      >
+                        <DeleteIcon style={{ color: "#28245C" }} />
+                      </IconButton>
+                    </TableCell></>}
+
                 </TableRow>
               ))}
             </TableBody>

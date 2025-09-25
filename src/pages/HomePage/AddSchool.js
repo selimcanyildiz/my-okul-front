@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField, Grid, InputAdornment } from "@mui/material";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, TextField, Grid, InputAdornment, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -8,6 +9,8 @@ import AddSchoolModal from "./AddSchoolModal";
 
 const AddSchool = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [schools, setSchools] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -111,12 +114,12 @@ const AddSchool = () => {
   return (
     <Box sx={{ marginTop: 1, padding: 2 }}>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-        <Grid item xs={2}>
+        {!isMobile && <Grid item xs={2}>
           <Button startIcon={<AddIcon />} sx={{ borderRadius: "20px", bgcolor: "#28245C", color: "white" }} variant="contained" color="primary" onClick={handleOpenModal} fullWidth>
             Kurum Ekle
           </Button>
-        </Grid>
-        <Grid item xs={4}>
+        </Grid>}
+        <Grid item xs={!isMobile ? 4 : 12}>
           {/* <TextField label="Ara" variant="outlined" value={searchText} onChange={(e) => setSearchText(e.target.value)} fullWidth /> */}
           <TextField placeholder="Ara" InputProps={{
             startAdornment: (
@@ -138,9 +141,9 @@ const AddSchool = () => {
               <TableCell>Okul Adı</TableCell>
               <TableCell>Yetkili Adı</TableCell>
               <TableCell>TC No</TableCell>
-              <TableCell>Kullanıcı Adı</TableCell>
-              <TableCell>Şifre</TableCell>
-              <TableCell>İşlemler</TableCell>
+              {!isMobile && <><TableCell>Kullanıcı Adı</TableCell>
+                <TableCell>Şifre</TableCell>
+                <TableCell>İşlemler</TableCell></>}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -149,22 +152,22 @@ const AddSchool = () => {
                 <TableCell>{s.name}</TableCell>
                 <TableCell>{s.admin.full_name}</TableCell>
                 <TableCell>{s.admin.tc}</TableCell>
-                <TableCell>{s.admin.username}</TableCell>
-                <TableCell>{s.admin.password}</TableCell>
-                <TableCell>
-                  <IconButton color="primary" onClick={() => handleEditSchool(s)}>
-                    <MoreVertIcon style={{ color: "#28245C" }} />
-                  </IconButton>
-                  <IconButton
-                    color="primary"
-                    onClick={() => {
-                      handleDeleteSchool(s.id);
-                      // setOpenConfirm(true);
-                    }}
-                  >
-                    <DeleteIcon style={{ color: "#28245C" }} />
-                  </IconButton>
-                </TableCell>
+                {!isMobile && <><TableCell>{s.admin.username}</TableCell>
+                  <TableCell>{s.admin.password}</TableCell>
+                  <TableCell>
+                    <IconButton color="primary" onClick={() => handleEditSchool(s)}>
+                      <MoreVertIcon style={{ color: "#28245C" }} />
+                    </IconButton>
+                    <IconButton
+                      color="primary"
+                      onClick={() => {
+                        handleDeleteSchool(s.id);
+                        // setOpenConfirm(true);
+                      }}
+                    >
+                      <DeleteIcon style={{ color: "#28245C" }} />
+                    </IconButton>
+                  </TableCell></>}
               </TableRow>
             ))}
           </TableBody>
