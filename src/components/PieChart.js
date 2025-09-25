@@ -19,11 +19,10 @@ const PieChart = ({ data, total, selectedSchool, setSelectedSchool, schools, use
                     <FormControl size="small" sx={{ minWidth: 160, mt: { xs: 1, sm: 0 } }}>
                         <Select
                             value={selectedSchool ?? ""}
-                            onChange={(e) => setSelectedSchool(e.target.value === "" ? "" : Number(e.target.value))}
+                            onChange={(e) => setSelectedSchool(Number(e.target.value))}
                             variant="outlined"
                             sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
                         >
-                            <MenuItem value="">Tümü</MenuItem>
                             {Array.isArray(schools) &&
                                 schools.map((s) => <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>)}
                         </Select>

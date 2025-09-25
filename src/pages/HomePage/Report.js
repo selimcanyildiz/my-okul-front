@@ -10,11 +10,13 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TablePagination,
+    Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PieChart from "../../components/PieChart";
 
-const SuperAdminHomePage = ({ schoolId }) => {
+const Report = ({ schoolId }) => {
     const navigate = useNavigate();
     const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -29,8 +31,11 @@ const SuperAdminHomePage = ({ schoolId }) => {
         passive_students: 0,
         total_schools: 0,
     });
+    const [page, setPage] = useState(0);       // sayfa numarası
+    const [rowsPerPage, setRowsPerPage] = useState(10);  // sayfa başına öğrenci sayısı
 
-    const fetchStats = async (school, limit = 5) => {
+
+    const fetchStats = async (school, limit = 0) => {
         try {
             const res = await fetch(`${apiUrl}/stats?school_id=${school}&limit=${limit}`);
             if (!res.ok) throw new Error("Stats verisi alınamadı");
@@ -41,6 +46,7 @@ const SuperAdminHomePage = ({ schoolId }) => {
             console.error(err);
         }
     };
+
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem("user"));
@@ -133,55 +139,94 @@ const SuperAdminHomePage = ({ schoolId }) => {
                         <Typography variant="h6" sx={{ mb: 1 }}>Son Giriş Tarihleri</Typography>
 
                         {/* Mobil için kart format */}
+                        {/* Mobil için kart format */}
                         <Box sx={{ display: { xs: "block", md: "none" } }}>
-                            {students.map((student) => (
-                                <Paper key={student.id} sx={{ p: 1, mb: 1, borderRadius: "12px" }}>
-                                    <Grid container spacing={1}>
-                                        <Grid item xs={6}>
-                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Öğrenci Adı</Typography>
-                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.name}</Typography>
+                            {students
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((student) => (
+                                    <Paper key={student.id} sx={{ p: 1, mb: 1, borderRadius: "12px" }}>
+                                        <Grid container spacing={1}>
+                                            <Grid item xs={6}>
+                                                <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Öğrenci Adı</Typography>
+                                                <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.name}</Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Okul</Typography>
+                                                <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.school}</Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Tarih</Typography>
+                                                <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.lastLogin}</Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Sınıf Şube</Typography>
+                                                <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.branch}</Typography>
+                                            </Grid>
                                         </Grid>
-                                        <Grid item xs={6}>
-                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Okul</Typography>
-                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.school}</Typography>
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Tarih</Typography>
-                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.lastLogin}</Typography>
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <Typography variant="caption" fontWeight="bold" sx={{ fontSize: "0.7rem" }}>Sınıf Şube</Typography>
-                                            <Typography variant="body2" sx={{ fontSize: "0.75rem" }}>{student.branch}</Typography>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                            ))}
+                                    </Paper>
+                                ))}
+
+                            {/* Mobil sayfalama */}
+                            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    disabled={page === 0}
+                                    onClick={() => setPage(page - 1)}
+                                >
+                                    Önceki
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    size="small"
+                                    disabled={(page + 1) * rowsPerPage >= students.length}
+                                    onClick={() => setPage(page + 1)}
+                                >
+                                    Sonraki
+                                </Button>
+                            </Box>
                         </Box>
+
 
                         {/* Masaüstü tablo */}
                         <Box sx={{ display: { xs: "none", md: "block" } }}>
-                            <TableContainer component={Paper}>
-                                <Table>
+                            <TableContainer>
+                                <Table stickyHeader>
                                     <TableHead>
                                         <TableRow>
-                                            <TableCell sx={{ fontWeight: "bold" }}>Öğrenci Adı</TableCell>
-                                            <TableCell sx={{ fontWeight: "bold" }}>Okul</TableCell>
-                                            <TableCell sx={{ fontWeight: "bold" }}>Sınıf</TableCell>
-                                            <TableCell sx={{ fontWeight: "bold" }}>Son Giriş Tarihi</TableCell>
+                                            <TableCell>Öğrenci Adı</TableCell>
+                                            <TableCell>Okul</TableCell>
+                                            <TableCell>Sınıf</TableCell>
+                                            <TableCell>Son Giriş Tarihi</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {students.map((student) => (
-                                            <TableRow key={student.id}>
-                                                <TableCell>{student.name}</TableCell>
-                                                <TableCell>{student.school}</TableCell>
-                                                <TableCell>{student.branch}</TableCell>
-                                                <TableCell>{student.lastLogin}</TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {students
+                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((student) => (
+                                                <TableRow key={student.id}>
+                                                    <TableCell>{student.name}</TableCell>
+                                                    <TableCell>{student.school}</TableCell>
+                                                    <TableCell>{student.branch}</TableCell>
+                                                    <TableCell>{student.lastLogin}</TableCell>
+                                                </TableRow>
+                                            ))}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
+
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, 50]}
+                                component="div"
+                                count={students.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={(event, newPage) => setPage(newPage)}
+                                onRowsPerPageChange={(event) => {
+                                    setRowsPerPage(parseInt(event.target.value, 10));
+                                    setPage(0);
+                                }}
+                            />
                         </Box>
                     </Grid>
 
@@ -208,4 +253,4 @@ const SuperAdminHomePage = ({ schoolId }) => {
     );
 };
 
-export default SuperAdminHomePage;
+export default Report;

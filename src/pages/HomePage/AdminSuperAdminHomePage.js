@@ -21,6 +21,7 @@ import AddSchool from "./AddSchool";
 import AddStudent from "./AddStudent";
 import SmsSettings from "./SmsSettings";
 import Settings from "./Settings";
+import Report from "./Report";
 
 const AdminSuperAdminHomePage = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -45,6 +46,7 @@ const AdminSuperAdminHomePage = () => {
     }
     if (activeMenu === "addSchool") return <AddSchool />;
     if (activeMenu === "addStudent") return <AddStudent />;
+    if (activeMenu === "report") return <Report />;
     if (activeMenu === "sms") return <SmsSettings />;
     if (activeMenu === "settings") return <Settings />;
     return null;
@@ -81,6 +83,8 @@ const AdminSuperAdminHomePage = () => {
         return "Öğrenci Bilgileri";
       case "sms":
         return "SMS Ayarları";
+      case "report":
+        return "Raporlama";
       case "settings":
         return "Ayarlar";
       default:
@@ -203,6 +207,7 @@ const AdminSuperAdminHomePage = () => {
           },
         }}
         startIcon={<AssessmentIcon />}
+        onClick={() => handleMenuClick("report")}
       >
         Raporlama
       </Button>

@@ -340,10 +340,10 @@ const StudentHomePage = () => {
                       Platforma giriş yapmak için tıklayınız.
                     </Typography>
                     {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1 }}>
-                      Bilgisayardan giriş yapın
+                      Masaüstü cihazlardan direkt giriş yapılır. Mobil cihazlardan uygulamaya yönlendirilirsiniz.
                     </Typography>}
                     {(platform === "sınavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1 }}>
-                      Bu platform için yönlendirmeden sonra manuel giriş yapın
+                      Platforma yönlendirilirsiniz. Kullanıcı adınızı ve şifrenizi kendiniz girmeniz gerekmektedir.
                     </Typography>}
                   </Box>
 
