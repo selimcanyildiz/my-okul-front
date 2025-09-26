@@ -226,7 +226,12 @@ const Report = ({ schoolId }) => {
                                     setRowsPerPage(parseInt(event.target.value, 10));
                                     setPage(0);
                                 }}
+                                labelRowsPerPage="Sayfa başına"
+                                labelDisplayedRows={({ from, to, count }) =>
+                                    `Toplam ${count !== -1 ? count : `>${to}`} kayıttan ${from}–${to} arası`
+                                }
                             />
+                            
                         </Box>
                     </Grid>
 
