@@ -257,7 +257,7 @@ const Settings = () => {
 
     const PlatformCard = (
         <Paper sx={{ p: 3, borderRadius: "12px" }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: !isMobile ? "bold" : undefined }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold"  }}>
                 Platform Bilgileri
             </Typography>
             {user?.platforms && (

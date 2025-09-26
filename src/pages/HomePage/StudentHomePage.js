@@ -301,7 +301,7 @@ const StudentHomePage = () => {
                   borderColor: "grey.300",
                   borderRadius: "30px",
                   cursor: "pointer",
-                  p: "20px",
+                  p: !isMobile ? "20px": "10px",
                   backgroundColor: (() => {
                     switch (platform) {
                       case "bilisimgaraji":
@@ -361,7 +361,7 @@ const StudentHomePage = () => {
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    mt: 2,
+                    mt: !isMobile ? 2 : 0
                   }}
                 >
                   <Typography variant="body2" sx={{ fontWeight: "bold" }}>
