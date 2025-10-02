@@ -83,10 +83,20 @@ const Report = ({ schoolId }) => {
         if (userType === "sysadmin" && selectedSchool) {
             fetchStats(selectedSchool);
         }
+        // else fetchStats(user.id)
     }, [selectedSchool]);
 
+    // const statCards = [
+    //     { label: "Kurum Sayısı", value: stats.total_schools, icon: "/images/kurum-sayisi.png" },
+    //     { label: "Toplam Öğrenci Sayısı", value: stats.total_students, icon: "/images/toplam-sayisi.png" },
+    //     { label: "Aktif Öğrenci Sayısı", value: stats.active_students, icon: "/images/aktif-sayisi.png" },
+    //     { label: "Pasif Öğrenci Sayısı", value: stats.passive_students, icon: "/images/pasif-sayisi.png" },
+    // ];
+
     const statCards = [
-        { label: "Kurum Sayısı", value: stats.total_schools, icon: "/images/kurum-sayisi.png" },
+        ...(user?.role === "sysadmin"
+            ? [{ label: "Kurum Sayısı", value: stats.total_schools, icon: "/images/kurum-sayisi.png" }]
+            : []),
         { label: "Toplam Öğrenci Sayısı", value: stats.total_students, icon: "/images/toplam-sayisi.png" },
         { label: "Aktif Öğrenci Sayısı", value: stats.active_students, icon: "/images/aktif-sayisi.png" },
         { label: "Pasif Öğrenci Sayısı", value: stats.passive_students, icon: "/images/pasif-sayisi.png" },
@@ -97,7 +107,7 @@ const Report = ({ schoolId }) => {
             {/* Stat Cards */}
             <Grid container spacing={2}>
                 {statCards.map((card, index) => (
-                    <Grid key={index} item xs={12} sm={6} md={3}>
+                    <Grid key={index} item xs={12} sm={6} md={user?.role === "sysadmin" ? 3 : 4}>
                         <Paper
                             sx={{
                                 padding: { xs: 1, sm: 2 },
@@ -231,7 +241,7 @@ const Report = ({ schoolId }) => {
                                     `Toplam ${count !== -1 ? count : `>${to}`} kayıttan ${from}–${to} arası`
                                 }
                             />
-                            
+
                         </Box>
                     </Grid>
 

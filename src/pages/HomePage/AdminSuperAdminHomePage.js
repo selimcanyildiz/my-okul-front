@@ -46,7 +46,7 @@ const AdminSuperAdminHomePage = () => {
     }
     if (activeMenu === "addSchool") return <AddSchool />;
     if (activeMenu === "addStudent") return <AddStudent />;
-    if (activeMenu === "report") return <Report />;
+    if (activeMenu === "report") return <Report schoolId={school.id} />;
     if (activeMenu === "sms") return <SmsSettings />;
     if (activeMenu === "settings") return <Settings />;
     return null;
