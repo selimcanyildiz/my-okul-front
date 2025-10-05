@@ -69,7 +69,7 @@ const AddSchoolModal = ({ openModal, handleCloseModal, handleInputChange, newSch
                             label="Telefon No"
                             variant="outlined"
                             name="phone"
-                            value={newSchool.phone}
+                            value={newSchool?.phone}
                             onChange={(e) => {
                                 const value = e.target.value.replace(/\D/g, ''); // sadece rakam
                                 if (value.length <= 11) {
@@ -96,6 +96,48 @@ const AddSchoolModal = ({ openModal, handleCloseModal, handleInputChange, newSch
                             inputProps={{ maxLength: 11 }}
                         />
                     </Grid>
+
+                    {/* 🌐 Yeni URL Alanları */}
+                <Grid item xs={12}>
+                    <TextField
+                        fullWidth
+                        label="Anaokulu URL"
+                        variant="outlined"
+                        name="url_anaokul"
+                        value={newSchool.url_anaokul || ""}
+                        onChange={handleInputChange}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        fullWidth
+                        label="İlkokul URL"
+                        variant="outlined"
+                        name="url_ilkokul"
+                        value={newSchool.url_ilkokul || ""}
+                        onChange={handleInputChange}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        fullWidth
+                        label="Ortaokul URL"
+                        variant="outlined"
+                        name="url_ortaokul"
+                        value={newSchool.url_ortaokul || ""}
+                        onChange={handleInputChange}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        fullWidth
+                        label="Lise URL"
+                        variant="outlined"
+                        name="url_lise"
+                        value={newSchool.url_lise || ""}
+                        onChange={handleInputChange}
+                    />
+                </Grid>
 
 
                     {/* Username ve şifre artık backend tarafından oluşturulacak */}
@@ -132,6 +174,8 @@ const AddSchoolModal = ({ openModal, handleCloseModal, handleInputChange, newSch
                         </>
                     )}
                 </Grid>
+
+                
 
                 <Box sx={{ marginTop: 2, display: "flex", justifyContent: "flex-end" }}>
                     <Button onClick={handleCloseModal} sx={{ marginRight: 1 }}>

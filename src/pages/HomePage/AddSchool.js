@@ -47,14 +47,20 @@ const AddSchool = () => {
   const handleOpenModal = () => { setOpenModal(true); setIsEditMode(false); };
   const handleCloseModal = () => {
     setOpenModal(false);
-    setNewSchool({ id: null, schoolName: "", address: "", city: "", district: "", responsibleName: "", responsibleSurname: "", tcNo: "" });
+    setNewSchool({ id: null, schoolName: "", address: "", city: "", district: "", responsibleName: "", responsibleSurname: "", tcNo: "", phone: "", url_anaokul: "", url_ilkokul: "", url_ortaokul: "", url_lise: "" });
   };
   const handleInputChange = (e) => setNewSchool({ ...newSchool, [e.target.name]: e.target.value });
 
   const handleAddSchool = async () => {
     try {
-      const res = await fetch(`${apiUrl}/schools/add`, {
-        method: "POST",
+      const url = isEditMode
+        ? `${apiUrl}/schools/update/${newSchool.id}`
+        : `${apiUrl}/schools/add`;
+
+      const method = isEditMode ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
@@ -65,22 +71,34 @@ const AddSchool = () => {
           admin_name: newSchool.responsibleName,
           admin_surname: newSchool.responsibleSurname,
           admin_tc: newSchool.tcNo,
+          url_anaokul: newSchool.url_anaokul,
+          url_ilkokul: newSchool.url_ilkokul,
+          url_ortaokul: newSchool.url_ortaokul,
+          url_lise: newSchool.url_lise
         })
       });
 
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
 
-      // Okul ve yetkili kullanıcı bilgilerini frontend’de göster
-      setSchools([...schools, { id: data.school.id, name: data.school.name, admin: data.admin_user }]);
-      alert(`Okul eklendi! Yetkili şifre: ${data.admin_user.password}`);
-
+      if (isEditMode) {
+        setSchools(schools.map(s => s.id === newSchool.id ? {
+          ...s,
+          name: data.school.name,
+          admin: data.admin_user
+        } : s));
+        alert("Okul başarıyla güncellendi!");
+      } else {
+        setSchools([...schools, { id: data.school.id, name: data.school.name, admin: data.admin_user }]);
+        alert(`Okul eklendi! Yetkili şifre: ${data.admin_user.password}`);
+      }
       handleCloseModal();
     } catch (err) {
-      console.error("Okul eklenirken hata:", err.message);
-      alert("Okul eklenirken hata oluştu!");
+      console.error("Okul kaydedilirken hata:", err.message);
+      alert("Okul kaydedilirken hata oluştu!");
     }
   };
+
 
   const handleDeleteSchool = async (schoolId) => {
     if (!window.confirm("Bu okul ve tüm öğrencileri silinecek! Devam edilsin mi?")) return;
@@ -109,7 +127,22 @@ const AddSchool = () => {
     s.admin.full_name?.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const handleEditSchool = (school) => { setNewSchool({ ...school, schoolName: school.name, responsibleName: school.admin.full_name.split(" ")[0], responsibleSurname: school.admin.full_name.split(" ")[1], tcNo: school.admin.tc }); setIsEditMode(true); setOpenModal(true); };
+  const handleEditSchool = (school) => {
+    setNewSchool({
+      id: school.id,
+      schoolName: school.name,
+      responsibleName: school.admin.full_name.split(" ")[0] || "",
+      responsibleSurname: school.admin.full_name.split(" ")[1] || "",
+      tcNo: school.admin.tc,
+      phone: school.admin.phone,
+      url_anaokul: school.url_anaokul || "",
+      url_ilkokul: school.url_ilkokul || "",
+      url_ortaokul: school.url_ortaokul || "",
+      url_lise: school.url_lise || ""
+    });
+    setIsEditMode(true);
+    setOpenModal(true);
+  };
 
   return (
     <Box sx={{ marginTop: 1, padding: 2 }}>

@@ -135,46 +135,54 @@ const StudentHomePage = () => {
   // };
 
   const handleLoginClick = async (platformName) => {
-  try {
-    // Bazı platformlar için direkt yönlendirme yap
-    const directRedirects = {
-      eyotek: "https://mykolej.eyotek.com/v1/",
-      cambridge: "https://www.cambridgeone.org/",
-      sınavza: "https://www.sinavza.com",
-    };
+    try {
+      // Bazı platformlar için direkt yönlendirme yap
+      const directRedirects = {
+        eyotek: "https://mykolej.eyotek.com/v1/",
+        cambridge: "https://www.cambridgeone.org/",
+        sınavza:
+          user.sube_sinif >= 1 && user.sube_sinif <= 4
+            ? school.url_ilkokul
+            : user.sube_sinif >= 5 && user.sube_sinif <= 8
+              ? school.url_ortaokul
+              : user.sube_sinif >= 9 && user.sube_sinif <= 12
+                ? school.url_lise
+                : school.url_anaokul,
+      };
 
-    if (directRedirects[platformName]) {
-      window.open(directRedirects[platformName], "_blank");
-      return; // burada dur, backend'e gitme
+
+      if (directRedirects[platformName]) {
+        window.open(directRedirects[platformName], "_blank");
+        return; // burada dur, backend'e gitme
+      }
+
+      // SSO entegrasyonu olan platformlar için backend'e istek at
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${apiUrl}/login-to-platform`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ platformName }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.redirect_url) {
+        window.open(data.redirect_url, "_blank");
+      } else {
+        // Backend'den gelen hata mesajını göster
+        const errorMsg = data.detail || data.error || "Bilinmeyen bir hata oluştu.";
+        setSnackbarMessage(errorMsg);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error("Hata:", error);
+      alert("Bir hata oluştu: " + error.message);
     }
-
-    // SSO entegrasyonu olan platformlar için backend'e istek at
-    const token = localStorage.getItem("token");
-    const res = await fetch(`${apiUrl}/login-to-platform`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ platformName }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.redirect_url) {
-      window.open(data.redirect_url, "_blank");
-    } else {
-      // Backend'den gelen hata mesajını göster
-      const errorMsg = data.detail || data.error || "Bilinmeyen bir hata oluştu.";
-      setSnackbarMessage(errorMsg);
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-    }
-  } catch (error) {
-    console.error("Hata:", error);
-    alert("Bir hata oluştu: " + error.message);
-  }
-};
+  };
 
   const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sınavza: "Sınavza", cambridge: "Cambridge", eyotek: "Eyotek" };
 
@@ -301,7 +309,7 @@ const StudentHomePage = () => {
                   borderColor: "grey.300",
                   borderRadius: "30px",
                   cursor: "pointer",
-                  p: !isMobile ? "20px": "10px",
+                  p: !isMobile ? "20px" : "10px",
                   backgroundColor: (() => {
                     switch (platform) {
                       case "bilisimgaraji":
@@ -339,10 +347,10 @@ const StudentHomePage = () => {
                     <Typography variant="body2" sx={{ mt: 1 }}>
                       Platforma giriş yapmak için tıklayınız.
                     </Typography>
-                    {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1, fontSize:"12px"}}>
+                    {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
                       Masaüstü cihazlardan direkt giriş yapılır. Mobil cihazlardan uygulamaya yönlendirilirsiniz.
                     </Typography>}
-                    {(platform === "sınavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1, fontSize:"12px" }}>
+                    {(platform === "sınavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
                       Platforma yönlendirilirsiniz. Kullanıcı adınızı ve şifrenizi kendiniz girmeniz gerekmektedir.
                     </Typography>}
                   </Box>
