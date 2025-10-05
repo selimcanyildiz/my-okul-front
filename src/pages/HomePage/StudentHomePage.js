@@ -136,24 +136,24 @@ const StudentHomePage = () => {
 
   const handleLoginClick = async (platformName) => {
     try {
-      // Bazı platformlar için direkt yönlendirme yap
-      const directRedirects = {
-        eyotek: "https://mykolej.eyotek.com/v1/",
-        cambridge: "https://www.cambridgeone.org/",
-        sınavza:
-          user.sube_sinif >= 1 && user.sube_sinif <= 4
-            ? school.url_ilkokul
-            : user.sube_sinif >= 5 && user.sube_sinif <= 8
-              ? school.url_ortaokul
-              : user.sube_sinif >= 9 && user.sube_sinif <= 12
-                ? school.url_lise
-                : school.url_anaokul,
-      };
-
-
-      if (directRedirects[platformName]) {
-        window.open(directRedirects[platformName], "_blank");
-        return; // burada dur, backend'e gitme
+      const staticPlatform = parseInt(user.sube_seviye.split("/")[0]);
+      if (platformName === "sinavza") {
+        window.open(staticPlatform >= 1 && staticPlatform <= 4
+          ? school.url_ilkokul || "https://edesis.com/"
+          : staticPlatform >= 5 && staticPlatform <= 8
+            ? school.url_ortaokul || "https://edesis.com/"
+            : staticPlatform >= 9 && staticPlatform <= 12
+              ? school.url_lise || "https://edesis.com/"
+              : school.url_anaokul || "https://edesis.com/", "_blank");
+        return;
+      }
+      else if (platformName === "eyotek") {
+        window.open("https://mykolej.eyotek.com/v1/", "_blank");
+        return;
+      }
+      else if (platformName === "cambridge") {
+        window.open("https://www.cambridgeone.org/", "_blank");
+        return;
       }
 
       // SSO entegrasyonu olan platformlar için backend'e istek at
@@ -162,7 +162,7 @@ const StudentHomePage = () => {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ platformName }),
       });
@@ -172,7 +172,6 @@ const StudentHomePage = () => {
       if (res.ok && data.redirect_url) {
         window.open(data.redirect_url, "_blank");
       } else {
-        // Backend'den gelen hata mesajını göster
         const errorMsg = data.detail || data.error || "Bilinmeyen bir hata oluştu.";
         setSnackbarMessage(errorMsg);
         setSnackbarSeverity("error");
@@ -184,7 +183,7 @@ const StudentHomePage = () => {
     }
   };
 
-  const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sınavza: "Sınavza", cambridge: "Cambridge", eyotek: "Eyotek" };
+  const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sinavza: "Sınavza", cambridge: "Cambridge", eyotek: "Eyotek" };
 
   return (
     <Box
@@ -283,7 +282,7 @@ const StudentHomePage = () => {
           alignItems: "center",
         }}
       >
-        {["bilisimgaraji", "kolibri", "morpa", "sınavza", "cambridge", "eyotek"].map(
+        {["bilisimgaraji", "kolibri", "morpa", "sinavza", "cambridge", "eyotek"].map(
           (platform) => (
             <Grid
               item
@@ -316,7 +315,7 @@ const StudentHomePage = () => {
                         return "#F6E902";
                       case "kolibri":
                         return "#2196F3";
-                      case "sınavza":
+                      case "sinavza":
                         return "#7330A6";
                       case "morpa":
                         return "#9D47FF";
@@ -350,7 +349,7 @@ const StudentHomePage = () => {
                     {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
                       Masaüstü cihazlardan direkt giriş yapılır. Mobil cihazlardan uygulamaya yönlendirilirsiniz.
                     </Typography>}
-                    {(platform === "sınavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
+                    {(platform === "sinavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
                       Platforma yönlendirilirsiniz. Kullanıcı adınızı ve şifrenizi kendiniz girmeniz gerekmektedir.
                     </Typography>}
                   </Box>
