@@ -279,6 +279,7 @@ const AdminSuperAdminHomePage = () => {
             width: "100%",
             textTransform: "capitalize",
             pl: 2,
+            marginBottom:"20px"
           }}
           startIcon={<ExitToAppIcon />}
           onClick={() => navigate("/")}
@@ -310,10 +311,28 @@ const AdminSuperAdminHomePage = () => {
       </Drawer>
 
       {/* Masaüstü Sol Menü */}
-      <Box sx={{ display: { xs: "none", md: "block" } }}>{menuContent}</Box>
+      {/* <Box sx={{ display: { xs: "none", md: "block" } }}>{menuContent}</Box> */}
+
+      {/* Masaüstü Sol Menü */}
+      <Box
+        sx={{
+          display: { xs: "none", md: "block" },
+          position: "fixed",          // sabit hale getir
+          top: 0,
+          left: 0,
+          height: "100vh",            // tam ekran yüksekliği
+          width: "230px",             // menü genişliği
+          bgcolor: "white",
+          overflow: "hidden",         // içerik taşmasını engelle
+          // boxShadow: "1px 0 1px rgba(0,0,0,0.1)", // hafif gölge
+          zIndex: 1200,
+        }}
+      >
+        {menuContent}
+      </Box>
 
       {/* Sağ İçerik */}
-      <Box
+      {/* <Box
         sx={{
           flex: 1,
           display: "flex",
@@ -323,7 +342,20 @@ const AdminSuperAdminHomePage = () => {
           minHeight: "100vh",
           ml: { xs: 0, md: "0px" },
         }}
+      > */}
+      {/* Sağ İçerik */}
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflowY: "auto",
+          width: "100%",
+          minHeight: "100vh",
+          ml: { xs: 0, md: "230px" }, // sabit menü genişliği kadar boşluk bırak
+        }}
       >
+
         {/* Üst Menü */}
         <Box
           sx={{
