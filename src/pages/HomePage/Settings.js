@@ -74,7 +74,7 @@ const Settings = () => {
                         },
                         kolibri: { username: data.kolibrikull, password: data.kolibrisif },
                         morpa: { username: data.morpakull, password: data.morpasif },
-                        sınavza: { username: data.sınavzakull, password: data.sınavzasif },
+                        sınavza: { username: data.sinavzakull, password: data.sinavzasif },
                         cambridge: {
                             username: data.cambridgekull,
                             password: data.cambridgesif,

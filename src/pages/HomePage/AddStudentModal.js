@@ -187,10 +187,10 @@ const AddStudentModal = ({
             <TextField fullWidth label="KLB Şifre" name="klbsif" value={newStudent.klbsif} onChange={handleInputChange} />
           </Grid>
           <Grid item xs={6}>
-            <TextField fullWidth label="Sınavza Kullanıcı" name="sınavzakull" value={newStudent.sınavzakull} onChange={handleInputChange} />
+            <TextField fullWidth label="Sınavza Kullanıcı" name="sinavzakull" value={newStudent.sinavzakull} onChange={handleInputChange} />
           </Grid>
           <Grid item xs={6}>
-            <TextField fullWidth label="Sınavza Şifre" name="sınavzasif" value={newStudent.sınavzasif} onChange={handleInputChange} />
+            <TextField fullWidth label="Sınavza Şifre" name="sinavzasif" value={newStudent.sinavzasif} onChange={handleInputChange} />
           </Grid>
           <Grid item xs={6}>
             <TextField fullWidth label="Morpa Kullanıcı" name="morpakull" value={newStudent.morpakull} onChange={handleInputChange} />
