@@ -111,22 +111,46 @@ const StudentHomePage = () => {
 
   // const handleLoginClick = async (platformName) => {
   //   try {
+  //     const staticPlatform = parseInt(user.sube_seviye.split("/")[0]);
+  //     if (platformName === "sinavza") {
+  //       window.open(staticPlatform >= 1 && staticPlatform <= 4
+  //         ? school.url_ilkokul || "https://edesis.com/"
+  //         : staticPlatform >= 5 && staticPlatform <= 8
+  //           ? school.url_ortaokul || "https://edesis.com/"
+  //           : staticPlatform >= 9 && staticPlatform <= 12
+  //             ? school.url_lise || "https://edesis.com/"
+  //             : school.url_anaokul || "https://edesis.com/", "_blank");
+  //       return;
+  //     }
+  //     else if (platformName === "eyotek") {
+  //       window.open("https://mykolej.eyotek.com/v1/", "_blank");
+  //       return;
+  //     }
+  //     else if (platformName === "cambridge") {
+  //       window.open("https://www.cambridgeone.org/", "_blank");
+  //       return;
+  //     }
+
+  //     // SSO entegrasyonu olan platformlar için backend'e istek at
   //     const token = localStorage.getItem("token");
   //     const res = await fetch(`${apiUrl}/login-to-platform`, {
   //       method: "POST",
   //       headers: {
   //         "Authorization": `Bearer ${token}`,
-  //         "Content-Type": "application/json"
+  //         "Content-Type": "application/json",
   //       },
   //       body: JSON.stringify({ platformName }),
   //     });
 
   //     const data = await res.json();
 
-  //     if (data.redirect_url) {
+  //     if (res.ok && data.redirect_url) {
   //       window.open(data.redirect_url, "_blank");
   //     } else {
-  //       alert("Yönlendirme URL'si alınamadı.");
+  //       const errorMsg = data.detail || data.error || "Bilinmeyen bir hata oluştu.";
+  //       setSnackbarMessage(errorMsg);
+  //       setSnackbarSeverity("error");
+  //       setSnackbarOpen(true);
   //     }
   //   } catch (error) {
   //     console.error("Hata:", error);
@@ -135,24 +159,30 @@ const StudentHomePage = () => {
   // };
 
   const handleLoginClick = async (platformName) => {
+    // Kullanıcı tıklayınca hemen yeni sekmeyi aç
+    const newTab = window.open("", "_blank");
+
     try {
       const staticPlatform = parseInt(user.sube_seviye.split("/")[0]);
+
+      // Platformlara göre ön tanımlı URL yönlendirmesi
       if (platformName === "sinavza") {
-        window.open(staticPlatform >= 1 && staticPlatform <= 4
-          ? school.url_ilkokul || "https://edesis.com/"
-          : staticPlatform >= 5 && staticPlatform <= 8
-            ? school.url_ortaokul || "https://edesis.com/"
-            : staticPlatform >= 9 && staticPlatform <= 12
-              ? school.url_lise || "https://edesis.com/"
-              : school.url_anaokul || "https://edesis.com/", "_blank");
+        const url =
+          staticPlatform >= 1 && staticPlatform <= 4
+            ? school.url_ilkokul || "https://edesis.com/"
+            : staticPlatform >= 5 && staticPlatform <= 8
+              ? school.url_ortaokul || "https://edesis.com/"
+              : staticPlatform >= 9 && staticPlatform <= 12
+                ? school.url_lise || "https://edesis.com/"
+                : school.url_anaokul || "https://edesis.com/";
+
+        newTab.location.href = url;
         return;
-      }
-      else if (platformName === "eyotek") {
-        window.open("https://mykolej.eyotek.com/v1/", "_blank");
+      } else if (platformName === "eyotek") {
+        newTab.location.href = "https://mykolej.eyotek.com/v1/";
         return;
-      }
-      else if (platformName === "cambridge") {
-        window.open("https://www.cambridgeone.org/", "_blank");
+      } else if (platformName === "cambridge") {
+        newTab.location.href = "https://www.cambridgeone.org/";
         return;
       }
 
@@ -170,15 +200,18 @@ const StudentHomePage = () => {
       const data = await res.json();
 
       if (res.ok && data.redirect_url) {
-        window.open(data.redirect_url, "_blank");
+        // Yeni sekmeyi backend'den gelen URL'ye yönlendir
+        newTab.location.href = data.redirect_url;
       } else {
         const errorMsg = data.detail || data.error || "Bilinmeyen bir hata oluştu.";
+        newTab.close(); // Hata varsa sekmeyi kapat
         setSnackbarMessage(errorMsg);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
     } catch (error) {
       console.error("Hata:", error);
+      newTab.close();
       alert("Bir hata oluştu: " + error.message);
     }
   };
