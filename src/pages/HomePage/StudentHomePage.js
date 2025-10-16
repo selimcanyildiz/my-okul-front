@@ -216,6 +216,18 @@ const StudentHomePage = () => {
     }
   };
 
+  const anaSiniflar = [
+    "Ana Sınıf",
+    "Anasnf",
+    "Anasnf 3-4 yaş",
+    "Anasnf 5-6 yaş",
+    "ANS",
+    "[A] Sarı Sınıf",
+    "[B] Yeşil Sınıf",
+    "[C] Mavi Sınıf",
+    "[D] Kırmızı Sınıf"
+  ];
+
   const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sinavza: "Sınavza", cambridge: "Cambridge", eyotek: "Eyotek" };
 
   return (
@@ -315,7 +327,19 @@ const StudentHomePage = () => {
           alignItems: "center",
         }}
       >
-        {["bilisimgaraji", "kolibri", "morpa", "sinavza", "cambridge", "eyotek"].map(
+        {["bilisimgaraji", "kolibri", "morpa", "sinavza", "cambridge", "eyotek"].filter(platform => {
+          if (
+            platform === "sinavza" &&
+            anaSiniflar.some(
+              s =>
+                s.toLowerCase().replace(/\s+/g, "") ===
+                (user.sube_sinif || "").toLowerCase().replace(/\s+/g, "")
+            )
+          ) {
+            return false;
+          }
+          return true;
+        }).map(
           (platform) => (
             <Grid
               item
