@@ -217,6 +217,7 @@ const StudentHomePage = () => {
   };
 
   const anaSiniflar = [
+    "Anasınıfı",
     "Ana Sınıf",
     "Anasnf",
     "Anasnf 3-4 yaş",
