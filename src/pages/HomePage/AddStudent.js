@@ -308,6 +308,69 @@ const AddStudent = () => {
     return "4";
   };
 
+  // Kolibri Excel yükleme
+const handleKolibriExcelUpload = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    const bstr = evt.target.result;
+    const wb = XLSX.read(bstr, { type: "binary" });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(ws);
+
+    // Beklenen başlıklar: "TC" ve "Student Code"
+    const formatted = data
+      .filter(row => row.TC && row["Student Code"]) // Boş satırları filtrele
+      .map(row => ({
+        tc: row.TC.toString().replace(/\.0$/, "").trim(),
+        klbcode: row["Student Code"].toString().trim(),
+      }));
+
+    if (formatted.length === 0) {
+      alert("Excel dosyasında geçerli veri bulunamadı!");
+      return;
+    }
+
+    updateKolibriCodes(formatted);
+  };
+  reader.readAsBinaryString(file);
+};
+
+const updateKolibriCodes = async (studentsData) => {
+  try {
+    const res = await fetch(`${apiUrl}/students/update_klb_bulk`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(studentsData),
+    });
+
+    if (!res.ok) throw new Error(`Sunucu hatası: ${res.status}`);
+
+    const data = await res.json();
+    let msg = data.message;
+    if (data.not_found && data.not_found.length > 0) {
+      msg += `\nBulunamayan TC'ler: ${data.not_found.join(", ")}`;
+    }
+
+    setSnackbarMessage(msg);
+    setSnackbarSeverity("success");
+    setSnackbarOpen(true);
+
+    fetchStudents(); // tabloyu yenile
+  } catch (err) {
+    console.error("Kolibri kod güncelleme hatası:", err);
+    setSnackbarMessage("Kolibri kodları yüklenirken hata oluştu.");
+    setSnackbarSeverity("error");
+    setSnackbarOpen(true);
+  }
+};
+
+
   const handleSubmit = async () => {
     try {
       const res = await fetch(`${apiUrl}/students/add_bulk`, {
@@ -397,6 +460,22 @@ const AddStudent = () => {
               Excel Yükle
               <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
             </Button>
+            <Button
+              startIcon={<UploadIcon style={{ color: "#28245C" }} />}
+              variant="outlined"
+              color="secondary"
+              component="label"
+              style={{ borderRadius: "20px", border: "1px solid #E9E9E9" }}
+            >
+              Kolibri Excel Yükle
+              <input
+                type="file"
+                accept=".xlsx, .xls"
+                onChange={handleKolibriExcelUpload}
+                hidden
+              />
+            </Button>
+
             {view && <Button style={{ color: "white" }} sx={{ bgcolor: "green", borderRadius: "20px" }} startIcon={<CheckIcon style={{ color: "white" }} />} onClick={handleSubmit}>Onayla</Button>}
           </Grid>}
         </Grid>

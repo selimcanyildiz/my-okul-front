@@ -178,6 +178,9 @@ const StudentHomePage = () => {
 
         newTab.location.href = url;
         return;
+      } else if (platformName === "kolibri") {
+        newTab.location.href = "https://onepasslearning.com";
+        return;
       } else if (platformName === "eyotek") {
         newTab.location.href = "https://mykolej.eyotek.com/v1/";
         return;
@@ -328,20 +331,21 @@ const StudentHomePage = () => {
           alignItems: "center",
         }}
       >
-        {["bilisimgaraji", "kolibri", "morpa", "sinavza", "cambridge", "eyotek"].filter(platform => {
-          if (
-            platform === "sinavza" &&
-            anaSiniflar.some(
-              s =>
-                s.toLowerCase().replace(/\s+/g, "") ===
-                (user.sube_sinif || "").toLowerCase().replace(/\s+/g, "")
-            )
-          ) {
-            return false;
-          }
-          return true;
-        }).map(
-          (platform) => (
+        {["bilisimgaraji", "kolibri", "morpa", "sinavza", "cambridge", "eyotek"]
+          .filter((platform) => {
+            if (
+              platform === "sinavza" &&
+              anaSiniflar.some(
+                (s) =>
+                  s.toLowerCase().replace(/\s+/g, "") ===
+                  (user.sube_sinif || "").toLowerCase().replace(/\s+/g, "")
+              )
+            ) {
+              return false;
+            }
+            return true;
+          })
+          .map((platform) => (
             <Grid
               item
               key={platform}
@@ -356,7 +360,6 @@ const StudentHomePage = () => {
                 onClick={() => handleLoginClick(platform)}
                 sx={{
                   width: { xs: "100%", md: "100%" },
-                  // maxWidth: 400, // tüm kartlar için max genişlik
                   height: 200, // tüm kartlar için sabit yükseklik
                   display: "flex",
                   margin: "0 15px 20px -15px",
@@ -404,12 +407,28 @@ const StudentHomePage = () => {
                     <Typography variant="body2" sx={{ mt: 1 }}>
                       Platforma giriş yapmak için tıklayınız.
                     </Typography>
-                    {platform === "kolibri" && <Typography variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
-                      Masaüstü cihazlardan direkt giriş yapılır. Mobil cihazlardan uygulamaya yönlendirilirsiniz.
-                    </Typography>}
-                    {(platform === "sinavza" || platform === "cambridge" || platform === "eyotek") && <Typography variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
-                      Platforma yönlendirilirsiniz. Kullanıcı adınızı ve şifrenizi kendiniz girmeniz gerekmektedir.
-                    </Typography>}
+
+                    {platform === "kolibri" && (
+                      <Typography
+                        variant="body2"
+                        sx={{ mt: 1, fontSize: "12px" }}
+                      >
+                        Masaüstü cihazlardan direkt giriş yapılır. Mobil cihazlardan
+                        uygulamaya yönlendirilirsiniz.
+                      </Typography>
+                    )}
+
+                    {(platform === "sinavza" ||
+                      platform === "cambridge" ||
+                      platform === "eyotek") && (
+                        <Typography
+                          variant="body2"
+                          sx={{ mt: 1, fontSize: "12px" }}
+                        >
+                          Platforma yönlendirilirsiniz. Kullanıcı adınızı ve şifrenizi
+                          kendiniz girmeniz gerekmektedir.
+                        </Typography>
+                      )}
                   </Box>
 
                   <Box>
@@ -421,31 +440,58 @@ const StudentHomePage = () => {
                   </Box>
                 </Box>
 
-                {/* Alt: Kullanıcı adı ve şifre */}
+                {/* Alt: Kullanıcı adı ve şifre veya Kolibri kodu */}
                 <Box
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    mt: !isMobile ? 2 : 0
+                    mt: !isMobile ? 2 : 0,
                   }}
                 >
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    Kullanıcı Adı:{" "}
-                    <Typography component="span" sx={{ fontWeight: "normal" }}>
-                      {user[platform + "kull"] || "kullanıcı"}
+                  {platform === "kolibri" ? (
+                    // 🔹 Kolibri için özel görünüm
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        width: "100%",
+                      }}
+                    >
+                      Kolibri Kodunuz:{" "}
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontWeight: "normal",
+                          backgroundColor: "rgba(255,255,255,0.2)",
+                          padding: "2px 8px",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        {user.klbcode || "Kod atanmamış"}
+                      </Typography>
                     </Typography>
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    Şifre:{" "}
-                    <Typography component="span" sx={{ fontWeight: "normal" }}>
-                      {user[platform + "sif"] || "*****"}
-                    </Typography>
-                  </Typography>
+                  ) : (
+                    // 🔹 Diğer platformlar için kullanıcı adı ve şifre
+                    <>
+                      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                        Kullanıcı Adı:{" "}
+                        <Typography component="span" sx={{ fontWeight: "normal" }}>
+                          {user[platform + "kull"] || "kullanıcı"}
+                        </Typography>
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                        Şifre:{" "}
+                        <Typography component="span" sx={{ fontWeight: "normal" }}>
+                          {user[platform + "sif"] || "*****"}
+                        </Typography>
+                      </Typography>
+                    </>
+                  )}
                 </Box>
               </Box>
             </Grid>
-          )
-        )}
+          ))}
       </Grid>
 
 
