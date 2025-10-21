@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Alert, Snackbar } from "@mui/material";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import PersonIcon from '@mui/icons-material/Person';
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -26,6 +27,9 @@ const StudentHomePage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const [snackbarOpenCopy, setSnackbarOpenCopy] = useState(false);
+
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -61,6 +65,12 @@ const StudentHomePage = () => {
     };
     fetchData();
   }, [navigate, apiUrl]);
+
+  const handleCopy = (text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setSnackbarOpenCopy(true);
+  };
 
   const handlePasswordChange = async () => {
     if (!newPassword || !confirmPassword) {
@@ -441,38 +451,68 @@ const StudentHomePage = () => {
                 </Box>
 
                 {/* Alt: Kullanıcı adı ve şifre veya Kolibri kodu */}
+                {/* Alt: Kullanıcı adı ve şifre veya Kolibri kodu */}
                 <Box
                   sx={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: platform === "kolibri" ? "center" : "space-between",
+                    alignItems: "center",
+                    textAlign: platform === "kolibri" ? "center" : "left",
                     mt: !isMobile ? 2 : 0,
                   }}
                 >
                   {platform === "kolibri" ? (
-                    // 🔹 Kolibri için özel görünüm
-                    <Typography
-                      variant="body2"
+                    // 🔹 Kolibri için özel görünüm: kod ve kopyalama yan yana ve ortalanmış
+                    <Box
                       sx={{
-                        fontWeight: "bold",
-                        textAlign: "center",
-                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 1,
                       }}
                     >
-                      Kolibri Kodunuz:{" "}
                       <Typography
-                        component="span"
+                        variant="body2"
                         sx={{
-                          fontWeight: "normal",
-                          backgroundColor: "rgba(255,255,255,0.2)",
-                          padding: "2px 8px",
-                          borderRadius: "8px",
+                          fontWeight: "bold",
+                          textAlign: "center",
                         }}
                       >
-                        {user.klbcode || "Kod atanmamış"}
+                        Kolibri Kodunuz:{" "}
+                        <Typography
+                          component="span"
+                          sx={{
+                            fontWeight: "normal",
+                            backgroundColor: "rgba(255,255,255,0.2)",
+                            padding: "2px 8px",
+                            borderRadius: "8px",
+                            ml: 1,
+                          }}
+                        >
+                          {user.klbcode || "Kod atanmamış"}
+                        </Typography>
                       </Typography>
-                    </Typography>
+
+                      {/* 📋 Kopyalama ikonu kodun hemen sağında */}
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCopy(user.klbcode);
+                        }}
+                        sx={{
+                          color: "white",
+                          backgroundColor: "rgba(255,255,255,0.15)",
+                          "&:hover": { backgroundColor: "rgba(255,255,255,0.25)" },
+                          width: 28,
+                          height: 28,
+                          p: 0.5,
+                        }}
+                      >
+                        <ContentCopyIcon sx={{ fontSize: 18 }} />
+                      </IconButton>
+                    </Box>
                   ) : (
-                    // 🔹 Diğer platformlar için kullanıcı adı ve şifre
+                    // 🔹 Diğer platformlar: kullanıcı adı solda, şifre sağda
                     <>
                       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                         Kullanıcı Adı:{" "}
@@ -489,6 +529,7 @@ const StudentHomePage = () => {
                     </>
                   )}
                 </Box>
+
               </Box>
             </Grid>
           ))}
@@ -541,6 +582,21 @@ const StudentHomePage = () => {
       >
         <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: "100%" }}>
           {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={snackbarOpenCopy}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpenCopy(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpenCopy(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Kolibri kodu kopyalandı!
         </Alert>
       </Snackbar>
 
