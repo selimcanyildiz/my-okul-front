@@ -460,7 +460,7 @@ const updateKolibriCodes = async (studentsData) => {
               Excel Yükle
               <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} hidden />
             </Button>
-            <Button
+            {/* <Button
               startIcon={<UploadIcon style={{ color: "#28245C" }} />}
               variant="outlined"
               color="secondary"
@@ -474,7 +474,7 @@ const updateKolibriCodes = async (studentsData) => {
                 onChange={handleKolibriExcelUpload}
                 hidden
               />
-            </Button>
+            </Button> */}
 
             {view && <Button style={{ color: "white" }} sx={{ bgcolor: "green", borderRadius: "20px" }} startIcon={<CheckIcon style={{ color: "white" }} />} onClick={handleSubmit}>Onayla</Button>}
           </Grid>}

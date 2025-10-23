@@ -229,20 +229,36 @@ const StudentHomePage = () => {
     }
   };
 
-  const anaSiniflar = [
-    "Anasınıfı",
-    "Ana Sınıf",
-    "Anasnf",
-    "Anasnf 3-4 yaş",
-    "Anasnf 5-6 yaş",
-    "ANS",
-    "[A] Sarı Sınıf",
-    "[B] Yeşil Sınıf",
-    "[C] Mavi Sınıf",
-    "[D] Kırmızı Sınıf"
-  ];
-
   const platformNames = { bilisimgaraji: "Bilişim Garajı", kolibri: "Kolibri", morpa: "Morpa Kampüs", sinavza: "Sınavza", cambridge: "Cambridge", eyotek: "Eyotek" };
+
+  // 🔹 Her platformun hangi sınıflara gösterileceğini tanımlıyoruz
+  const platformVisibility = {
+    sinavza: [
+      "5.Snf", "5", "6.Snf", "6", "7.Snf", "7", "8.Snf", "8", "9.Snf", "9",
+      "10.Snf", "10", "11.Snf", "11", "12.Snf", "12"
+    ],
+    bilisimgaraji: [
+      "Anasnf 5-6 yaş", "Anasnf 3-4 yaş", "[A] Sarı Sınıf", "[B] Yeşil Sınıf", "[C] Mavi Sınıf", "[D] Kırmızı Sınıf",
+      "Anasnf", "Ana sınıf", "ANS", "Anasınıfı",
+      "1.Snf", "1.SINIF", "1", "2.Snf", "2", "3.Snf", "3", "4.Snf", "4",
+      "5.Snf", "5", "6.Snf", "6", "7.Snf", "7"
+    ],
+    morpa: [
+      "Anasnf 5-6 yaş", "Anasnf 3-4 yaş", "[A] Sarı Sınıf", "[B] Yeşil Sınıf", "[C] Mavi Sınıf", "[D] Kırmızı Sınıf",
+      "Anasnf", "Ana sınıf", "ANS", "Anasınıfı",
+      "1.Snf", "1.SINIF", "1", "2.Snf", "2", "3.Snf", "3", "4.Snf", "4",
+      "5.Snf", "5", "6.Snf", "6", "7.Snf", "7", "8.Snf", "8"
+    ],
+    kolibri: [
+      "Anasnf 5-6 yaş", "Anasnf 3-4 yaş", "[A] Sarı Sınıf", "[B] Yeşil Sınıf", "[C] Mavi Sınıf", "[D] Kırmızı Sınıf",
+      "Anasnf", "Ana sınıf", "ANS", "Anasınıfı",
+      "1.Snf", "1.SINIF", "1", "2.Snf", "2", "3.Snf", "3", "4.Snf", "4",
+      "5.Snf", "5", "6.Snf", "6", "7.Snf", "7", "8.Snf", "8", "9.Snf", "9", "10.Snf", "10"
+    ],
+    cambridge: "all",
+    eyotek: "all",
+  };
+
 
   return (
     <Box
@@ -343,19 +359,20 @@ const StudentHomePage = () => {
       >
         {["bilisimgaraji", "kolibri", "morpa", "sinavza", "cambridge", "eyotek"]
           .filter((platform) => {
-            if (
-              platform === "sinavza" &&
-              anaSiniflar.some(
-                (s) =>
-                  s.toLowerCase().replace(/\s+/g, "") ===
-                  (user.sube_sinif || "").toLowerCase().replace(/\s+/g, "")
-              )
-            ) {
-              return false;
-            }
-            return true;
+            const subeSinif = (user.sube_sinif || "").trim().toLowerCase();
+
+            const allowed = platformVisibility[platform];
+            if (allowed === "all") return true; // herkes görebilir
+            if (!allowed) return false;
+
+            // normalize et (boşlukları ve harf büyük-küçük farkını kaldır)
+            return allowed.some(
+              (s) => s.trim().toLowerCase().replace(/\s+/g, "") === subeSinif.replace(/\s+/g, "")
+            );
           })
           .map((platform) => (
+            // 🔹 Kart JSX burada aynı kalacak
+
             <Grid
               item
               key={platform}
