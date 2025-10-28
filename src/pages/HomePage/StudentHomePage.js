@@ -168,12 +168,41 @@ const StudentHomePage = () => {
   //   }
   // };
 
+  const getStaticPlatform = (subeSinifRaw) => {
+    if (!subeSinifRaw) return 0;
+
+    const value = String(subeSinifRaw).trim().toLowerCase();
+
+    // --- ANAOKULU / ANASINIFI TÜREVLERİ ---
+    const anaokuluKeywords = [
+      "ana",
+      "ans",
+      "[a]",
+      "[b]",
+      "[c]",
+      "[d]",
+    ];
+    if (anaokuluKeywords.some(k => value.includes(k))) {
+      return 0; // 0 → Anaokulu
+    }
+
+    // --- SAYISAL DEĞERİ ÇEK ---
+    const match = value.match(/\d+/); // metinden ilk sayıyı bul
+    if (match) {
+      return parseInt(match[0], 10); // örn. "10.Snf" → 10
+    }
+
+    // --- EŞLEŞME YOKSA varsayılan ---
+    return 0;
+  }
+
+
   const handleLoginClick = async (platformName) => {
     // Kullanıcı tıklayınca hemen yeni sekmeyi aç
     const newTab = window.open("", "_blank");
 
     try {
-      const staticPlatform = parseInt(user.sube_seviye.split("/")[0]);
+      const staticPlatform = getStaticPlatform(user?.sube_sinif);
 
       // Platformlara göre ön tanımlı URL yönlendirmesi
       if (platformName === "sinavza") {
