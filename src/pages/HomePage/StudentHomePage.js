@@ -207,7 +207,7 @@ const StudentHomePage = () => {
       // Platformlara göre ön tanımlı URL yönlendirmesi
       if (platformName === "sinavza") {
         const url =
-          staticPlatform >= 1 && staticPlatform <= 4
+          staticPlatform > 1 && staticPlatform <= 4
             ? school.url_ilkokul || "https://edesis.com/"
             : staticPlatform >= 5 && staticPlatform <= 8
               ? school.url_ortaokul || "https://edesis.com/"
