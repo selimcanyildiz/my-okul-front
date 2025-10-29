@@ -24,11 +24,15 @@ const Giris = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [hata, setHata] = useState("");
   const [beniHatirla, setBeniHatirla] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleLogin = async () => {
+    setLoading(true); // ✅ giriş başladığında aktif
+    setHata("");
+
     try {
       const res = await fetch(`${apiUrl}/login`, {
         method: "POST",
@@ -40,10 +44,7 @@ const Giris = () => {
 
       if (res.ok) {
         localStorage.setItem("token", data.access_token);
-        localStorage.setItem(
-          "userType",
-          data.user.role ? data.user.role : "student"
-        );
+        localStorage.setItem("userType", data.user.role || "student");
         localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/anasayfa");
       } else {
@@ -51,6 +52,8 @@ const Giris = () => {
       }
     } catch (error) {
       setHata("Sunucuyla bağlantı kurulamadı. Lütfen tekrar deneyin.");
+    } finally {
+      setLoading(false); // ✅ işlem bittiğinde kapat
     }
   };
 
@@ -293,6 +296,7 @@ const Giris = () => {
             <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
               <Button
                 type="submit"
+                loading={loading}
                 variant="contained"
                 sx={{
                   backgroundColor: "#141A30",

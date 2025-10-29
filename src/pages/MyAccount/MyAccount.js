@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
-import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
-import DownloadIcon from '@mui/icons-material/Download';
+import { Grid, Box, Typography, Menu, MenuItem, IconButton } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
 import Settings from "../HomePage/Settings";

@@ -119,55 +119,6 @@ const StudentHomePage = () => {
     }
   };
 
-  // const handleLoginClick = async (platformName) => {
-  //   try {
-  //     const staticPlatform = parseInt(user.sube_seviye.split("/")[0]);
-  //     if (platformName === "sinavza") {
-  //       window.open(staticPlatform >= 1 && staticPlatform <= 4
-  //         ? school.url_ilkokul || "https://edesis.com/"
-  //         : staticPlatform >= 5 && staticPlatform <= 8
-  //           ? school.url_ortaokul || "https://edesis.com/"
-  //           : staticPlatform >= 9 && staticPlatform <= 12
-  //             ? school.url_lise || "https://edesis.com/"
-  //             : school.url_anaokul || "https://edesis.com/", "_blank");
-  //       return;
-  //     }
-  //     else if (platformName === "eyotek") {
-  //       window.open("https://mykolej.eyotek.com/v1/", "_blank");
-  //       return;
-  //     }
-  //     else if (platformName === "cambridge") {
-  //       window.open("https://www.cambridgeone.org/", "_blank");
-  //       return;
-  //     }
-
-  //     // SSO entegrasyonu olan platformlar için backend'e istek at
-  //     const token = localStorage.getItem("token");
-  //     const res = await fetch(`${apiUrl}/login-to-platform`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Authorization": `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ platformName }),
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (res.ok && data.redirect_url) {
-  //       window.open(data.redirect_url, "_blank");
-  //     } else {
-  //       const errorMsg = data.detail || data.error || "Bilinmeyen bir hata oluştu.";
-  //       setSnackbarMessage(errorMsg);
-  //       setSnackbarSeverity("error");
-  //       setSnackbarOpen(true);
-  //     }
-  //   } catch (error) {
-  //     console.error("Hata:", error);
-  //     alert("Bir hata oluştu: " + error.message);
-  //   }
-  // };
-
   const getStaticPlatform = (subeSinifRaw) => {
     if (!subeSinifRaw) return 0;
 
@@ -391,12 +342,36 @@ const StudentHomePage = () => {
             const subeSinif = (user.sube_sinif || "").trim().toLowerCase();
 
             const allowed = platformVisibility[platform];
-            if (allowed === "all") return true; // herkes görebilir
+            if (allowed === "all") return true;
             if (!allowed) return false;
 
-            // normalize et (boşlukları ve harf büyük-küçük farkını kaldır)
+            const normalizedSube = subeSinif.replace(/\s+/g, "");
+
+            // 🔹 Sınavza istisnası: Eğer okul_id 17 veya 22 ise 1-4 sınıflar da görebilsin
+            if (
+              platform === "sinavza" &&
+              (user.school_id === 17 || user.school_id === 22)
+            ) {
+              const ilkokulEkstra = [
+                "1.Snf", "1.SINIF", "1",
+                "2", "2.Snf",
+                "3", "3.Snf",
+                "4", "4.Snf"
+              ];
+
+              // normalize ederek karşılaştırıyoruz
+              if (
+                ilkokulEkstra.some(
+                  (v) => v.trim().toLowerCase().replace(/\s+/g, "") === normalizedSube
+                )
+              ) {
+                return true;
+              }
+            }
+
+            // 🔹 Normal durum: platformVisibility'deki kurallara göre kontrol et
             return allowed.some(
-              (s) => s.trim().toLowerCase().replace(/\s+/g, "") === subeSinif.replace(/\s+/g, "")
+              (s) => s.trim().toLowerCase().replace(/\s+/g, "") === normalizedSube
             );
           })
           .map((platform) => (
