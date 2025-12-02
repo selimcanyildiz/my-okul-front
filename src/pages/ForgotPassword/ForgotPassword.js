@@ -1,127 +1,186 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Box, Container } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import PhoneNumberInput from './PhoneNumberInput';
-import VerificationCodeInput from './VerificationCodeInput';
-import NewPasswordInput from './NewPasswordInput';
+// ForgotPassword.js
+import React, { useState, useEffect } from "react";
+import { Typography, Box, Container } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+import PhoneNumberInput from "./PhoneNumberInput"; // username için kullanıyoruz
+import VerificationCodeInput from "./VerificationCodeInput";
+import NewPasswordInput from "./NewPasswordInput";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL; // 👈 Login sayfasıyla aynı
 
-  const [phoneNumber, setPhoneNumber] = useState('0 5');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [timer, setTimer] = useState(10);
+  // username = öğrenci kullanıcı adı (TC)
+  const [username, setUsername] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [timer, setTimer] = useState(600); // 600 sn = 10 dk
   const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isCodeVerified, setIsCodeVerified] = useState(false);
-  const [isPhoneInputActive, setIsPhoneInputActive] = useState(true);
+  const [loading, setLoading] = useState(false);
 
+  // Kod süresi sayacı
   useEffect(() => {
     let interval;
-    if (timer > 0 && isCodeSent && !isCodeVerified) {
+    if (isCodeSent && timer > 0) {
       interval = setInterval(() => {
         setTimer((prev) => prev - 1);
       }, 1000);
-    } else if (timer === 0 && !isCodeVerified) {
-      clearInterval(interval);
-      setMessage('Kod süresi doldu. Lütfen tekrar telefon numarasını girin.');
-      setIsCodeSent(false);
-      setVerificationCode('');
-      setTimer(10);
-      setIsPhoneInputActive(true); // Numara tekrar girilebilsin
-      setPhoneNumber('0 5'); // Numara sıfırlanıyor
     }
-    return () => clearInterval(interval);
-  }, [timer, isCodeSent, isCodeVerified]);
-  
-  
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isCodeSent, timer]);
 
-  const handleSendCode = () => {
-    if (!phoneNumber) {
-      setMessage('Lütfen geçerli bir telefon numarası girin.');
-    } else {
-      setMessage('Kod gönderildi. Lütfen gelen kodu girin.');
+  // 1) KOD GÖNDER
+  const handleSendCode = async () => {
+    const cleanUsername = username.trim();
+
+    if (!cleanUsername) {
+      setMessage("Lütfen TC / kullanıcı adınızı girin.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const res = await fetch(`${apiUrl}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: cleanUsername }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Kod gönderilirken bir hata oluştu.");
+      }
+
       setIsCodeSent(true);
-      setIsPhoneInputActive(false);
+      setTimer(600); // 10 dk
+      setMessage("Şifre yenileme kodu kayıtlı veli telefonuna gönderildi.");
+    } catch (err) {
+      console.error(err);
+      setMessage(err.message || "Kod gönderilirken bir hata oluştu.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleVerifyCode = () => {
-    if (verificationCode === '123456') {
-      setIsCodeVerified(true);
-      setMessage('Kod doğrulandı. Lütfen yeni şifrenizi girin.');
-    } else {
-      setMessage('Geçersiz kod. Lütfen tekrar deneyin.');
-    }
-  };
+  // 2) ŞİFREYİ GERÇEKTEN DEĞİŞTİR (kod + yeni şifre)
+  const handleSubmitNewPassword = async () => {
+    const cleanUsername = username.trim();
 
-  const handleSubmitNewPassword = () => {
-    if (newPassword && newPassword === confirmPassword) {
-      setMessage('Şifreniz başarıyla değiştirildi, yönlendiriliyorsunuz...');
+    if (!verificationCode) {
+      setMessage("Lütfen SMS ile gelen kodu girin.");
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 4) {
+      setMessage("Yeni şifre en az 4 karakter olmalı.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setMessage("Şifreler uyuşmuyor.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setMessage("");
+
+      const res = await fetch(`${apiUrl}/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: cleanUsername,
+          code: verificationCode,
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Şifre değiştirilirken bir hata oluştu.");
+      }
+
+      setMessage("Şifreniz başarıyla değiştirildi, yönlendiriliyorsunuz...");
       setTimeout(() => {
         navigate("/giris");
-      }, 1000);
-    } else {
-      setMessage('Şifreler uyuşmuyor veya geçersiz.');
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      setMessage(err.message || "Şifre değiştirilirken bir hata oluştu.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handlePhoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ''); // Sadece sayıları kabul et
-    if (value.length <= 4) {
-      value = `0 5${value.slice(2)}`; // Başlangıçta 0 ve 5 sabit olacak
-    } else if (value.length <= 7) {
-      value = `0 5${value.slice(2, 4)} ${value.slice(4)} `; // İlk 3 haneli grup sabit 534
-    } else if (value.length < 10) {
-      value = `0 5${value.slice(2, 4)} ${value.slice(4, 7)} ${value.slice(7)} `; // İkinci grup sabit
-    } else {
-      value = `0 5${value.slice(2, 4)} ${value.slice(4, 7)} ${value.slice(7, 9)} ${value.slice(9, 11)} `; // Son grup
-    }
-    setPhoneNumber(value);
+  // Username (TC / kullanıcı adı) input değişimi
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
   };
 
   return (
     <Container maxWidth="xs">
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: 3,
+        }}
+      >
         <Typography variant="h6" gutterBottom>
           Şifremi Unuttum
         </Typography>
 
-        {/* Telefon Numarası */}
-        {isPhoneInputActive && !isCodeSent && (
+        {/* 1. Adım: Kullanıcı adı / TC girme */}
+        {!isCodeSent && (
           <PhoneNumberInput
-            phoneNumber={phoneNumber}
-            handlePhoneChange={handlePhoneChange}
+            phoneNumber={username}
+            handlePhoneChange={handleUsernameChange}
             handleSendCode={handleSendCode}
+            loading={loading}
           />
         )}
 
-        {/* Kod Doğrulama */}
-        {isCodeSent && !isCodeVerified && (
-          <VerificationCodeInput
-            verificationCode={verificationCode}
-            setVerificationCode={setVerificationCode}
-            handleVerifyCode={handleVerifyCode}
-            timer={timer}
-          />
-        )}
+        {/* 2. Adım: Kod + yeni şifre */}
+        {isCodeSent && (
+          <>
+            <VerificationCodeInput
+              verificationCode={verificationCode}
+              setVerificationCode={setVerificationCode}
+              timer={timer}
+            />
 
-        {/* Yeni Şifre ve Onay */}
-        {isCodeVerified && (
-          <NewPasswordInput
-            newPassword={newPassword}
-            confirmPassword={confirmPassword}
-            setNewPassword={setNewPassword}
-            setConfirmPassword={setConfirmPassword}
-            handleSubmitNewPassword={handleSubmitNewPassword}
-          />
+            <NewPasswordInput
+              newPassword={newPassword}
+              confirmPassword={confirmPassword}
+              setNewPassword={setNewPassword}
+              setConfirmPassword={setConfirmPassword}
+              handleSubmitNewPassword={handleSubmitNewPassword}
+              loading={loading}
+            />
+          </>
         )}
 
         {/* Mesaj */}
         {message && (
-          <Typography variant="body2" color={message.includes('başarıyla') ? 'success.main' : 'error.main'} sx={{ marginTop: 2 }}>
+          <Typography
+            variant="body2"
+            color={
+              message.toLowerCase().includes("başarıyla")
+                ? "success.main"
+                : "error.main"
+            }
+            sx={{ marginTop: 2, textAlign: "center" }}
+          >
             {message}
           </Typography>
         )}

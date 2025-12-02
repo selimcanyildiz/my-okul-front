@@ -1,7 +1,15 @@
+// NewPasswordInput.js
 import React from 'react';
 import { TextField, Button } from '@mui/material';
 
-const NewPasswordInput = ({ newPassword, confirmPassword, setNewPassword, setConfirmPassword, handleSubmitNewPassword }) => {
+const NewPasswordInput = ({
+  newPassword,
+  confirmPassword,
+  setNewPassword,
+  setConfirmPassword,
+  handleSubmitNewPassword,
+  loading,
+}) => {
   return (
     <>
       <TextField
@@ -28,8 +36,9 @@ const NewPasswordInput = ({ newPassword, confirmPassword, setNewPassword, setCon
         onClick={handleSubmitNewPassword}
         fullWidth
         sx={{ marginTop: 2 }}
+        disabled={loading}
       >
-        Şifreyi Değiştir
+        {loading ? 'Kaydediliyor...' : 'Şifreyi Değiştir'}
       </Button>
     </>
   );

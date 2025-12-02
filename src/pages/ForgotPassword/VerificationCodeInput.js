@@ -1,56 +1,52 @@
+// VerificationCodeInput.js
 import React from 'react';
-import { TextField, Button, Typography, Box } from '@mui/material';
+import { TextField, Typography, Box } from '@mui/material';
 import { CircularProgressbarWithChildren } from 'react-circular-progressbar';
 
-const VerificationCodeInput = ({ verificationCode, setVerificationCode, handleVerifyCode, timer }) => {
+const VerificationCodeInput = ({ verificationCode, setVerificationCode, timer }) => {
+  // 600 sn üzerinden yüzde hesaplıyoruz
+  const percentage = (timer / 600) * 100;
+
   return (
     <>
       <TextField
-        label="Doğrulama Kodu"
+        label="SMS ile Gelen Kod"
         variant="outlined"
         fullWidth
         value={verificationCode}
         onChange={(e) => setVerificationCode(e.target.value)}
         margin="normal"
       />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleVerifyCode}
-        fullWidth
-        sx={{ marginTop: 2 }}
-      >
-        Kodu Doğrula
-      </Button>
+
       <Typography variant="body2" sx={{ marginTop: 1 }}>
-        Kalan Süre:
+        Kod Geçerlilik Süresi:
       </Typography>
       <Box sx={{ width: 70, height: 70, marginTop: 1 }}>
         <CircularProgressbarWithChildren
-          value={(timer / 120) * 100}
+          value={percentage}
           strokeWidth={5}
           styles={{
             path: {
-              stroke: timer >= 6 ? 'green' : timer >= 3 ? 'yellow' : 'red',
+              stroke: timer >= 300 ? 'green' : timer >= 120 ? 'orange' : 'red',
               strokeLinecap: 'round',
-              transition: 'stroke 0.5s ease-in-out', // Renk geçişi için transition eklendi
+              transition: 'stroke 0.5s ease-in-out',
             },
             text: {
-              fill: timer >= 60 ? 'green' : timer >= 30 ? 'yellow' : 'red',
+              fill: timer >= 300 ? 'green' : timer >= 120 ? 'orange' : 'red',
               fontSize: '20px',
               fontWeight: 'bold',
-              transition: 'fill 0.5s ease-in-out', // Renk geçişi için transition eklendi
+              transition: 'fill 0.5s ease-in-out',
             },
           }}
         >
           <div style={{ fontSize: 20, marginTop: -15 }}>
             <strong
               style={{
-                color: timer >= 6 ? 'green' : timer >= 3 ? 'yellow' : 'red',
-                transition: 'color 0.5s ease-in-out',  // Burada renk geçişine animasyon ekliyoruz
+                color: timer >= 300 ? 'green' : timer >= 120 ? 'orange' : 'red',
+                transition: 'color 0.5s ease-in-out',
               }}
             >
-              {`${timer} s`}
+              {`${timer}s`}
             </strong>
           </div>
         </CircularProgressbarWithChildren>

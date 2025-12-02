@@ -280,7 +280,7 @@ const Giris = () => {
                 sx={{ color: "gray" }}
               />
               <Button
-                // onClick={handleForgotPassword}
+                onClick={handleForgotPassword}
                 variant="text"
                 sx={{
                   color: "gray",

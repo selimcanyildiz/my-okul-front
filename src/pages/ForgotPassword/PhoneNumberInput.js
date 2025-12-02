@@ -1,17 +1,17 @@
+// PhoneNumberInput.js
 import React from 'react';
 import { TextField, Button } from '@mui/material';
 
-const PhoneNumberInput = ({ phoneNumber, handlePhoneChange, handleSendCode }) => {
+const PhoneNumberInput = ({ phoneNumber, handlePhoneChange, handleSendCode, loading }) => {
   return (
     <>
       <TextField
-        label="Telefon Numarası"
+        label="TC / Kullanıcı Adı"
         variant="outlined"
         fullWidth
         value={phoneNumber}
         onChange={handlePhoneChange}
         margin="normal"
-        inputProps={{ maxLength: 16 }}
       />
       <Button
         variant="contained"
@@ -19,8 +19,9 @@ const PhoneNumberInput = ({ phoneNumber, handlePhoneChange, handleSendCode }) =>
         onClick={handleSendCode}
         fullWidth
         sx={{ marginTop: 2 }}
+        disabled={loading}
       >
-        Kod Gönder
+        {loading ? 'Gönderiliyor...' : 'Kod Gönder'}
       </Button>
     </>
   );
